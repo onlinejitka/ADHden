@@ -415,11 +415,11 @@ export default function ADHDApp() {
     {
       id: "bd-teeth",
       title: "Čištění zubů se mnou",
-      desc: "2 minuty pro čisté zoubky s rytmickým doprovodem",
-      time: 2,
+      desc: "2,5 minuty pro čisté zoubky s rytmickým doprovodem",
+      time: 2.5,
       type: "audio",
       // Pokud máte MP3 soubor v public/audio/zuby.mp3, odkomentujte řádek níže:
-      // mediaUrl: "/audio/zuby.mp3",
+      // mediaUrl: "public/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
       free: true,
     },
     {
