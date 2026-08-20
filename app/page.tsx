@@ -96,7 +96,7 @@ export default function LandingPage() {
 
             
       {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-20" />
+      <div className="h-10" />
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
               Zkrotit chaos, časovou slepotu
@@ -105,7 +105,7 @@ export default function LandingPage() {
             </h1>
 
       {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-20" />
+      <div className="h-10" />
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
