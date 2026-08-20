@@ -70,14 +70,14 @@ export default async function LandingPage() {
               <span>♡ Laskavý systém pro neurodivergentní mozek</span>
             </div>
 
+            <div className="h-10" /> {/* Mezera 64 px */}
+
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
               Zkrotit chaos, časovou slepotu a paralýzu{" "}
               <span className="text-amber-300 font-normal">bez pocitu viny.</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
-              ADHDen spojuje vizuální ubývání času, zklidňující hnědý šum, AI rozpad paralyzujících úkolů a společného parťáka pro dospělé i rodiny s dětmi.
-            </p>
+           <div className="h-5" /> {/* Mezera 64 px */}
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
@@ -105,6 +105,8 @@ export default async function LandingPage() {
               </span>
             </div>
           </div>
+
+          <div className="h-10" /> {/* Mezera 64 px */}
 
           {/* Sekce Nástrojů */}
           <section className="space-y-6 text-left">
