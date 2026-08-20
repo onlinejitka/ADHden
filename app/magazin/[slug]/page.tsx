@@ -4,6 +4,22 @@ import { getPostBySlug } from "@/lib/notion";
 
 export const revalidate = 60;
 
+// Pomocná funkce pro převod YouTube odkazu z Notionu na přehrávač
+function getYouTubeEmbedUrl(url?: string) {
+  if (!url) return null;
+  let videoId = "";
+  if (url.includes("youtu.be/")) {
+    videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
+  } else if (url.includes("watch?v=")) {
+    videoId = url.split("watch?v=")[1]?.split("&")[0] || "";
+  } else if (url.includes("embed/")) {
+    videoId = url.split("embed/")[1]?.split("?")[0] || "";
+  } else {
+    videoId = url.trim();
+  }
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+}
+
 export default async function ArticlePage({
   params,
 }: {
@@ -12,7 +28,7 @@ export default async function ArticlePage({
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
-  const post = await getPostBySlug(slug);
+  const post: any = await getPostBySlug(slug);
 
   if (!post) {
     return (
@@ -30,7 +46,24 @@ export default async function ArticlePage({
     );
   }
 
-  // Univerzální vytažení obsahu z post objektu
+  // 1. Načtení Perexu z Notion sloupce
+  const perex =
+    post.perex ||
+    post.description ||
+    post.properties?.Perex?.rich_text?.[0]?.plain_text ||
+    post.properties?.Perex?.title?.[0]?.plain_text ||
+    "";
+
+  // 2. Načtení YouTube videa z Notion sloupce "YouTube"
+  const rawYoutubeUrl =
+    post.youtube ||
+    post.youtubeUrl ||
+    post.properties?.YouTube?.url ||
+    post.properties?.YouTube?.rich_text?.[0]?.plain_text ||
+    "";
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(rawYoutubeUrl);
+
+  // 3. Načtení těla článku (pokud existuje)
   const content =
     post.contentHtml ||
     post.html ||
@@ -98,30 +131,36 @@ export default async function ArticlePage({
             {post.title || "Bez názvu"}
           </h1>
 
-          {post.description && (
+          {perex && (
             <p className="text-sm text-zinc-400 leading-relaxed italic border-l-2 border-amber-400/40 pl-4 py-0.5">
-              {post.description}
+              {perex}
             </p>
           )}
         </div>
 
-        {/* Vykreslení obsahu podle typu */}
-        <div className="pt-4 border-t border-zinc-800/60">
-          {typeof content === "string" ? (
-            <div
-              className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 whitespace-pre-line"
-              dangerouslySetInnerHTML={{ __html: content }}
+        {/* Youtube Video přehrávač z Notion tabulky */}
+        {youtubeEmbedUrl && (
+          <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
+            <iframe
+              src={youtubeEmbedUrl}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
             />
-          ) : Array.isArray(content) ? (
-            <div className="space-y-3">
-              {content.map((block: any, idx: number) => renderNotionBlock(block, idx))}
-            </div>
-          ) : (
-            <div className="text-xs text-zinc-500 italic">
-              Obsah je připraven k zobrazení.
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Vykreslení psaného textu z Notion (pokud v těle stránky nějaký je) */}
+        {typeof content === "string" && content.trim().length > 0 ? (
+          <div
+            className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60 whitespace-pre-line"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        ) : Array.isArray(content) && content.length > 0 ? (
+          <div className="space-y-3 pt-4 border-t border-zinc-800/60">
+            {content.map((block: any, idx: number) => renderNotionBlock(block, idx))}
+          </div>
+        ) : null}
 
         {/* Výzva na konci článku */}
         <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
@@ -165,27 +204,8 @@ function renderNotionBlock(block: any, index: number) {
       return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{text}</p>;
     case "bulleted_list_item":
       return <li key={index} className="text-xs sm:text-sm text-zinc-300 ml-4 list-disc mb-1">{text}</li>;
-    case "numbered_list_item":
-      return <li key={index} className="text-xs sm:text-sm text-zinc-300 ml-4 list-decimal mb-1">{text}</li>;
     case "quote":
       return <blockquote key={index} className="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-4">{text}</blockquote>;
-    case "video":
-    case "embed": {
-      const url = data?.external?.url || data?.file?.url || data?.url;
-      if (url && (url.includes("youtube") || url.includes("youtu.be"))) {
-        const embedUrl = url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/");
-        return (
-          <div key={index} className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800">
-            <iframe src={embedUrl} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
-          </div>
-        );
-      }
-      return null;
-    }
-    case "image": {
-      const imgUrl = data?.external?.url || data?.file?.url;
-      return imgUrl ? <img key={index} src={imgUrl} alt="" className="rounded-2xl my-4 max-w-full" /> : null;
-    }
     default:
       return text ? <p key={index} className="text-xs sm:text-sm text-zinc-300 mb-2">{text}</p> : null;
   }
