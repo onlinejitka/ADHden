@@ -49,13 +49,13 @@ export default function LandingPage() {
       <div>
         {/* Horní navigace */}
        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  <Link href="/" className="flex items-center gap-2 group">
-    <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
-      ADHDen
-    </span>
-    <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
-      cz
-    </span>
+  {/* Logo v záhlaví */}
+  <Link href="/" className="flex items-center group">
+    <img
+      src="/ADHden%20logo.jpg"
+      alt="ADHDen.cz logo"
+      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+    />
   </Link>
 
   <div className="flex items-center gap-3 sm:gap-5">
@@ -74,7 +74,7 @@ export default function LandingPage() {
       <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
       <span>Magazín</span>
     </Link>
-    
+
     <Link
       href="/app"
       className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
