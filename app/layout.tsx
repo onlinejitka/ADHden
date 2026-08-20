@@ -27,6 +27,11 @@ export const metadata: Metadata = {
     "Časová slepota",
   ],
   authors: [{ name: "Jitka Pekárková" }],
+  icons: {
+    icon: "/ADHden%20favikon.png",
+    shortcut: "/ADHden%20favikon.png",
+    apple: "/ADHden%20favikon.png",
+  },
   openGraph: {
     title: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
     description:
