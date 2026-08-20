@@ -61,7 +61,7 @@ interface CustomAudio {
 
 export default function ADHDApp() {
   const [activeTab, setActiveTab] = useState<Tab>("timer");
-  const [isPro, setIsPro] = useState<boolean>(true); // Přepínač pro testování PRO/FREE
+  const [isPro, setIsPro] = useState<boolean>(true);
 
   // =============================================================
   // 1. TIME TIMER
@@ -405,7 +405,7 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 6. BODY DOUBLING (S AUTOPLAYEM A SPRÁVNOU CESTOU)
+  // 6. BODY DOUBLING (S možností zapnout/vypnout zvuk za běhu)
   // =============================================================
   const [sessions] = useState<BodyDoublingSession[]>([
     {
@@ -414,7 +414,6 @@ export default function ADHDApp() {
       desc: "2,5 minuty pro čisté zoubky s rytmickým doprovodem",
       time: 2.5,
       type: "audio",
-      // Správná cesta k vašemu MP3 souboru bez slova public:
       mediaUrl: "/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
       free: true,
     },
@@ -454,21 +453,36 @@ export default function ADHDApp() {
 
   const [activeSession, setActiveSession] = useState<BodyDoublingSession | null>(null);
   const [sessionSecs, setSessionSecs] = useState<number>(0);
+  const [isSessionAudioMuted, setIsSessionAudioMuted] = useState<boolean>(false);
   const bodyDoublingAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const startSession = (session: BodyDoublingSession) => {
     setActiveSession(session);
     setSessionSecs(Math.round(session.time * 60));
+    setIsSessionAudioMuted(false);
 
-    // AUTOMATICKÉ SPUŠTĚNÍ HUDBY PŘI STARTU
     if (session.mediaUrl && session.type === "audio") {
       setTimeout(() => {
         if (bodyDoublingAudioRef.current) {
           bodyDoublingAudioRef.current.src = session.mediaUrl!;
           bodyDoublingAudioRef.current.loop = true;
+          bodyDoublingAudioRef.current.muted = false;
           bodyDoublingAudioRef.current.play().catch((e) => console.log("Autoplay audio error:", e));
         }
       }, 50);
+    }
+  };
+
+  // Přepínač ztlumení / zapnutí zvuku během běžící relace
+  const toggleSessionAudio = () => {
+    if (bodyDoublingAudioRef.current) {
+      if (bodyDoublingAudioRef.current.paused) {
+        bodyDoublingAudioRef.current.play().catch(() => {});
+        setIsSessionAudioMuted(false);
+      } else {
+        bodyDoublingAudioRef.current.pause();
+        setIsSessionAudioMuted(true);
+      }
     }
   };
 
@@ -478,6 +492,7 @@ export default function ADHDApp() {
       bodyDoublingAudioRef.current.currentTime = 0;
     }
     setActiveSession(null);
+    setIsSessionAudioMuted(false);
   };
 
   useEffect(() => {
@@ -504,7 +519,7 @@ export default function ADHDApp() {
 
   return (
     <div className="flex-1 flex flex-col p-4">
-      {/* Skryté audio přehrávače */}
+      {/* Skryté přehrávače */}
       <audio ref={audioPlayerRef} className="hidden" />
       <audio ref={bodyDoublingAudioRef} className="hidden" />
 
@@ -795,7 +810,6 @@ export default function ADHDApp() {
               </button>
             </div>
 
-            {/* KATEGORIE VE 2 SLOUPCÍCH */}
             <div className="grid grid-cols-2 gap-2">
               {currentSections.map((sec) => (
                 <button
@@ -813,7 +827,6 @@ export default function ADHDApp() {
               ))}
             </div>
 
-            {/* Položky aktivní sekce */}
             <div className="space-y-2 pt-1">
               {currentActiveSection.items.map((item) => (
                 <div
@@ -840,7 +853,6 @@ export default function ADHDApp() {
               ))}
             </div>
 
-            {/* Přidání kroku (PRO only) */}
             <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3 space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-300">
                 <span>Přidat krok do sekce <b>{currentActiveSection.name}</b>:</span>
@@ -891,7 +903,6 @@ export default function ADHDApp() {
               </p>
             </div>
 
-            {/* Oficiální nahrávky od autora */}
             <div className="space-y-2">
               {officialAudios.map((audio) => {
                 const isPlaying = activeAudioId === audio.id;
@@ -1063,7 +1074,7 @@ export default function ADHDApp() {
             </div>
 
             {activeSession ? (
-              /* AKTIVNÍ RELACE S OKAMŽITÝM PŘEHRÁVÁNÍM */
+              /* AKTIVNÍ RELACE S OVLÁDÁNÍM ZVUKU ZA BĚHU */
               <div className="bg-slate-800 border border-emerald-500/40 rounded-2xl p-5 text-center flex flex-col items-center space-y-4 shadow-2xl">
                 <div className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
                   {activeSession.title}
@@ -1093,7 +1104,11 @@ export default function ADHDApp() {
                         {formatTime(sessionSecs)}
                       </span>
                       <span className="text-[10px] text-emerald-400 font-medium mt-0.5">
-                        {activeSession.mediaUrl && activeSession.type === "audio" ? "🎵 Hudba hraje" : "Společně v akci"}
+                        {activeSession.mediaUrl && activeSession.type === "audio"
+                          ? isSessionAudioMuted
+                            ? "🔇 Zvuk ztlumen"
+                            : "🎵 Hudba hraje"
+                          : "Společně v akci"}
                       </span>
                     </div>
                   </div>
@@ -1101,12 +1116,29 @@ export default function ADHDApp() {
 
                 <p className="text-xs text-slate-300 max-w-xs">{activeSession.desc}</p>
 
-                <button
-                  onClick={endSession}
-                  className="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs text-slate-300 font-semibold transition active:scale-95"
-                >
-                  Ukončit aktivitu
-                </button>
+                {/* Tlačítka pro ovládání: Vypnout/Zapnout zvuk + Ukončit */}
+                <div className="flex items-center gap-2">
+                  {activeSession.mediaUrl && activeSession.type === "audio" && (
+                    <button
+                      onClick={toggleSessionAudio}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 ${
+                        isSessionAudioMuted
+                          ? "bg-slate-700 text-amber-300 border border-amber-500/40"
+                          : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+                      }`}
+                    >
+                      {isSessionAudioMuted ? <VolumeX className="w-4 h-4 text-amber-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+                      {isSessionAudioMuted ? "Zapnout hudbu" : "Ztlumit hudbu"}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={endSession}
+                    className="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs text-slate-300 font-semibold transition active:scale-95"
+                  >
+                    Ukončit aktivitu
+                  </button>
+                </div>
               </div>
             ) : (
               /* SEZNAM AKTIVIT PARŤÁKA */
