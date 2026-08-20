@@ -105,7 +105,7 @@ export default function LandingPage() {
             </h1>
 
       {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-10" />
+      <div className="h-5" />
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
@@ -134,11 +134,14 @@ export default function LandingPage() {
             </div>
           </div>
 
+      {/* Prázdný spacer mezi sekcemi */}
+      <div className="h-10" />
+
           {/* Sekce Nástrojů */}
           <section className="space-y-6 text-left">
             <div className="text-center space-y-1.5">
               <h2 className="text-lg font-semibold text-zinc-200">
-                Nástroje navržené přímo pro ADHD dynamiku
+                Nástroje v aplikaci ADHden navržené přímo pro ADHD dynamiku
               </h2>
               <p className="text-xs text-zinc-400">
                 Proč běžné úkolovníky a minutky selhávají a jak vám pomůže ADHDen.
@@ -235,6 +238,9 @@ export default function LandingPage() {
 </div>
           </section>
 
+      {/* Prázdný spacer mezi sekcemi */}
+      <div className="h-5" />
+
           {/* ELEGANTNÍ UPOUTÁVKA NA PRŮVODCE ZDARMA */}
           <section className="pt-2">
             <Link
@@ -262,6 +268,9 @@ export default function LandingPage() {
               </div>
             </Link>
           </section>
+
+                {/* Prázdný spacer mezi sekcemi */}
+      <div className="h-5" />
 
           {/* Sekce Magazínu */}
           <section className="space-y-6 border-t border-zinc-800/60 pt-12">
