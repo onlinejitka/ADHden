@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import {
@@ -14,76 +12,54 @@ import {
   ChevronRight,
   FileText
 } from "lucide-react";
+import { getPublishedPosts } from "@/lib/notion";
 
-export default function LandingPage() {
-  const articles = [
-    {
-      id: "1",
-      title: "Co je to časová slepota a jak ji obelstít bez stresu",
-      perex: "Proč pro ADHD mozek existují jen dvě časová pásma – TEĎ a NIKDY – a jak pomáhají vizuální kotvy.",
-      category: "ADHD & Čas",
-      readTime: "4 min čtení",
-      date: "14. srpna",
-    },
-    {
-      id: "2",
-      title: "Proč právě hnědý šum tak dobře zklidňuje přetížený mozek?",
-      perex: "Srovnání bílého, růžového a hnědého šumu. Jak hluboké frekvence maskují vnitřní i vnější ruch.",
-      category: "Senzorika",
-      readTime: "3 min čtení",
-      date: "10. srpna",
-    },
-    {
-      id: "3",
-      title: "Jak přimět děti k ranním rutinám bez neustálého křiku",
-      perex: "Osvědčené vizuální kartičky a princip Body Doubling pro klidnější odchody do školy a školky.",
-      category: "Pro rodiče",
-      readTime: "5 min čtení",
-      date: "5. srpna",
-    }
-  ];
+export const revalidate = 60;
+
+export default async function LandingPage() {
+  const allPosts = await getPublishedPosts();
+  const articles = allPosts.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       
       <div>
         {/* Horní navigace */}
-       <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  {/* Logo v záhlaví */}
-  <Link href="/" className="flex items-center group">
-    <img
-      src="/ADHden%20logo.jpg"
-      alt="ADHDen.cz logo"
-      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
-    />
-  </Link>
+        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/ADHden%20logo.jpg"
+              alt="ADHDen.cz logo"
+              className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+            />
+          </Link>
 
-  <div className="flex items-center gap-3 sm:gap-5">
-    <Link
-      href="/adhd-ledovec"
-      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
-    >
-      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>ADHD Ledovec</span>
-    </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/adhd-ledovec"
+              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>ADHD Ledovec</span>
+            </Link>
 
-    <Link
-      href="/magazin"
-      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-    >
-      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>Magazín</span>
-    </Link>
-
-    <Link
-      href="/app"
-      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-    >
-      <span>Spustit aplikaci</span>
-      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-    </Link>
-  </div>
-</header>
+            <Link
+              href="/magazin"
+              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>Magazín</span>
+            </Link>
+            
+            <Link
+              href="/app"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+            >
+              <span>Spustit aplikaci</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </Link>
+          </div>
+        </header>
 
         {/* Hlavní obsah */}
         <main className="max-w-4xl mx-auto px-6 pt-14 pb-16 space-y-16">
@@ -94,18 +70,14 @@ export default function LandingPage() {
               <span>♡ Laskavý systém pro neurodivergentní mozek</span>
             </div>
 
-            
-      {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-10" />
-
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
-              Zkroťte chaos, časovou slepotu
-              <p>a paralýzu{" "}
-              <span className="text-amber-300 font-normal">bez pocitu viny.</span></p>
+              Zkrotit chaos, časovou slepotu a paralýzu{" "}
+              <span className="text-amber-300 font-normal">bez pocitu viny.</span>
             </h1>
 
-      {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-5" />
+            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
+              ADHDen spojuje vizuální ubývání času, zklidňující hnědý šum, AI rozpad paralyzujících úkolů a společného parťáka pro dospělé i rodiny s dětmi.
+            </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
@@ -134,114 +106,101 @@ export default function LandingPage() {
             </div>
           </div>
 
-      {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-10" />
-
           {/* Sekce Nástrojů */}
           <section className="space-y-6 text-left">
             <div className="text-center space-y-1.5">
               <h2 className="text-lg font-semibold text-zinc-200">
-                Nástroje v aplikaci ADHden navržené přímo pro ADHD dynamiku
+                Nástroje navržené přímo pro ADHD dynamiku
               </h2>
               <p className="text-xs text-zinc-400">
                 Proč běžné úkolovníky a minutky selhávají a jak vám pomůže ADHDen.
               </p>
             </div>
 
- {/* Sekce Nástrojů na úvodní stránce */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-  
-  {/* 1. Vizuální Time Timer */}
-  <Link
-    href="/app?tab=timer"
-    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-  >
-    <div className="space-y-3">
-      <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
-        <Timer className="w-4 h-4" strokeWidth={1.5} />
-      </div>
-      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition">
-        Vizuální Time Timer
-      </h3>
-      <p className="text-[11px] text-zinc-400 leading-relaxed">
-        ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut.
-      </p>
-    </div>
-    <span className="text-[11px] font-medium text-amber-300/80 group-hover:text-amber-300 flex items-center gap-1">
-      Spustit timer <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-    </span>
-  </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              <Link
+                href="/app?tab=timer"
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
+                    <Timer className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition">
+                    Vizuální Time Timer
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut.
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-amber-300/80 group-hover:text-amber-300 flex items-center gap-1">
+                  Spustit timer <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
 
-  {/* 2. Hnědý & Senzorický šum */}
-  <Link
-    href="/app?tab=klid"
-    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-  >
-    <div className="space-y-3">
-      <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
-        <Volume2 className="w-4 h-4" strokeWidth={1.5} />
-      </div>
-      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
-        Hnědý & Senzorický šum
-      </h3>
-      <p className="text-[11px] text-zinc-400 leading-relaxed">
-        Ztiší vnitřní dialog, uklidní nervový systém a vytvoří zvukovou bariéru vůči rušivému okolí.
-      </p>
-    </div>
-    <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
-      Okamžité zklidnění <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-    </span>
-  </Link>
+              <Link
+                href="/app?tab=klid"
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+                    <Volume2 className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+                    Hnědý & Senzorický šum
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Ztiší vnitřní dialog, uklidní nervový systém a vytvoří zvukovou bariéru vůči rušivému okolí.
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+                  Okamžité zklidnění <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
 
-  {/* 3. AI Kouskovač */}
-  <Link
-    href="/app?tab=kouskovac"
-    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-  >
-    <div className="space-y-3">
-      <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-300">
-        <Sparkles className="w-4 h-4" strokeWidth={1.5} />
-      </div>
-      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-purple-300 transition">
-        AI Kouskovač
-      </h3>
-      <p className="text-[11px] text-zinc-400 leading-relaxed">
-        Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní kroky, u kterých mozek necítí odpor začít.
-      </p>
-    </div>
-    <span className="text-[11px] font-medium text-purple-300/80 group-hover:text-purple-300 flex items-center gap-1">
-      Konec paralýzy <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-    </span>
-  </Link>
+              <Link
+                href="/app?tab=kouskovac"
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-300">
+                    <Sparkles className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-purple-300 transition">
+                    AI Kouskovač
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní kroky, u kterých mozek necítí odpor začít.
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-purple-300/80 group-hover:text-purple-300 flex items-center gap-1">
+                  Konec paralýzy <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
 
-  {/* 4. Body Doubling */}
-  <Link
-    href="/app?tab=bodydoubling"
-    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-  >
-    <div className="space-y-3">
-      <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
-        <Users className="w-4 h-4" strokeWidth={1.5} />
-      </div>
-      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
-        Body Doubling
-      </h3>
-      <p className="text-[11px] text-zinc-400 leading-relaxed">
-        Čištění zubů, skládání prádla nebo úklid stolu. Spusťte průvodce a dělejte činnost společně s tichým parťákem.
-      </p>
-    </div>
-    <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
-      Parťák do akce <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-    </span>
-  </Link>
-
-</div>
+              <Link
+                href="/app?tab=bodydoubling"
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+                    <Users className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+                    Body Doubling
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    Čištění zubů, skládání prádla nebo úklid stolu. Spusťte průvodce a dělejte činnost společně s tichým parťákem.
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+                  Parťák do akce <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
+            </div>
           </section>
 
-      {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-5" />
-
-          {/* ELEGANTNÍ UPOUTÁVKA NA PRŮVODCE ZDARMA */}
+          {/* Upoutávka na průvodce */}
           <section className="pt-2">
             <Link
               href="/adhd-ledovec"
@@ -269,11 +228,8 @@ export default function LandingPage() {
             </Link>
           </section>
 
-                {/* Prázdný spacer mezi sekcemi */}
-      <div className="h-5" />
-
-          {/* Sekce Magazínu */}
-          <section className="space-y-6 pt-0">
+          {/* Sekce 3 nejnovějších článků z Notion */}
+          <section className="space-y-6 border-t border-zinc-800/60 pt-12">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-200">
@@ -293,58 +249,70 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {articles.map((art) => (
-                <Link
-                  key={art.id}
-                  href="/magazin"
-                  className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-3"
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-[11px] text-zinc-500">
-                      <span className="text-amber-300/90 font-medium">
-                        {art.category}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" strokeWidth={1.5} /> {art.readTime}
-                      </span>
+            {articles.length === 0 ? (
+              <div className="p-6 bg-zinc-800/20 border border-zinc-800 rounded-2xl text-center text-xs text-zinc-400">
+                Zatím nebyly načteny žádné články z Notionu.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {articles.map((art: any) => (
+                  <Link
+                    key={art.id}
+                    href={`/magazin/${art.slug}`}
+                    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-3"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                        <span className="text-amber-300/90 font-medium">
+                          {art.category}
+                        </span>
+                      </div>
+
+                      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
+                        {art.title}
+                      </h3>
+
+                      {art.description && (
+                        <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
+                          {art.description}
+                        </p>
+                      )}
                     </div>
 
-                    <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
-                      {art.title}
-                    </h3>
-
-                    <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
-                      {art.perex}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition">
-                    <span>{art.date}</span>
-                    <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5">
-                      Číst <ChevronRight className="w-3 h-3" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    <div className="pt-2 text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition border-t border-zinc-800/40">
+                      <span>{art.date}</span>
+                      <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5">
+                        Číst <ChevronRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </section>
 
         </main>
       </div>
 
-      {/* Zápatí (Footer) */}
+      {/* Zápatí */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
+          
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHDen - Všechna práva vyhrazená.
+              © 2026 Noční Knihovna. Všechna práva vyhrazená.
+            </p>
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
             </p>
           </div>
 
           <div className="border-t border-zinc-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            
             <div className="space-y-0.5 text-center sm:text-left">
-              <p className="font-bold text-zinc-200">Provozovatel: Jitka Pekárková</p>
+              <p className="font-bold text-zinc-200">
+                Provozovatel: Jitka Pekárková
+              </p>
               <p className="text-[11px] text-zinc-500">
                 Sídlo: Primátorská 38, Praha 8 • IČO: 87458021
               </p>
@@ -380,9 +348,11 @@ export default function LandingPage() {
                 GDPR
               </Link>
             </div>
+
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
