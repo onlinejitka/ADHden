@@ -419,7 +419,7 @@ export default function ADHDApp() {
       time: 2.5,
       type: "audio",
       // Pokud máte MP3 soubor v public/audio/zuby.mp3, odkomentujte řádek níže:
-      // mediaUrl: "public/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
+      mediaUrl: "public/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
       free: true,
     },
     {
