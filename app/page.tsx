@@ -49,7 +49,7 @@ interface BodyDoublingSession {
   desc: string;
   time: number; // v minutách
   type: "timer" | "audio" | "video";
-  mediaUrl?: string; // Zde autor vloží odkaz např. "/audio/zuby.mp3" nebo URL
+  mediaUrl?: string;
   free: boolean;
 }
 
@@ -61,7 +61,7 @@ interface CustomAudio {
 
 export default function ADHDApp() {
   const [activeTab, setActiveTab] = useState<Tab>("timer");
-  const [isPro, setIsPro] = useState<boolean>(true); // Přepínač pro testování
+  const [isPro, setIsPro] = useState<boolean>(true); // Přepínač pro testování PRO/FREE
 
   // =============================================================
   // 1. TIME TIMER
@@ -167,7 +167,7 @@ export default function ADHDApp() {
       }
     } catch (e: any) {
       console.error(e);
-      setErrorMessage("Nepodařilo se spojit se serverem. Zkuste to znovu.");
+      setErrorMessage("Nepodařilo se spojit se serverem.");
     } finally {
       setIsLoadingSteps(false);
     }
@@ -327,14 +327,11 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 4. KLIDOVÁ ZÓNA (Oficiální nahrávky od autora + max 3 MP3 v PRO)
+  // 4. KLIDOVÁ ZÓNA
   // =============================================================
-  // ZDE MŮŽETE JAKO AUTOR DOPLŇOVAT SVÉ DALŠÍ OFICIÁLNÍ NAHRÁVKY:
   const [officialAudios] = useState([
     { id: "oa-brown", name: "Hnědý šum (Brown Noise)", desc: "Zklidnění nervové soustavy", type: "builtin-brown", free: true },
     { id: "oa-rain", name: "Klidný noční déšť", desc: "Monotónní zvuk kapek", type: "builtin-rain", free: true },
-    // Příklad přidání vaší vlastní MP3 nahrávky (soubor vložíte do public/audio/relax.mp3):
-    // { id: "oa-pribeh", name: "Večerní vyprávění u krbu", desc: "Čtený příběh pro klidnou hlavu", type: "file", url: "/audio/relax.mp3", free: false }
   ]);
 
   const [customAudios, setCustomAudios] = useState<CustomAudio[]>([]);
@@ -384,7 +381,7 @@ export default function ADHDApp() {
     } else if (url && audioPlayerRef.current) {
       audioPlayerRef.current.src = url;
       audioPlayerRef.current.loop = true;
-      audioPlayerRef.current.play();
+      audioPlayerRef.current.play().catch((err) => console.log("Audio play error:", err));
       setActiveAudioId(id);
     }
   };
@@ -408,9 +405,8 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 6. BODY DOUBLING (Správa aktivit autorem)
+  // 6. BODY DOUBLING (S AUTOPLAYEM A SPRÁVNOU CESTOU)
   // =============================================================
-  // ZDE MŮŽETE JAKO AUTOR DOPLŇOVAT A UPRAVOVAT AKTIVITY PARŤÁKA:
   const [sessions] = useState<BodyDoublingSession[]>([
     {
       id: "bd-teeth",
@@ -418,8 +414,8 @@ export default function ADHDApp() {
       desc: "2,5 minuty pro čisté zoubky s rytmickým doprovodem",
       time: 2.5,
       type: "audio",
-      // Pokud máte MP3 soubor v public/audio/zuby.mp3, odkomentujte řádek níže:
-      mediaUrl: "public/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
+      // Správná cesta k vašemu MP3 souboru bez slova public:
+      mediaUrl: "/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
       free: true,
     },
     {
@@ -436,14 +432,12 @@ export default function ADHDApp() {
       desc: "3 minuty cviků na uvolnění krku a zad",
       time: 3,
       type: "video",
-      // Pokud máte video v public/video/protazeni.mp4, odkomentujte řádek níže:
-      // mediaUrl: "/video/protazeni.mp4",
       free: true,
     },
     {
       id: "bd-laundry",
       title: "Skládání prádla bez odkládání",
-      desc: "15 minut fokus se zklidňujícím hlasem",
+      desc: "15 minut fokus se zklidňujícím rytmem",
       time: 15,
       type: "audio",
       free: false,
@@ -460,10 +454,30 @@ export default function ADHDApp() {
 
   const [activeSession, setActiveSession] = useState<BodyDoublingSession | null>(null);
   const [sessionSecs, setSessionSecs] = useState<number>(0);
+  const bodyDoublingAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const startSession = (session: BodyDoublingSession) => {
     setActiveSession(session);
-    setSessionSecs(session.time * 60);
+    setSessionSecs(Math.round(session.time * 60));
+
+    // AUTOMATICKÉ SPUŠTĚNÍ HUDBY PŘI STARTU
+    if (session.mediaUrl && session.type === "audio") {
+      setTimeout(() => {
+        if (bodyDoublingAudioRef.current) {
+          bodyDoublingAudioRef.current.src = session.mediaUrl!;
+          bodyDoublingAudioRef.current.loop = true;
+          bodyDoublingAudioRef.current.play().catch((e) => console.log("Autoplay audio error:", e));
+        }
+      }, 50);
+    }
+  };
+
+  const endSession = () => {
+    if (bodyDoublingAudioRef.current) {
+      bodyDoublingAudioRef.current.pause();
+      bodyDoublingAudioRef.current.currentTime = 0;
+    }
+    setActiveSession(null);
   };
 
   useEffect(() => {
@@ -471,7 +485,7 @@ export default function ADHDApp() {
     if (activeSession && sessionSecs > 0) {
       timer = setInterval(() => setSessionSecs((s) => s - 1), 1000);
     } else if (activeSession && sessionSecs === 0) {
-      setActiveSession(null);
+      endSession();
       soundEngine?.playSuccessDing();
       confetti({ particleCount: 80, spread: 90 });
     }
@@ -490,7 +504,9 @@ export default function ADHDApp() {
 
   return (
     <div className="flex-1 flex flex-col p-4">
+      {/* Skryté audio přehrávače */}
       <audio ref={audioPlayerRef} className="hidden" />
+      <audio ref={bodyDoublingAudioRef} className="hidden" />
 
       {/* Hlavička */}
       <header className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
@@ -1047,12 +1063,13 @@ export default function ADHDApp() {
             </div>
 
             {activeSession ? (
+              /* AKTIVNÍ RELACE S OKAMŽITÝM PŘEHRÁVÁNÍM */
               <div className="bg-slate-800 border border-emerald-500/40 rounded-2xl p-5 text-center flex flex-col items-center space-y-4 shadow-2xl">
                 <div className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
                   {activeSession.title}
                 </div>
 
-                {/* Video přehrávač (pokud autor nastavil mediaUrl) */}
+                {/* Video přehrávač (pokud je přiřazeno video) */}
                 {activeSession.mediaUrl && activeSession.type === "video" && (
                   <video
                     src={activeSession.mediaUrl}
@@ -1063,17 +1080,7 @@ export default function ADHDApp() {
                   />
                 )}
 
-                {/* Audio přehrávač (pokud autor nastavil mediaUrl) */}
-                {activeSession.mediaUrl && activeSession.type === "audio" && (
-                  <audio
-                    src={activeSession.mediaUrl}
-                    controls
-                    autoPlay
-                    loop
-                    className="w-full"
-                  />
-                )}
-
+                {/* Koláčový časovač */}
                 <div className="relative w-56 h-56 rounded-full flex items-center justify-center shadow-xl p-2 bg-slate-950 border border-slate-800">
                   <div
                     className="w-full h-full rounded-full transition-all duration-1000 ease-linear flex items-center justify-center relative overflow-hidden"
@@ -1086,7 +1093,7 @@ export default function ADHDApp() {
                         {formatTime(sessionSecs)}
                       </span>
                       <span className="text-[10px] text-emerald-400 font-medium mt-0.5">
-                        Společně v akci
+                        {activeSession.mediaUrl && activeSession.type === "audio" ? "🎵 Hudba hraje" : "Společně v akci"}
                       </span>
                     </div>
                   </div>
@@ -1095,13 +1102,14 @@ export default function ADHDApp() {
                 <p className="text-xs text-slate-300 max-w-xs">{activeSession.desc}</p>
 
                 <button
-                  onClick={() => setActiveSession(null)}
-                  className="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs text-slate-300 font-semibold"
+                  onClick={endSession}
+                  className="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs text-slate-300 font-semibold transition active:scale-95"
                 >
                   Ukončit aktivitu
                 </button>
               </div>
             ) : (
+              /* SEZNAM AKTIVIT PARŤÁKA */
               <div className="space-y-2.5">
                 {sessions.map((item) => (
                   <div
@@ -1130,10 +1138,16 @@ export default function ADHDApp() {
                       <div className="text-[11px] text-slate-400">{item.desc}</div>
                     </div>
                     <button
+                      disabled={!item.free && !isPro}
                       onClick={() => startSession(item)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950"
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 ${
+                        item.free || isPro
+                          ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950"
+                          : "bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed"
+                      }`}
                     >
-                      <Play className="w-3 h-3" /> Start
+                      {item.free || isPro ? <Play className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                      Start
                     </button>
                   </div>
                 ))}
