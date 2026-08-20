@@ -95,12 +95,12 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
-              Zkrotit chaos, časovou slepotu a paralýzu{" "}
-              <span className="text-amber-300 font-normal">bez pocitu viny.</span>
+              Zkrotit chaos, časovou slepotu
+              <p>a paralýzu{" "}
+              <span className="text-amber-300 font-normal">bez pocitu viny.</span></p>
             </h1>
 
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
-              ADHDen spojuje vizuální ubývání času, zklidňující hnědý šum, AI rozpad paralyzujících úkolů a společného parťáka pro dospělé i rodiny s dětmi.
+            <p>
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
