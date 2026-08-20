@@ -21,7 +21,8 @@ import {
   Music,
   Video as VideoIcon,
   Clock,
-  Trash2
+  Trash2,
+  AlertCircle
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { soundEngine } from "@/lib/audioGenerator";
@@ -48,7 +49,7 @@ interface BodyDoublingSession {
   desc: string;
   time: number; // v minutách
   type: "timer" | "audio" | "video";
-  mediaUrl?: string;
+  mediaUrl?: string; // Zde autor vloží odkaz např. "/audio/zuby.mp3" nebo URL
   free: boolean;
 }
 
@@ -60,10 +61,10 @@ interface CustomAudio {
 
 export default function ADHDApp() {
   const [activeTab, setActiveTab] = useState<Tab>("timer");
-  const [isPro, setIsPro] = useState<boolean>(false); // Výchozí FREE režim pro ověření zámků
+  const [isPro, setIsPro] = useState<boolean>(true); // Přepínač pro testování
 
   // =============================================================
-  // 1. VIZUÁLNÍ KOLÁČOVÝ TIME TIMER
+  // 1. TIME TIMER
   // =============================================================
   const [timerMinutes, setTimerMinutes] = useState<number>(15);
   const [secondsLeft, setSecondsLeft] = useState<number>(15 * 60);
@@ -73,7 +74,6 @@ export default function ADHDApp() {
   const [customTimeMinutes, setCustomTimeMinutes] = useState<string>("");
   const wakeLockRef = useRef<any>(null);
 
-  // Udržení rozsvíceného displeje
   useEffect(() => {
     async function requestWakeLock() {
       if (typeof window !== "undefined" && "wakeLock" in navigator && isTimerRunning) {
@@ -145,11 +145,13 @@ export default function ADHDApp() {
   const [steps, setSteps] = useState<string[]>([]);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isLoadingSteps, setIsLoadingSteps] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [customStepCount, setCustomStepCount] = useState(3);
 
   const handleBreakdown = async (stepsCountToUse = 3) => {
     if (!rawTask.trim()) return;
     setIsLoadingSteps(true);
+    setErrorMessage(null);
     setCompletedSteps([]);
     try {
       const res = await fetch("/api/breakdown", {
@@ -158,11 +160,14 @@ export default function ADHDApp() {
         body: JSON.stringify({ task: rawTask, stepsCount: stepsCountToUse }),
       });
       const data = await res.json();
-      if (data.steps) {
+      if (data.steps && Array.isArray(data.steps)) {
         setSteps(data.steps);
+      } else if (data.error) {
+        setErrorMessage(data.error);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setErrorMessage("Nepodařilo se spojit se serverem. Zkuste to znovu.");
     } finally {
       setIsLoadingSteps(false);
     }
@@ -181,7 +186,7 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 3. RUTINY (Výchozí Dospělí + 2 Sloupce pro sekce)
+  // 3. RUTINY
   // =============================================================
   const [routineAudience, setRoutineAudience] = useState<"adults" | "kids">("adults");
 
@@ -322,11 +327,19 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 4. KLIDOVÁ ZÓNA (Max 3 MP3 v PRO)
+  // 4. KLIDOVÁ ZÓNA (Oficiální nahrávky od autora + max 3 MP3 v PRO)
   // =============================================================
+  // ZDE MŮŽETE JAKO AUTOR DOPLŇOVAT SVÉ DALŠÍ OFICIÁLNÍ NAHRÁVKY:
+  const [officialAudios] = useState([
+    { id: "oa-brown", name: "Hnědý šum (Brown Noise)", desc: "Zklidnění nervové soustavy", type: "builtin-brown", free: true },
+    { id: "oa-rain", name: "Klidný noční déšť", desc: "Monotónní zvuk kapek", type: "builtin-rain", free: true },
+    // Příklad přidání vaší vlastní MP3 nahrávky (soubor vložíte do public/audio/relax.mp3):
+    // { id: "oa-pribeh", name: "Večerní vyprávění u krbu", desc: "Čtený příběh pro klidnou hlavu", type: "file", url: "/audio/relax.mp3", free: false }
+  ]);
+
   const [customAudios, setCustomAudios] = useState<CustomAudio[]>([]);
-  const [activeCustomAudio, setActiveCustomAudio] = useState<string | null>(null);
-  const customAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPro) return;
@@ -346,25 +359,33 @@ export default function ADHDApp() {
   };
 
   const deleteCustomAudio = (id: string) => {
-    if (activeCustomAudio === id) {
-      customAudioRef.current?.pause();
-      setActiveCustomAudio(null);
+    if (activeAudioId === id) {
+      audioPlayerRef.current?.pause();
+      setActiveAudioId(null);
     }
     setCustomAudios(customAudios.filter((a) => a.id !== id));
   };
 
-  const playCustomAudio = (track: CustomAudio) => {
+  const playAudioTrack = (id: string, type: string, url?: string) => {
     soundEngine?.stopNoise();
-    if (activeCustomAudio === track.id) {
-      customAudioRef.current?.pause();
-      setActiveCustomAudio(null);
-    } else {
-      if (customAudioRef.current) {
-        customAudioRef.current.src = track.url;
-        customAudioRef.current.loop = true;
-        customAudioRef.current.play();
-      }
-      setActiveCustomAudio(track.id);
+    if (audioPlayerRef.current) audioPlayerRef.current.pause();
+
+    if (activeAudioId === id) {
+      setActiveAudioId(null);
+      return;
+    }
+
+    if (type === "builtin-brown") {
+      soundEngine?.playBrownNoise(0.6);
+      setActiveAudioId(id);
+    } else if (type === "builtin-rain") {
+      soundEngine?.playRainNoise(0.5);
+      setActiveAudioId(id);
+    } else if (url && audioPlayerRef.current) {
+      audioPlayerRef.current.src = url;
+      audioPlayerRef.current.loop = true;
+      audioPlayerRef.current.play();
+      setActiveAudioId(id);
     }
   };
 
@@ -387,8 +408,9 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 6. BODY DOUBLING
+  // 6. BODY DOUBLING (Správa aktivit autorem)
   // =============================================================
+  // ZDE MŮŽETE JAKO AUTOR DOPLŇOVAT A UPRAVOVAT AKTIVITY PARŤÁKA:
   const [sessions] = useState<BodyDoublingSession[]>([
     {
       id: "bd-teeth",
@@ -396,6 +418,8 @@ export default function ADHDApp() {
       desc: "2 minuty pro čisté zoubky s rytmickým doprovodem",
       time: 2,
       type: "audio",
+      // Pokud máte MP3 soubor v public/audio/zuby.mp3, odkomentujte řádek níže:
+      // mediaUrl: "/audio/zuby.mp3",
       free: true,
     },
     {
@@ -412,6 +436,8 @@ export default function ADHDApp() {
       desc: "3 minuty cviků na uvolnění krku a zad",
       time: 3,
       type: "video",
+      // Pokud máte video v public/video/protazeni.mp4, odkomentujte řádek níže:
+      // mediaUrl: "/video/protazeni.mp4",
       free: true,
     },
     {
@@ -425,7 +451,7 @@ export default function ADHDApp() {
     {
       id: "bd-mail",
       title: "Vyřízení 3 e-mailů",
-      desc: "10 minut intenzivní práce s podporou parťáka",
+      desc: "10 minut soustředěné práce",
       time: 10,
       type: "timer",
       free: false,
@@ -464,7 +490,7 @@ export default function ADHDApp() {
 
   return (
     <div className="flex-1 flex flex-col p-4">
-      <audio ref={customAudioRef} className="hidden" />
+      <audio ref={audioPlayerRef} className="hidden" />
 
       {/* Hlavička */}
       <header className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
@@ -574,7 +600,7 @@ export default function ADHDApp() {
               </div>
             )}
 
-            {/* ZVUKY V TIMERU (Růžový a Déšť zamčené pro PRO) */}
+            {/* ZVUKY V TIMERU */}
             <div className="w-full bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 space-y-3">
               <div className="flex items-center justify-between text-xs font-medium text-slate-300">
                 <span className="flex items-center gap-1.5">
@@ -662,6 +688,13 @@ export default function ADHDApp() {
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400 resize-none"
               />
 
+              {errorMessage && (
+                <div className="mt-2 p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center gap-2 text-xs text-rose-300">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-1 text-xs text-slate-300">
                   <span>Počet kroků:</span>
@@ -717,7 +750,7 @@ export default function ADHDApp() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: RUTINY (PRO ONLY pro přidávání) */}
+        {/* TAB 3: RUTINY */}
         {/* ========================================================= */}
         {activeTab === "rutiny" && (
           <div className="space-y-3 py-2">
@@ -791,7 +824,7 @@ export default function ADHDApp() {
               ))}
             </div>
 
-            {/* PŘIDÁVÁNÍ KROKŮ (ZAMČENO PRO FREE) */}
+            {/* Přidání kroku (PRO only) */}
             <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3 space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-300">
                 <span>Přidat krok do sekce <b>{currentActiveSection.name}</b>:</span>
@@ -842,34 +875,31 @@ export default function ADHDApp() {
               </p>
             </div>
 
+            {/* Oficiální nahrávky od autora */}
             <div className="space-y-2">
-              <div className="p-3 bg-slate-800/80 border border-slate-700 rounded-xl flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-slate-200">Hnědý šum (Brown Noise)</div>
-                  <div className="text-[11px] text-emerald-400">Zklidnění nervové soustavy</div>
-                </div>
-                <button
-                  onClick={() => soundEngine?.playBrownNoise(0.6)}
-                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1"
-                >
-                  <Play className="w-3.5 h-3.5" /> Přehrát
-                </button>
-              </div>
-
-              <div className="p-3 bg-slate-800/80 border border-slate-700 rounded-xl flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-slate-200">Klidný noční déšť</div>
-                  <div className="text-[11px] text-slate-400">Monotónní zvuk kapek</div>
-                </div>
-                <button
-                  onClick={() => soundEngine?.playRainNoise(0.5)}
-                  className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-lg text-xs flex items-center gap-1"
-                >
-                  <Play className="w-3.5 h-3.5" /> Přehrát
-                </button>
-              </div>
+              {officialAudios.map((audio) => {
+                const isPlaying = activeAudioId === audio.id;
+                return (
+                  <div key={audio.id} className="p-3 bg-slate-800/80 border border-slate-700 rounded-xl flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-slate-200">{audio.name}</div>
+                      <div className="text-[11px] text-emerald-400">{audio.desc}</div>
+                    </div>
+                    <button
+                      onClick={() => playAudioTrack(audio.id, audio.type, (audio as any).url)}
+                      className={`px-3 py-1.5 font-bold rounded-lg text-xs flex items-center gap-1 ${
+                        isPlaying ? "bg-emerald-500 text-slate-950" : "bg-amber-500 hover:bg-amber-400 text-slate-950"
+                      }`}
+                    >
+                      {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      {isPlaying ? "Hraje" : "Přehrát"}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
+            {/* VLASTNÍ MP3 (Max 3 pro PRO) */}
             <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -914,34 +944,35 @@ export default function ADHDApp() {
                 </p>
               ) : (
                 <div className="space-y-1.5">
-                  {customAudios.map((track) => (
-                    <div
-                      key={track.id}
-                      className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between"
-                    >
-                      <span className="text-xs text-slate-300 truncate max-w-[160px]">
-                        🎵 {track.name}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => playCustomAudio(track)}
-                          className={`px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1 ${
-                            activeCustomAudio === track.id
-                              ? "bg-emerald-500 text-slate-950"
-                              : "bg-slate-800 text-slate-300"
-                          }`}
-                        >
-                          {activeCustomAudio === track.id ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                        </button>
-                        <button
-                          onClick={() => deleteCustomAudio(track.id)}
-                          className="p-1 text-slate-500 hover:text-rose-400 transition"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                  {customAudios.map((track) => {
+                    const isPlaying = activeAudioId === track.id;
+                    return (
+                      <div
+                        key={track.id}
+                        className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between"
+                      >
+                        <span className="text-xs text-slate-300 truncate max-w-[160px]">
+                          🎵 {track.name}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => playAudioTrack(track.id, "custom", track.url)}
+                            className={`px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1 ${
+                              isPlaying ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-300"
+                            }`}
+                          >
+                            {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                          </button>
+                          <button
+                            onClick={() => deleteCustomAudio(track.id)}
+                            className="p-1 text-slate-500 hover:text-rose-400 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -949,8 +980,8 @@ export default function ADHDApp() {
             <button
               onClick={() => {
                 soundEngine?.stopNoise();
-                if (customAudioRef.current) customAudioRef.current.pause();
-                setActiveCustomAudio(null);
+                if (audioPlayerRef.current) audioPlayerRef.current.pause();
+                setActiveAudioId(null);
               }}
               className="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition"
             >
@@ -1021,15 +1052,18 @@ export default function ADHDApp() {
                   {activeSession.title}
                 </div>
 
+                {/* Video přehrávač (pokud autor nastavil mediaUrl) */}
                 {activeSession.mediaUrl && activeSession.type === "video" && (
                   <video
                     src={activeSession.mediaUrl}
                     controls
                     autoPlay
                     loop
-                    className="w-full rounded-xl max-h-44 bg-black"
+                    className="w-full rounded-xl max-h-48 bg-black"
                   />
                 )}
+
+                {/* Audio přehrávač (pokud autor nastavil mediaUrl) */}
                 {activeSession.mediaUrl && activeSession.type === "audio" && (
                   <audio
                     src={activeSession.mediaUrl}
