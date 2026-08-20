@@ -28,15 +28,7 @@ export default async function ArticlePage({
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
-  let post: any = null;
-
-  try {
-    if (slug) {
-      post = await getPostBySlug(slug);
-    }
-  } catch (error) {
-    console.error("Chyba při načítání článku z Notion:", error);
-  }
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return (
@@ -55,28 +47,7 @@ export default async function ArticlePage({
     );
   }
 
-  const perex =
-    post.perex ||
-    post.description ||
-    post.properties?.Perex?.rich_text?.[0]?.plain_text ||
-    post.properties?.Perex?.title?.[0]?.plain_text ||
-    "";
-
-  const rawYoutubeUrl =
-    post.youtube ||
-    post.youtubeUrl ||
-    post.properties?.YouTube?.url ||
-    post.properties?.YouTube?.rich_text?.[0]?.plain_text ||
-    "";
-  const youtubeEmbedUrl = getYouTubeEmbedUrl(rawYoutubeUrl);
-
-  const rawContent =
-    post.blocks ||
-    post.contentHtml ||
-    post.html ||
-    post.content ||
-    post.markdown ||
-    post.body;
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(post.youtube);
 
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
@@ -144,17 +115,17 @@ export default async function ArticlePage({
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-100 leading-snug">
-              {post.title || "Bez názvu"}
+              {post.title}
             </h1>
 
-            {perex && (
+            {post.description && (
               <p className="text-sm text-zinc-400 leading-relaxed italic border-l-2 border-amber-400/40 pl-4 py-0.5">
-                {perex}
+                {post.description}
               </p>
             )}
           </div>
 
-          {/* Youtube Video přehrávač */}
+          {/* YouTube video */}
           {youtubeEmbedUrl && (
             <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
               <iframe
@@ -166,16 +137,15 @@ export default async function ArticlePage({
             </div>
           )}
 
-          {/* Vykreslení těla článku */}
-          <div className="pt-4 border-t border-zinc-800/60 space-y-4">
-            {Array.isArray(rawContent) && rawContent.length > 0
-              ? rawContent.map((block: any, idx: number) => renderNotionBlock(block, idx))
-              : typeof rawContent === "string"
-              ? renderMarkdownText(rawContent)
-              : null}
-          </div>
+          {/* HTML z těla Notion stránky */}
+          {post.contentHtml && (
+            <div
+              className="pt-4 border-t border-zinc-800/60"
+              dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+            />
+          )}
 
-          {/* Výzva k akci */}
+          {/* Výzva k aplikaci na konci článku */}
           <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
             <h3 className="text-sm font-semibold text-zinc-200">
               Chcete si tyto techniky vyzkoušet v praxi?
@@ -249,139 +219,4 @@ export default async function ArticlePage({
       </footer>
     </div>
   );
-}
-
-// Funkce pro parsování Markdown textu z Notionu (odrážky, tučné, odkazi)
-function renderMarkdownText(mdText: string) {
-  if (!mdText) return null;
-
-  const parseInline = (text: string) => {
-    let html = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-
-    // Tučný text **text**
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-zinc-100">$1</strong>');
-    // Kurzíva *text*
-    html = html.replace(/\*(.*?)\*/g, '<em class="italic text-zinc-300">$1</em>');
-    // Odkazy [text](url)
-    html = html.replace(
-      /\[(.*?)\]\((.*?)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-amber-300 underline underline-offset-2 hover:text-amber-200 transition font-medium">$1</a>'
-    );
-
-    return <span dangerouslySetInnerHTML={{ __html: html }} />;
-  };
-
-  const lines = mdText.split("\n");
-  const elements: React.ReactNode[] = [];
-  let currentList: string[] | null = null;
-
-  const flushList = (key: string) => {
-    if (!currentList || currentList.length === 0) return;
-    elements.push(
-      <ul key={key} className="space-y-2.5 my-4 pl-1">
-        {currentList.map((item, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed">
-            <span className="text-amber-400 font-bold text-base leading-none mt-0.5">•</span>
-            <div className="flex-1">{parseInline(item)}</div>
-          </li>
-        ))}
-      </ul>
-    );
-    currentList = null;
-  };
-
-  lines.forEach((line, index) => {
-    const trimmed = line.trim();
-
-    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-      if (!currentList) currentList = [];
-      currentList.push(trimmed.substring(2));
-      return;
-    }
-
-    flushList(`list-${index}`);
-
-    if (!trimmed) return;
-
-    if (trimmed.startsWith("### ")) {
-      elements.push(<h3 key={index} className="text-base font-semibold text-amber-300 mt-6 mb-2">{parseInline(trimmed.substring(4))}</h3>);
-    } else if (trimmed.startsWith("## ")) {
-      elements.push(<h2 key={index} className="text-lg font-bold text-zinc-100 mt-6 mb-3">{parseInline(trimmed.substring(3))}</h2>);
-    } else if (trimmed.startsWith("# ")) {
-      elements.push(<h1 key={index} className="text-xl font-bold text-zinc-100 mt-6 mb-3">{parseInline(trimmed.substring(2))}</h1>);
-    } else {
-      elements.push(<p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{parseInline(trimmed)}</p>);
-    }
-  });
-
-  flushList("list-end");
-
-  return elements;
-}
-
-// Funkce pro parsování Notion bloků (pokud Notion API vrací pole bloků)
-function renderRichText(richText: any[]) {
-  if (!richText || !Array.isArray(richText) || richText.length === 0) return null;
-
-  return richText.map((t: any, i: number) => {
-    let textContent: React.ReactNode = t.plain_text || t.text?.content || "";
-    if (!textContent) return null;
-
-    if (t.annotations?.bold) {
-      textContent = <strong key={`b-${i}`} className="font-bold text-zinc-100">{textContent}</strong>;
-    }
-    if (t.annotations?.italic) {
-      textContent = <em key={`i-${i}`} className="italic text-zinc-300">{textContent}</em>;
-    }
-    if (t.href || t.link?.url) {
-      const url = t.href || t.link?.url;
-      textContent = (
-        <a
-          key={`a-${i}`}
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-amber-300 underline underline-offset-2 hover:text-amber-200 font-medium"
-        >
-          {textContent}
-        </a>
-      );
-    }
-
-    return <React.Fragment key={i}>{textContent}</React.Fragment>;
-  });
-}
-
-function renderNotionBlock(block: any, index: number) {
-  if (typeof block === "string") {
-    return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{block}</p>;
-  }
-  const type = block?.type;
-  if (!type) return null;
-
-  const data = block[type];
-  const richText = data?.rich_text;
-
-  switch (type) {
-    case "heading_1":
-      return <h1 key={index} className="text-xl font-bold text-zinc-100 mt-6 mb-3">{renderRichText(richText)}</h1>;
-    case "heading_2":
-      return <h2 key={index} className="text-lg font-semibold text-zinc-100 mt-5 mb-2">{renderRichText(richText)}</h2>;
-    case "heading_3":
-      return <h3 key={index} className="text-base font-semibold text-amber-300 mt-5 mb-2">{renderRichText(richText)}</h3>;
-    case "paragraph":
-      return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{renderRichText(richText)}</p>;
-    case "bulleted_list_item":
-      return (
-        <div key={index} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed my-1.5 pl-2">
-          <span className="text-amber-400 font-bold text-base leading-none mt-0.5">•</span>
-          <div className="flex-1">{renderRichText(richText)}</div>
-        </div>
-      );
-    default:
-      return richText ? <p key={index} className="text-xs sm:text-sm text-zinc-300 mb-2">{renderRichText(richText)}</p> : null;
-  }
 }
