@@ -9,8 +9,8 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "Denní Knihovna",
-  description: "Laskavý systém pro klidný den",
+  title: "ADHDen",
+  description: "Zkroťte chaos, časovou slepotu a paralýzu bez pocitu viny.",
 };
 
 export default function RootLayout({
