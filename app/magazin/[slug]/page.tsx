@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen, FileText } from "lucide-react";
 import { getPostBySlug } from "@/lib/notion";
 
@@ -80,8 +81,8 @@ export default async function ArticlePage({
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
-        {/* Záhlaví s kompletními odkazy */}
-        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+        {/* Záhlaví */}
+<header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
   {/* Logo v záhlaví */}
   <Link href="/" className="flex items-center group">
     <img
@@ -165,10 +166,10 @@ export default async function ArticlePage({
             </div>
           )}
 
-          {/* Vykreslení psaného textu z Notion */}
+          {/* Vykreslení psaného textu z Notion s plnou podporou formátování */}
           {typeof content === "string" && content.trim().length > 0 ? (
             <div
-              className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60 whitespace-pre-line"
+              className="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60 [&_strong]:font-bold [&_strong]:text-zinc-100 [&_b]:font-bold [&_b]:text-zinc-100 [&_a]:text-amber-300 [&_a]:underline [&_a]:underline-offset-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2 [&_li]:text-zinc-300 [&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-zinc-100 [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-100 [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-amber-300 [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:mb-3"
               dangerouslySetInnerHTML={{ __html: content }}
             />
           ) : Array.isArray(content) && content.length > 0 ? (
@@ -196,15 +197,12 @@ export default async function ArticlePage({
         </main>
       </div>
 
-      {/* Zápatí (Footer) */}
+      {/* Zápatí */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 Noční Knihovna. Všechna práva vyhrazená.
-            </p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
+              © 2026 ADHden - Všechna práva vyhrazená.
             </p>
           </div>
 
@@ -253,6 +251,46 @@ export default async function ArticlePage({
   );
 }
 
+// Vykreslení bohatého textu z Notion (tučné, odkaz, kurzíva)
+function renderRichText(richText: any[]) {
+  if (!richText || !Array.isArray(richText) || richText.length === 0) return null;
+
+  return richText.map((t: any, i: number) => {
+    let textContent: React.ReactNode = t.plain_text || t.text?.content || "";
+    if (!textContent) return null;
+
+    if (t.annotations?.bold) {
+      textContent = <strong key={`b-${i}`} className="font-bold text-zinc-100">{textContent}</strong>;
+    }
+    if (t.annotations?.italic) {
+      textContent = <em key={`i-${i}`} className="italic text-zinc-300">{textContent}</em>;
+    }
+    if (t.annotations?.strikethrough) {
+      textContent = <s key={`s-${i}`} className="line-through text-zinc-500">{textContent}</s>;
+    }
+    if (t.annotations?.code) {
+      textContent = <code key={`c-${i}`} className="bg-zinc-800 text-amber-300 px-1.5 py-0.5 rounded text-xs font-mono">{textContent}</code>;
+    }
+    if (t.href || t.link?.url) {
+      const url = t.href || t.link?.url;
+      textContent = (
+        <a
+          key={`a-${i}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-amber-300 underline underline-offset-2 hover:text-amber-200 transition font-medium"
+        >
+          {textContent}
+        </a>
+      );
+    }
+
+    return <React.Fragment key={i}>{textContent}</React.Fragment>;
+  });
+}
+
+// Vykreslení jednotlivých bloků z Notion
 function renderNotionBlock(block: any, index: number) {
   if (typeof block === "string") {
     return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{block}</p>;
@@ -261,22 +299,44 @@ function renderNotionBlock(block: any, index: number) {
   if (!type) return null;
 
   const data = block[type];
-  const text = data?.rich_text?.map((t: any) => t.plain_text).join("") || data?.text || "";
+  const richText = data?.rich_text;
 
   switch (type) {
     case "heading_1":
-      return <h1 key={index} className="text-xl font-bold text-zinc-100 mt-6 mb-3">{text}</h1>;
+      return <h1 key={index} className="text-xl font-bold text-zinc-100 mt-6 mb-3">{renderRichText(richText)}</h1>;
     case "heading_2":
-      return <h2 key={index} className="text-lg font-semibold text-zinc-100 mt-5 mb-2">{text}</h2>;
+      return <h2 key={index} className="text-lg font-semibold text-zinc-100 mt-5 mb-2">{renderRichText(richText)}</h2>;
     case "heading_3":
-      return <h3 key={index} className="text-base font-semibold text-amber-300 mt-4 mb-2">{text}</h3>;
+      return <h3 key={index} className="text-base font-semibold text-amber-300 mt-5 mb-2">{renderRichText(richText)}</h3>;
     case "paragraph":
-      return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{text}</p>;
+      return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{renderRichText(richText)}</p>;
     case "bulleted_list_item":
-      return <li key={index} className="text-xs sm:text-sm text-zinc-300 ml-4 list-disc mb-1">{text}</li>;
+      return (
+        <div key={index} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed my-1.5 pl-2">
+          <span className="text-amber-400 font-bold text-base leading-none mt-0.5">•</span>
+          <div className="flex-1">{renderRichText(richText)}</div>
+        </div>
+      );
+    case "numbered_list_item":
+      return (
+        <div key={index} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed my-1.5 pl-2">
+          <span className="text-amber-400 font-bold text-xs mt-0.5">{index + 1}.</span>
+          <div className="flex-1">{renderRichText(richText)}</div>
+        </div>
+      );
     case "quote":
-      return <blockquote key={index} className="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-4">{text}</blockquote>;
+      return <blockquote key={index} className="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-4">{renderRichText(richText)}</blockquote>;
+    case "callout":
+      return (
+        <div key={index} className="p-4 bg-zinc-800/40 border border-zinc-700/60 rounded-xl my-4 text-xs sm:text-sm text-zinc-200">
+          {renderRichText(richText)}
+        </div>
+      );
+    case "image": {
+      const imgUrl = data?.external?.url || data?.file?.url;
+      return imgUrl ? <img key={index} src={imgUrl} alt="" className="rounded-2xl my-4 max-w-full" /> : null;
+    }
     default:
-      return text ? <p key={index} className="text-xs sm:text-sm text-zinc-300 mb-2">{text}</p> : null;
+      return richText ? <p key={index} className="text-xs sm:text-sm text-zinc-300 mb-2">{renderRichText(richText)}</p> : null;
   }
 }
