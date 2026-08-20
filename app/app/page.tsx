@@ -59,6 +59,14 @@ interface CustomAudio {
   url: string;
 }
 
+return (
+  <div className="w-full min-h-screen bg-slate-950 flex justify-center">
+    <div className="w-full max-w-md min-h-screen flex flex-col bg-slate-900 border-x border-slate-800 shadow-2xl relative pb-20 p-4">
+      {/* ... veškerý kód aplikace s časovačem, rutinami a parťákem ... */}
+    </div>
+  </div>
+);
+
 export default function ADHDApp() {
   const [activeTab, setActiveTab] = useState<Tab>("timer");
   const [isPro, setIsPro] = useState<boolean>(true);
