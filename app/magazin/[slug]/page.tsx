@@ -183,10 +183,7 @@ export default async function ArticlePage({
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 Noční Knihovna. Všechna práva vyhrazená.
-            </p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
+              © 2026 ADHDen - Všechna práva vyhrazena.
             </p>
           </div>
 
