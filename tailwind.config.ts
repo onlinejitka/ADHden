@@ -1,6 +1,5 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,18 +7,26 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-lexend)", "system-ui", "sans-serif"],
+      },
       colors: {
-        adhd: {
-          bg: "#0F172A",
-          card: "#1E293B",
-          accent: "#38BDF8",
-          warm: "#F59E0B",
-          calm: "#10B981",
-          softText: "#94A3B8"
-        }
-      }
+        graphite: {
+          base: "#121214",  // Hlavní pozadí celého webu
+          card: "#18181b",  // Karta / Mobilní obal
+          border: "#27272a",// Jemné ohraničení
+        },
+        gold: {
+          DEFAULT: "#fbbf24", // Zlatavá (hlavní tlačítka, časovač, úspěchy)
+        },
+        petrol: {
+          DEFAULT: "#2dd4bf", // Petrolejová (klidová zóna, parťák)
+        },
+        lavender: {
+          DEFAULT: "#c084fc", // Fialová (kouskovač, kreativní prvky)
+        },
+      },
     },
   },
   plugins: [],
 };
-export default config;
