@@ -112,7 +112,7 @@ export default async function LandingPage() {
           <section className="space-y-6 text-left">
             <div className="text-center space-y-1.5">
               <h2 className="text-lg font-semibold text-zinc-200">
-                Nástroje navržené přímo pro ADHD dynamiku
+                Nástroje v aplikaci ADHden navržené přímo pro ADHD dynamiku.
               </h2>
               <p className="text-xs text-zinc-400">
                 Proč běžné úkolovníky a minutky selhávají a jak vám pomůže ADHDen.
