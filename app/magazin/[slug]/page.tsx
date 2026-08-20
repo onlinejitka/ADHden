@@ -52,7 +52,6 @@ export default async function ArticlePage({
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
-        {/* Záhlaví */}
         <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
           <Link href="/" className="flex items-center gap-2 group">
             <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
@@ -90,7 +89,6 @@ export default async function ArticlePage({
           </div>
         </header>
 
-        {/* Obsah článku */}
         <main className="max-w-3xl mx-auto px-6 pt-10 pb-20 space-y-8">
           <Link
             href="/magazin"
@@ -125,7 +123,6 @@ export default async function ArticlePage({
             )}
           </div>
 
-          {/* YouTube video */}
           {youtubeEmbedUrl && (
             <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
               <iframe
@@ -137,7 +134,6 @@ export default async function ArticlePage({
             </div>
           )}
 
-          {/* HTML z těla Notion stránky */}
           {post.contentHtml && (
             <div
               className="pt-4 border-t border-zinc-800/60"
@@ -145,7 +141,6 @@ export default async function ArticlePage({
             />
           )}
 
-          {/* Výzva k aplikaci na konci článku */}
           <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
             <h3 className="text-sm font-semibold text-zinc-200">
               Chcete si tyto techniky vyzkoušet v praxi?
@@ -164,7 +159,6 @@ export default async function ArticlePage({
         </main>
       </div>
 
-      {/* Zápatí */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
