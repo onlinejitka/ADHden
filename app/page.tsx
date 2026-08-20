@@ -305,25 +305,18 @@ export default function LandingPage() {
         </main>
       </div>
 
-      {/* ZÁPATÍ (FOOTER) */}
+      {/* Zápatí (Footer) */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
-          
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 Noční Knihovna. Všechna práva vyhrazená.
-            </p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
+              © 2026 ADHDen - Všechna práva vyhrazená.
             </p>
           </div>
 
           <div className="border-t border-zinc-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            
             <div className="space-y-0.5 text-center sm:text-left">
-              <p className="font-bold text-zinc-200">
-                Provozovatel: Jitka Pekárková
-              </p>
+              <p className="font-bold text-zinc-200">Provozovatel: Jitka Pekárková</p>
               <p className="text-[11px] text-zinc-500">
                 Sídlo: Primátorská 38, Praha 8 • IČO: 87458021
               </p>
@@ -333,13 +326,23 @@ export default function LandingPage() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
-              <Link href="/o-autorce" className="text-amber-300 hover:underline">
+              <a
+                href="https://jitkap.cz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-300 hover:underline"
+              >
                 O autorce
-              </Link>
+              </a>
               <span className="text-zinc-700">•</span>
-              <Link href="/navigator" className="text-teal-300 hover:underline">
+              <a
+                href="https://navigator40k.cz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal-300 hover:underline"
+              >
                 Navigátor 40k
-              </Link>
+              </a>
               <span className="text-zinc-700">•</span>
               <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
                 Obchodní podmínky
@@ -349,11 +352,9 @@ export default function LandingPage() {
                 GDPR
               </Link>
             </div>
-
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
