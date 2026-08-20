@@ -1,3 +1,30 @@
+{/* Hlavička aplikace s proklikem na úvod */}
+<header className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
+  <Link href="/" className="group flex flex-col">
+    <div className="flex items-center gap-1.5">
+      <h1 className="text-xl font-bold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
+        ADHDen
+      </h1>
+      <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1 py-0.2 rounded font-mono">
+        cz
+      </span>
+    </div>
+    <p className="text-xs text-zinc-400 mt-0.5">Laskavý průvodce pro klidnou mysl</p>
+  </Link>
+
+  <button
+    onClick={() => setIsPro(!isPro)}
+    className={`text-[11px] px-3 py-1 rounded-full font-medium transition-all ${
+      isPro
+        ? "bg-amber-400/10 text-amber-300 border border-amber-400/30"
+        : "bg-zinc-800 text-zinc-400 border border-zinc-700"
+    }`}
+  >
+    {isPro ? "★ PRO Aktivní" : "FREE Režim"}
+  </button>
+</header>
+
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -25,6 +52,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import Link from "next/link";
 import { soundEngine } from "@/lib/audioGenerator";
 
 type Tab = "timer" | "kouskovac" | "rutiny" | "klid" | "uspechy" | "bodydoubling";
