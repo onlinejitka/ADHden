@@ -70,54 +70,54 @@ export default async function ArticlePage({
     "";
   const youtubeEmbedUrl = getYouTubeEmbedUrl(rawYoutubeUrl);
 
-  const content =
+  const rawContent =
+    post.blocks ||
     post.contentHtml ||
     post.html ||
     post.content ||
     post.markdown ||
-    post.blocks ||
     post.body;
 
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
         {/* Záhlaví */}
-<header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  {/* Logo v záhlaví */}
-  <Link href="/" className="flex items-center group">
-    <img
-      src="/ADHden%20logo.jpg"
-      alt="ADHDen.cz logo"
-      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
-    />
-  </Link>
+        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
+              ADHDen
+            </span>
+            <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
+              cz
+            </span>
+          </Link>
 
-  <div className="flex items-center gap-3 sm:gap-5">
-    <Link
-      href="/adhd-ledovec"
-      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
-    >
-      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>ADHD Ledovec</span>
-    </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/adhd-ledovec"
+              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>ADHD Ledovec</span>
+            </Link>
 
-    <Link
-      href="/magazin"
-      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-    >
-      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>Magazín</span>
-    </Link>
+            <Link
+              href="/magazin"
+              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>Magazín</span>
+            </Link>
 
-    <Link
-      href="/app"
-      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-    >
-      <span>Spustit aplikaci</span>
-      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-    </Link>
-  </div>
-</header>
+            <Link
+              href="/app"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+            >
+              <span>Spustit aplikaci</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </Link>
+          </div>
+        </header>
 
         {/* Obsah článku */}
         <main className="max-w-3xl mx-auto px-6 pt-10 pb-20 space-y-8">
@@ -154,7 +154,7 @@ export default async function ArticlePage({
             )}
           </div>
 
-          {/* Youtube Video přehrávač z Notion tabulky */}
+          {/* Youtube Video přehrávač */}
           {youtubeEmbedUrl && (
             <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
               <iframe
@@ -166,19 +166,16 @@ export default async function ArticlePage({
             </div>
           )}
 
-          {/* Vykreslení psaného textu z Notion s plnou podporou formátování */}
-          {typeof content === "string" && content.trim().length > 0 ? (
-            <div
-              className="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60 [&_strong]:font-bold [&_strong]:text-zinc-100 [&_b]:font-bold [&_b]:text-zinc-100 [&_a]:text-amber-300 [&_a]:underline [&_a]:underline-offset-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2 [&_li]:text-zinc-300 [&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-zinc-100 [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-100 [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-amber-300 [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:mb-3"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
-          ) : Array.isArray(content) && content.length > 0 ? (
-            <div className="space-y-3 pt-4 border-t border-zinc-800/60">
-              {content.map((block: any, idx: number) => renderNotionBlock(block, idx))}
-            </div>
-          ) : null}
+          {/* Vykreslení těla článku */}
+          <div className="pt-4 border-t border-zinc-800/60 space-y-4">
+            {Array.isArray(rawContent) && rawContent.length > 0
+              ? rawContent.map((block: any, idx: number) => renderNotionBlock(block, idx))
+              : typeof rawContent === "string"
+              ? renderMarkdownText(rawContent)
+              : null}
+          </div>
 
-          {/* Výzva na konci článku */}
+          {/* Výzva k akci */}
           <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
             <h3 className="text-sm font-semibold text-zinc-200">
               Chcete si tyto techniky vyzkoušet v praxi?
@@ -202,7 +199,10 @@ export default async function ArticlePage({
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHden - Všechna práva vyhrazená.
+              © 2026 Noční Knihovna. Všechna práva vyhrazená.
+            </p>
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
             </p>
           </div>
 
@@ -251,7 +251,78 @@ export default async function ArticlePage({
   );
 }
 
-// Vykreslení bohatého textu z Notion (tučné, odkaz, kurzíva)
+// Funkce pro parsování Markdown textu z Notionu (odrážky, tučné, odkazi)
+function renderMarkdownText(mdText: string) {
+  if (!mdText) return null;
+
+  const parseInline = (text: string) => {
+    let html = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // Tučný text **text**
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-zinc-100">$1</strong>');
+    // Kurzíva *text*
+    html = html.replace(/\*(.*?)\*/g, '<em class="italic text-zinc-300">$1</em>');
+    // Odkazy [text](url)
+    html = html.replace(
+      /\[(.*?)\]\((.*?)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-amber-300 underline underline-offset-2 hover:text-amber-200 transition font-medium">$1</a>'
+    );
+
+    return <span dangerouslySetInnerHTML={{ __html: html }} />;
+  };
+
+  const lines = mdText.split("\n");
+  const elements: React.ReactNode[] = [];
+  let currentList: string[] | null = null;
+
+  const flushList = (key: string) => {
+    if (!currentList || currentList.length === 0) return;
+    elements.push(
+      <ul key={key} className="space-y-2.5 my-4 pl-1">
+        {currentList.map((item, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed">
+            <span className="text-amber-400 font-bold text-base leading-none mt-0.5">•</span>
+            <div className="flex-1">{parseInline(item)}</div>
+          </li>
+        ))}
+      </ul>
+    );
+    currentList = null;
+  };
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      if (!currentList) currentList = [];
+      currentList.push(trimmed.substring(2));
+      return;
+    }
+
+    flushList(`list-${index}`);
+
+    if (!trimmed) return;
+
+    if (trimmed.startsWith("### ")) {
+      elements.push(<h3 key={index} className="text-base font-semibold text-amber-300 mt-6 mb-2">{parseInline(trimmed.substring(4))}</h3>);
+    } else if (trimmed.startsWith("## ")) {
+      elements.push(<h2 key={index} className="text-lg font-bold text-zinc-100 mt-6 mb-3">{parseInline(trimmed.substring(3))}</h2>);
+    } else if (trimmed.startsWith("# ")) {
+      elements.push(<h1 key={index} className="text-xl font-bold text-zinc-100 mt-6 mb-3">{parseInline(trimmed.substring(2))}</h1>);
+    } else {
+      elements.push(<p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{parseInline(trimmed)}</p>);
+    }
+  });
+
+  flushList("list-end");
+
+  return elements;
+}
+
+// Funkce pro parsování Notion bloků (pokud Notion API vrací pole bloků)
 function renderRichText(richText: any[]) {
   if (!richText || !Array.isArray(richText) || richText.length === 0) return null;
 
@@ -265,12 +336,6 @@ function renderRichText(richText: any[]) {
     if (t.annotations?.italic) {
       textContent = <em key={`i-${i}`} className="italic text-zinc-300">{textContent}</em>;
     }
-    if (t.annotations?.strikethrough) {
-      textContent = <s key={`s-${i}`} className="line-through text-zinc-500">{textContent}</s>;
-    }
-    if (t.annotations?.code) {
-      textContent = <code key={`c-${i}`} className="bg-zinc-800 text-amber-300 px-1.5 py-0.5 rounded text-xs font-mono">{textContent}</code>;
-    }
     if (t.href || t.link?.url) {
       const url = t.href || t.link?.url;
       textContent = (
@@ -279,7 +344,7 @@ function renderRichText(richText: any[]) {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-amber-300 underline underline-offset-2 hover:text-amber-200 transition font-medium"
+          className="text-amber-300 underline underline-offset-2 hover:text-amber-200 font-medium"
         >
           {textContent}
         </a>
@@ -290,7 +355,6 @@ function renderRichText(richText: any[]) {
   });
 }
 
-// Vykreslení jednotlivých bloků z Notion
 function renderNotionBlock(block: any, index: number) {
   if (typeof block === "string") {
     return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{block}</p>;
@@ -317,25 +381,6 @@ function renderNotionBlock(block: any, index: number) {
           <div className="flex-1">{renderRichText(richText)}</div>
         </div>
       );
-    case "numbered_list_item":
-      return (
-        <div key={index} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed my-1.5 pl-2">
-          <span className="text-amber-400 font-bold text-xs mt-0.5">{index + 1}.</span>
-          <div className="flex-1">{renderRichText(richText)}</div>
-        </div>
-      );
-    case "quote":
-      return <blockquote key={index} className="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-4">{renderRichText(richText)}</blockquote>;
-    case "callout":
-      return (
-        <div key={index} className="p-4 bg-zinc-800/40 border border-zinc-700/60 rounded-xl my-4 text-xs sm:text-sm text-zinc-200">
-          {renderRichText(richText)}
-        </div>
-      );
-    case "image": {
-      const imgUrl = data?.external?.url || data?.file?.url;
-      return imgUrl ? <img key={index} src={imgUrl} alt="" className="rounded-2xl my-4 max-w-full" /> : null;
-    }
     default:
       return richText ? <p key={index} className="text-xs sm:text-sm text-zinc-300 mb-2">{renderRichText(richText)}</p> : null;
   }
