@@ -1,117 +1,124 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, Calendar, Tag, ArrowRight, Play } from "lucide-react";
-import { getPostBySlug, getPublishedPosts } from "@/lib/notion";
+import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen } from "lucide-react";
+import { getPostBySlug } from "@/lib/notion";
 
 export const revalidate = 60;
 
-// Pomocná funkce pro extrakci ID YouTube videa
-function getYouTubeEmbedUrl(url: string) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11
-    ? `https://www.youtube.com/embed/${match[2]}`
-    : null;
-}
-
-// Pomocná funkce pro Spotify Embed URL
-function getSpotifyEmbedUrl(url: string) {
-  // Převede např. https://open.spotify.com/track/XYZ na https://open.spotify.com/embed/track/XYZ
-  return url.replace("open.spotify.com/", "open.spotify.com/embed/");
-}
-
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+export default async function ArticlePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
-    notFound();
+    return (
+      <div className="min-h-screen bg-[#121214] text-zinc-300 flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-xl font-semibold text-zinc-100">Článek nebyl nalezen</h1>
+          <Link
+            href="/magazin"
+            className="inline-flex items-center gap-2 text-xs text-amber-300 hover:underline"
+          >
+            <ArrowLeft className="w-4 h-4" /> Zpět do magazínu
+          </Link>
+        </div>
+      </div>
+    );
   }
 
-  const ytEmbed = post.youtubeUrl ? getYouTubeEmbedUrl(post.youtubeUrl) : null;
-  const spotifyEmbed = post.spotifyUrl ? getSpotifyEmbedUrl(post.spotifyUrl) : null;
-
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center py-10 px-4">
-      <article className="w-full max-w-2xl space-y-6">
-        {/* Navigace zpět */}
-        <Link href="/blog" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition">
-          <ArrowLeft className="w-3.5 h-3.5" /> Zpět na všechny články
+    <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300">
+      {/* Jednotné záhlaví */}
+      <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+        <Link
+          href="/"
+          className="flex items-center gap-2 group"
+        >
+          <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
+            ADHDen
+          </span>
+          <span className="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
+            cz
+          </span>
         </Link>
 
-        {/* Hlavička článku */}
-        <div className="space-y-3 pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3 text-xs text-slate-400">
-            <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <Tag className="w-3 h-3" /> {post.category}
-            </span>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> {post.date}
-            </span>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/magazin"
+            className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+            <span>Magazín</span>
+          </Link>
+          <Link
+            href="/app"
+            className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+          >
+            <span>Spustit aplikaci</span>
+            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+          </Link>
+        </div>
+      </header>
+
+      {/* Obsah článku */}
+      <main className="max-w-3xl mx-auto px-6 pt-10 pb-20 space-y-8">
+        <Link
+          href="/magazin"
+          className="inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-zinc-200 transition"
+        >
+          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+          <span>Zpět na všechny články</span>
+        </Link>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 text-xs text-zinc-500">
+            {post.category && (
+              <span className="text-amber-300/90 font-medium flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" strokeWidth={1.5} /> {post.category}
+              </span>
+            )}
+            {post.date && (
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5" strokeWidth={1.5} /> {post.date}
+              </span>
+            )}
           </div>
-          <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight">
+
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-100 leading-snug">
             {post.title}
           </h1>
-          <p className="text-sm text-slate-300 font-medium leading-relaxed italic">
-            {post.perex}
-          </p>
+
+          {post.description && (
+            <p className="text-sm text-zinc-400 leading-relaxed italic border-l-2 border-amber-400/40 pl-4 py-0.5">
+              {post.description}
+            </p>
+          )}
         </div>
 
-        {/* YOUTUBE EMBED (pokud je zadáno v Notion) */}
-        {ytEmbed && (
-          <div className="w-full aspect-video rounded-2xl overflow-hidden border border-slate-800 shadow-xl bg-black my-4">
-            <iframe
-              src={ytEmbed}
-              title="YouTube video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            />
-          </div>
-        )}
+        {/* Samotný text z Notion */}
+        <div
+          className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60"
+          dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+        />
 
-        {/* SPOTIFY EMBED (pokud je zadáno v Notion) */}
-        {spotifyEmbed && (
-          <div className="w-full rounded-2xl overflow-hidden my-4 border border-slate-800 bg-slate-900/40 p-1">
-            <iframe
-              src={spotifyEmbed}
-              width="100%"
-              height="152"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              className="rounded-xl"
-            />
-          </div>
-        )}
-
-        {/* Textový obsah článku */}
-        <div className="space-y-4 text-sm text-slate-200 leading-relaxed pt-2">
-          {post.content?.map((paragraph, idx) => {
-            if (paragraph.startsWith("## ")) {
-              return (
-                <h2 key={idx} className="text-lg font-bold text-amber-300 pt-4 pb-1">
-                  {paragraph.replace("## ", "")}
-                </h2>
-              );
-            }
-            return <p key={idx}>{paragraph}</p>;
-          })}
-        </div>
-
-        {/* Výzva k akci (CTA Box pro přechod do aplikace) */}
-        <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 border border-amber-500/30 rounded-2xl my-8 space-y-3 text-center">
-          <h3 className="text-base font-bold text-white">Chcete si tyto techniky vyzkoušet v praxi?</h3>
-          <p className="text-xs text-slate-300 max-w-md mx-auto">
-            Spusťte si webovou aplikaci ADHDen zdarma přímo v prohlížeči – bez instalace a bez tlaku.
+        {/* Výzva k aplikaci na konci článku */}
+        <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
+          <h3 className="text-sm font-semibold text-zinc-200">
+            Chcete si tyto techniky vyzkoušet v praxi?
+          </h3>
+          <p className="text-xs text-zinc-400">
+            Spusťte si aplikaci ADHDen zdarma přímo v prohlížeči.
           </p>
           <Link
             href="/app"
-            className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20"
+            className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-semibold px-5 py-2.5 rounded-xl text-xs transition"
           >
-            Spustit aplikaci ADHDen <ArrowRight className="w-3.5 h-3.5" />
+            <span>Spustit aplikaci ADHDen</span>
+            <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
           </Link>
         </div>
-      </article>
+      </main>
     </div>
   );
 }
