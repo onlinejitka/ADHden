@@ -9,10 +9,42 @@ import {
   Users,
   BookOpen,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  Clock,
+  ChevronRight
 } from "lucide-react";
 
 export default function LandingPage() {
+  const articles = [
+    {
+      id: "1",
+      title: "Co je to časová slepota a jak ji obelstít bez stresu",
+      perex: "Proč pro ADHD mozek existují jen dvě časová pásma – TEĎ a NIKDY – a jak pomáhají vizuální kotvy.",
+      category: "ADHD & Čas",
+      readTime: "4 min čtení",
+      date: "14. srpna",
+      color: "amber"
+    },
+    {
+      id: "2",
+      title: "Proč právě hnědý šum tak dobře zklidňuje přetížený mozek?",
+      perex: "Srovnání bílého, růžového a hnědého šumu. Jak hluboké frekvence maskují vnitřní i vnější ruch.",
+      category: "Senzorika",
+      readTime: "3 min čtení",
+      date: "10. srpna",
+      color: "teal"
+    },
+    {
+      id: "3",
+      title: "Jak přimět děti k ranním rutinám bez neustálého křiku",
+      perex: "Osvědčené vizuální kartičky a princip Body Doubling pro klidnější odchody do školy a školky.",
+      category: "Pro rodiče",
+      readTime: "5 min čtení",
+      date: "5. srpna",
+      color: "purple"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300">
       
@@ -46,26 +78,22 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero sekce s mírnější typografií */}
-      <main className="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center space-y-8">
+      {/* Hero sekce */}
+      <main className="max-w-4xl mx-auto px-6 pt-14 pb-16 text-center space-y-8">
         
-        {/* Odznáček */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700/50 text-[11px] text-amber-300/90">
           <span>♡ Laskavý systém pro neurodivergentní mozek</span>
         </div>
 
-        {/* Hlavní nadpis - zmenšen a zjemněn proti přehlcení */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
           Zkrotit chaos, časovou slepotu a paralýzu{" "}
           <span className="text-amber-300 font-normal">bez pocitu viny.</span>
         </h1>
 
-        {/* Podnadpis */}
         <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
           ADHDen spojuje vizuální ubývání času, zklidňující hnědý šum, AI rozpad paralyzujících úkolů a společného parťáka pro dospělé i rodiny s dětmi.
         </p>
 
-        {/* Akční tlačítka */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           <Link
             href="/app"
@@ -83,7 +111,6 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {/* Drobné garance pod tlačítky */}
         <div className="flex items-center justify-center gap-6 text-[11px] text-zinc-500 pt-2">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" strokeWidth={1.5} /> Zdarma bez registrace
@@ -94,7 +121,7 @@ export default function LandingPage() {
         </div>
 
         {/* Sekce Nástrojů */}
-        <section className="pt-16 space-y-6 text-left">
+        <section className="pt-12 space-y-6 text-left">
           <div className="text-center space-y-1.5">
             <h2 className="text-lg font-semibold text-zinc-200">
               Nástroje navržené přímo pro ADHD dynamiku
@@ -104,10 +131,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Mřížka 4 dlaždic - nyní plně proklikávatelných */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-            
-            {/* Dlaždice 1: Time Timer */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
             <Link
               href="/app"
               className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
@@ -128,7 +152,6 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Dlaždice 2: Hnědý šum */}
             <Link
               href="/app"
               className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
@@ -149,7 +172,6 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Dlaždice 3: AI Kouskovač */}
             <Link
               href="/app"
               className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
@@ -170,7 +192,6 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Dlaždice 4: Body Doubling */}
             <Link
               href="/app"
               className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
@@ -190,10 +211,73 @@ export default function LandingPage() {
                 Parťák do akce <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
               </span>
             </Link>
-
           </div>
         </section>
+
+        {/* Sekce Magazínu / Posledních článků */}
+        <section className="pt-16 space-y-6 text-left border-t border-zinc-800/60 mt-12">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-200">
+                Poslední články & Tipy
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Krátké návody a porozumění neurodivergentní mysli.
+              </p>
+            </div>
+            
+            <Link
+              href="/magazin"
+              className="text-xs text-amber-300 hover:underline flex items-center gap-1 font-medium"
+            >
+              <span>Všechny články</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {articles.map((art) => (
+              <Link
+                key={art.id}
+                href="/magazin"
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                    <span className="text-amber-300/90 font-medium">
+                      {art.category}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" strokeWidth={1.5} /> {art.readTime}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
+                    {art.title}
+                  </h3>
+
+                  <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
+                    {art.perex}
+                  </p>
+                </div>
+
+                <div className="pt-2 text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition">
+                  <span>{art.date}</span>
+                  <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5">
+                    Číst <ChevronRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
       </main>
+
+      {/* Zápatí */}
+      <footer className="border-t border-zinc-800/60 py-8 text-center text-xs text-zinc-500">
+        <p>ADHDen.cz – Laskavý prostor bez tlaku a výčitek</p>
+      </footer>
     </div>
   );
 }
