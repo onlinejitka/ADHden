@@ -76,6 +76,17 @@ export default function ADHDApp() {
   const wakeLockRef = useRef<any>(null);
 
   useEffect(() => {
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get("tab") as Tab;
+    const validTabs: Tab[] = ["timer", "kouskovac", "rutiny", "klid", "uspechy", "bodydoubling"];
+    if (tabParam && validTabs.includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }
+}, []);
+
+  useEffect(() => {
     async function requestWakeLock() {
       if (typeof window !== "undefined" && "wakeLock" in navigator && isTimerRunning) {
         try {
