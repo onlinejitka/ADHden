@@ -1,53 +1,93 @@
 import Link from "next/link";
-import { BookOpen, ArrowLeft, Calendar, Tag } from "lucide-react";
+import { BookOpen, ArrowLeft, Calendar, Tag, ArrowRight } from "lucide-react";
 import { getPublishedPosts } from "@/lib/notion";
 
 export const revalidate = 60; // Automatické obnovení obsahu z Notion každých 60 sekund
 
-export default async function BlogIndexPage() {
+export default async function MagazinIndexPage() {
   const posts = await getPublishedPosts();
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center py-10 px-4">
-      <div className="w-full max-w-3xl space-y-8">
-        {/* Hlavička blogu */}
+    <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300">
+      
+      {/* Hlavička */}
+      <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+        <Link
+          href="/"
+          className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+          <span>Zpět na ADHDen.cz</span>
+        </Link>
+
+        <Link
+          href="/app"
+          className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+        >
+          <span>Spustit aplikaci</span>
+          <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+        </Link>
+      </header>
+
+      {/* Obsah */}
+      <main className="max-w-4xl mx-auto px-6 pt-12 pb-20 space-y-8">
         <div className="space-y-3">
-          <Link href="/" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition">
-            <ArrowLeft className="w-3.5 h-3.5" /> Zpět na úvod ADHDen.cz
-          </Link>
-          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
-            <BookOpen className="w-7 h-7 text-amber-400" /> Magazín & Průvodce
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700/50 text-[11px] text-amber-300">
+            <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
+            <span>Magazín & Průvodce</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-100">
+            Praktické rady, psychologie pozornosti a postupy pro život s ADHD
           </h1>
-          <p className="text-sm text-slate-400">
-            Praktické rady, psychologie pozornosti a postupy pro život a rodinu s ADHD.
-          </p>
         </div>
 
-        {/* Seznam článků */}
-        <div className="space-y-4">
-          {posts.map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="block p-6 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl transition group"
-            >
-              <div className="flex items-center gap-3 text-xs text-slate-500 mb-2">
-                <span className="flex items-center gap-1 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                  <Tag className="w-3 h-3" /> {post.category}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" /> {post.date}
-                </span>
-              </div>
-              <h2 className="text-lg font-bold text-white group-hover:text-amber-400 transition mb-2">
-                {post.title}
-              </h2>
-              <p className="text-xs text-slate-300 leading-relaxed mb-4">{post.perex}</p>
-              <span className="text-xs text-amber-400 font-semibold">Číst celý článek →</span>
-            </Link>
-          ))}
-        </div>
-      </div>
+        {/* Seznam článků z Notion */}
+        {posts.length === 0 ? (
+          <div className="p-8 bg-zinc-800/20 border border-zinc-800 rounded-2xl text-center text-xs text-zinc-400">
+            Zatím nebyly načteny žádné publikované články z Notionu.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {posts.map((post: any) => (
+              <Link
+                key={post.id}
+                href={`/magazin/${post.slug}`}
+                className="group p-6 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                    {post.category && (
+                      <span className="text-amber-300/90 font-medium flex items-center gap-1">
+                        <Tag className="w-3 h-3" strokeWidth={1.5} /> {post.category}
+                      </span>
+                    )}
+                    {post.date && (
+                      <span className="flex items-center gap-1 ml-auto">
+                        <Calendar className="w-3 h-3" strokeWidth={1.5} /> {post.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <h2 className="text-sm font-semibold text-zinc-100 group-hover:text-amber-300 transition leading-snug">
+                    {post.title}
+                  </h2>
+
+                  {post.description && (
+                    <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
+                      {post.description}
+                    </p>
+                  )}
+                </div>
+
+                <div className="pt-2 text-[11px] text-amber-300/80 group-hover:text-amber-300 font-medium flex items-center justify-end gap-1 border-t border-zinc-800/40">
+                  <span>Číst článek</span>
+                  <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
