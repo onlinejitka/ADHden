@@ -141,87 +141,94 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-              <Link
-                href="/app"
-                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
-                    <Timer className="w-4 h-4" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition">
-                    Vizuální Time Timer
-                  </h3>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut.
-                  </p>
-                </div>
-                <span className="text-[11px] font-medium text-amber-300/80 group-hover:text-amber-300 flex items-center gap-1">
-                  Spustit timer <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                </span>
-              </Link>
+ {/* Sekce Nástrojů na úvodní stránce */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+  
+  {/* 1. Vizuální Time Timer */}
+  <Link
+    href="/app?tab=timer"
+    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+  >
+    <div className="space-y-3">
+      <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
+        <Timer className="w-4 h-4" strokeWidth={1.5} />
+      </div>
+      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition">
+        Vizuální Time Timer
+      </h3>
+      <p className="text-[11px] text-zinc-400 leading-relaxed">
+        ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut.
+      </p>
+    </div>
+    <span className="text-[11px] font-medium text-amber-300/80 group-hover:text-amber-300 flex items-center gap-1">
+      Spustit timer <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+    </span>
+  </Link>
 
-              <Link
-                href="/app"
-                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
-                    <Volume2 className="w-4 h-4" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
-                    Hnědý & Senzorický šum
-                  </h3>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Ztiší vnitřní dialog, uklidní nervový systém a vytvoří zvukovou bariéru vůči rušivému okolí.
-                  </p>
-                </div>
-                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
-                  Okamžité zklidnění <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                </span>
-              </Link>
+  {/* 2. Hnědý & Senzorický šum */}
+  <Link
+    href="/app?tab=klid"
+    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+  >
+    <div className="space-y-3">
+      <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+        <Volume2 className="w-4 h-4" strokeWidth={1.5} />
+      </div>
+      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+        Hnědý & Senzorický šum
+      </h3>
+      <p className="text-[11px] text-zinc-400 leading-relaxed">
+        Ztiší vnitřní dialog, uklidní nervový systém a vytvoří zvukovou bariéru vůči rušivému okolí.
+      </p>
+    </div>
+    <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+      Okamžité zklidnění <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+    </span>
+  </Link>
 
-              <Link
-                href="/app"
-                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-300">
-                    <Sparkles className="w-4 h-4" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-purple-300 transition">
-                    AI Kouskovač
-                  </h3>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní kroky, u kterých mozek necítí odpor začít.
-                  </p>
-                </div>
-                <span className="text-[11px] font-medium text-purple-300/80 group-hover:text-purple-300 flex items-center gap-1">
-                  Konec paralýzy <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                </span>
-              </Link>
+  {/* 3. AI Kouskovač */}
+  <Link
+    href="/app?tab=kouskovac"
+    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+  >
+    <div className="space-y-3">
+      <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-300">
+        <Sparkles className="w-4 h-4" strokeWidth={1.5} />
+      </div>
+      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-purple-300 transition">
+        AI Kouskovač
+      </h3>
+      <p className="text-[11px] text-zinc-400 leading-relaxed">
+        Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní kroky, u kterých mozek necítí odpor začít.
+      </p>
+    </div>
+    <span className="text-[11px] font-medium text-purple-300/80 group-hover:text-purple-300 flex items-center gap-1">
+      Konec paralýzy <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+    </span>
+  </Link>
 
-              <Link
-                href="/app"
-                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
-                    <Users className="w-4 h-4" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
-                    Body Doubling
-                  </h3>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Čištění zubů, skládání prádla nebo úklid stolu. Spusťte průvodce a dělejte činnost společně s tichým parťákem.
-                  </p>
-                </div>
-                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
-                  Parťák do akce <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                </span>
-              </Link>
-            </div>
+  {/* 4. Body Doubling */}
+  <Link
+    href="/app?tab=bodydoubling"
+    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+  >
+    <div className="space-y-3">
+      <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+        <Users className="w-4 h-4" strokeWidth={1.5} />
+      </div>
+      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+        Body Doubling
+      </h3>
+      <p className="text-[11px] text-zinc-400 leading-relaxed">
+        Čištění zubů, skládání prádla nebo úklid stolu. Spusťte průvodce a dělejte činnost společně s tichým parťákem.
+      </p>
+    </div>
+    <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+      Parťák do akce <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+    </span>
+  </Link>
+
+</div>
           </section>
 
           {/* ELEGANTNÍ UPOUTÁVKA NA PRŮVODCE ZDARMA */}
