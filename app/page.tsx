@@ -439,6 +439,7 @@ export default function ADHDApp() {
       desc: "15 minut fokus se zklidňujícím rytmem",
       time: 15,
       type: "audio",
+      mediaUrl: "/Skladani-pradla-Amber_Hours.mp3",
       free: false,
     },
     {
@@ -447,6 +448,7 @@ export default function ADHDApp() {
       desc: "10 minut soustředěné práce",
       time: 10,
       type: "timer",
+      mediaUrl: "/Klid-u-pocitace-Where_the_Pencil_Meets_Paper.mp3",
       free: false,
     },
   ]);
