@@ -1,0 +1,170 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  BookOpen,
+  Clock,
+  ArrowRight,
+  Sparkles,
+  Tag
+} from "lucide-react";
+
+interface Article {
+  id: string;
+  title: string;
+  perex: string;
+  category: "ADHD & Čas" | "Senzorika" | "Pro rodiče" | "Praktické tipy";
+  readTime: string;
+  date: string;
+}
+
+export default function MagazinPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("Vše");
+
+  const articles: Article[] = [
+    {
+      id: "1",
+      title: "Co je to časová slepota a jak ji obelstít bez stresu",
+      perex: "Proč pro ADHD mozek existují jen dvě časová pásma – TEĎ a NIKDY – a jak pomáhají vizuální kotvy bez nutnosti neustále sledovat ručičky hodin.",
+      category: "ADHD & Čas",
+      readTime: "4 min čtení",
+      date: "14. srpna",
+    },
+    {
+      id: "2",
+      title: "Proč právě hnědý šum tak dobře zklidňuje přetížený mozek?",
+      perex: "Srovnání bílého, růžového a hnědého šumu. Jak hluboké frekvence maskují vnitřní monolog i vnější rušivé zvuky.",
+      category: "Senzorika",
+      readTime: "3 min čtení",
+      date: "10. srpna",
+    },
+    {
+      id: "3",
+      title: "Jak přimět děti k ranním rutinám bez neustálého křiku",
+      perex: "Osvědčené vizuální kartičky a princip Body Doubling pro klidnější odchody do školy a školky.",
+      category: "Pro rodiče",
+      readTime: "5 min čtení",
+      date: "5. srpna",
+    },
+    {
+      id: "4",
+      title: "Paralýza z rozhodování: Jak začít, když je úkolů příliš",
+      perex: "Pravidlo 2 minut a technika mikro-kroků. Jak oklamat mozkový odpor k náročným činnostem.",
+      category: "Praktické tipy",
+      readTime: "4 min čtení",
+      date: "1. srpna",
+    },
+  ];
+
+  const categories = ["Vše", "ADHD & Čas", "Senzorika", "Pro rodiče", "Praktické tipy"];
+
+  const filteredArticles =
+    selectedCategory === "Vše"
+      ? articles
+      : articles.filter((a) => a.category === selectedCategory);
+
+  return (
+    <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300">
+      
+      {/* Horní navigace */}
+      <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+        <Link
+          href="/"
+          className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+          <span>Zpět na hlavní stranu</span>
+        </Link>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/app"
+            className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+          >
+            <span>Otevřít aplikaci</span>
+            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+          </Link>
+        </div>
+      </header>
+
+      {/* Obsah Magazínu */}
+      <main className="max-w-4xl mx-auto px-6 pt-12 pb-20 space-y-8">
+        
+        {/* Titulek */}
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700/50 text-[11px] text-amber-300">
+            <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
+            <span>ADHDen Magazín</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-100">
+            Tipy a porozumění neurodivergentní mysli
+          </h1>
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-xl">
+            Krátké, praktické články bez zbytečné omáčky. Navržené pro rychlé přečtení a okamžité použití v běžném dni.
+          </p>
+        </div>
+
+        {/* Filtr kategorií */}
+        <div className="flex flex-wrap gap-2 pt-2 border-b border-zinc-800/60 pb-4">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                selectedCategory === cat
+                  ? "bg-amber-400/10 text-amber-300 border border-amber-400/40"
+                  : "bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800 border border-zinc-800"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Seznam článků */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          {filteredArticles.map((art) => (
+            <article
+              key={art.id}
+              className="group p-6 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                  <span className="text-amber-300/90 font-medium flex items-center gap-1">
+                    <Tag className="w-3 h-3" strokeWidth={1.5} /> {art.category}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" strokeWidth={1.5} /> {art.readTime}
+                  </span>
+                </div>
+
+                <h2 className="text-sm font-semibold text-zinc-100 group-hover:text-amber-300 transition leading-snug">
+                  {art.title}
+                </h2>
+
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  {art.perex}
+                </p>
+              </div>
+
+              <div className="pt-2 text-[11px] text-zinc-500 flex items-center justify-between border-t border-zinc-800/40">
+                <span>{art.date}</span>
+                <span className="text-amber-300/80 group-hover:text-amber-300 font-medium flex items-center gap-1">
+                  Číst článek <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+      </main>
+
+      {/* Zápatí */}
+      <footer className="border-t border-zinc-800/60 py-8 text-center text-xs text-zinc-500">
+        <p>ADHDen.cz – Laskavý prostor bez tlaku a výčitek</p>
+      </footer>
+    </div>
+  );
+}
