@@ -229,10 +229,7 @@ export default function AdhdLedovecPage() {
           
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 Noční Knihovna. Všechna práva vyhrazená.
-            </p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
+              © 2026 ADHDen. Všechna práva vyhrazena.
             </p>
           </div>
 
@@ -251,22 +248,32 @@ export default function AdhdLedovecPage() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
-              <Link href="/o-autorce" className="text-amber-300 hover:underline">
-                O autorce
-              </Link>
-              <span className="text-zinc-700">•</span>
-              <Link href="/navigator" className="text-teal-300 hover:underline">
-                Navigátor 40k
-              </Link>
-              <span className="text-zinc-700">•</span>
-              <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
-                Obchodní podmínky
-              </Link>
-              <span className="text-zinc-700">•</span>
-              <Link href="/gdpr" className="text-zinc-300 hover:text-zinc-100">
-                GDPR
-              </Link>
-            </div>
+  <a
+    href="https://jitkap.cz/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-amber-300 hover:underline"
+  >
+    O autorce
+  </a>
+  <span className="text-zinc-700">•</span>
+  <a
+    href="https://navigator40k.cz/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-teal-300 hover:underline"
+  >
+    Navigátor 40k
+  </a>
+  <span className="text-zinc-700">•</span>
+  <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
+    Obchodní podmínky
+  </Link>
+  <span className="text-zinc-700">•</span>
+  <Link href="/gdpr" className="text-zinc-300 hover:text-zinc-100">
+    GDPR
+  </Link>
+</div>
 
           </div>
         </div>
