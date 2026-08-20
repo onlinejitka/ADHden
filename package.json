@@ -1,5 +1,5 @@
 {
-  "name": "denni-knihovna",
+  "name": "adhden",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@notionhq/client": "^2.2.15",
     "canvas-confetti": "^1.9.4",
     "lucide-react": "^0.475.0",
     "next": "^15.1.7",
