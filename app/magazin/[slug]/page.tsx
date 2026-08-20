@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen, FileText } from "lucide-react";
 import { getPostBySlug } from "@/lib/notion";
 
 export const revalidate = 60;
@@ -27,13 +27,22 @@ export default async function ArticlePage({
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
-  const post: any = await getPostBySlug(slug);
+  let post: any = null;
+
+  try {
+    if (slug) {
+      post = await getPostBySlug(slug);
+    }
+  } catch (error) {
+    console.error("Chyba při načítání článku z Notion:", error);
+  }
 
   if (!post) {
     return (
       <div className="min-h-screen bg-[#121214] text-zinc-300 flex items-center justify-center p-6 font-sans">
         <div className="text-center space-y-4">
           <h1 className="text-xl font-semibold text-zinc-100">Článek nebyl nalezen</h1>
+          <p className="text-xs text-zinc-500">Zkontrolujte adresu nebo se vraťte do magazínu.</p>
           <Link
             href="/magazin"
             className="inline-flex items-center gap-2 text-xs text-amber-300 hover:underline"
@@ -71,43 +80,43 @@ export default async function ArticlePage({
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
-        {/* Záhlaví */}
-<header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  <Link href="/" className="flex items-center gap-2 group">
-    <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
-      ADHDen
-    </span>
-    <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
-      cz
-    </span>
-  </Link>
+        {/* Záhlaví s kompletními odkazy */}
+        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
+              ADHDen
+            </span>
+            <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
+              cz
+            </span>
+          </Link>
 
-  <div className="flex items-center gap-3 sm:gap-5">
-    <Link
-      href="/adhd-ledovec"
-      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
-    >
-      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>ADHD Ledovec</span>
-    </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/adhd-ledovec"
+              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>ADHD Ledovec</span>
+            </Link>
 
-    <Link
-      href="/magazin"
-      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-    >
-      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>Magazín</span>
-    </Link>
-    
-    <Link
-      href="/app"
-      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-    >
-      <span>Spustit aplikaci</span>
-      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-    </Link>
-  </div>
-</header>
+            <Link
+              href="/magazin"
+              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>Magazín</span>
+            </Link>
+
+            <Link
+              href="/app"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+            >
+              <span>Spustit aplikaci</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </Link>
+          </div>
+        </header>
 
         {/* Obsah článku */}
         <main className="max-w-3xl mx-auto px-6 pt-10 pb-20 space-y-8">
@@ -192,7 +201,10 @@ export default async function ArticlePage({
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHDen - Všechna práva vyhrazena.
+              © 2026 Noční Knihovna. Všechna práva vyhrazená.
+            </p>
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
             </p>
           </div>
 
