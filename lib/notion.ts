@@ -22,16 +22,16 @@ function richTextToHtml(richText: any[]): string {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/\n/g, '<br style="display: block; margin-top: 0.4rem; content: \'\';" />');
+        .replace(/\n/g, '<br style="display: block; margin-top: 0.3rem; content: \'\';" />');
 
       if (t.annotations?.bold) {
-        text = `<strong style="font-weight: 700; color: #f4f4f5;">${text}</strong>`;
+        text = `<strong style="font-weight: 600; color: #f4f4f5;">${text}</strong>`;
       }
       if (t.annotations?.italic) {
         text = `<em style="font-style: italic; color: #d4d4d8;">${text}</em>`;
       }
       if (t.annotations?.code) {
-        text = `<code style="background-color: #27272a; color: #fcd34d; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-family: monospace;">${text}</code>`;
+        text = `<code style="background-color: #27272a; color: #fcd34d; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.75rem; font-family: monospace;">${text}</code>`;
       }
       if (t.annotations?.strikethrough) {
         text = `<s style="text-decoration: line-through; color: #71717a;">${text}</s>`;
@@ -46,7 +46,7 @@ function richTextToHtml(richText: any[]): string {
     .join("");
 }
 
-// Převod bloků z Notion do HTML s garancí viditelných odstupů odstavců
+// Převod bloků z Notion do HTML s kompaktní velikostí písma
 function blocksToHtml(blocks: any[]): string {
   if (!blocks || !Array.isArray(blocks)) return "";
 
@@ -61,17 +61,17 @@ function blocksToHtml(blocks: any[]): string {
     const data = block[type];
     const content = data?.rich_text ? richTextToHtml(data.rich_text) : "";
 
-    // Odrážky s jasným horním a spodním odstupem
+    // Odrážky
     if (type === "bulleted_list_item") {
       if (!inBulletedList) {
         if (inNumberedList) {
           html += "</ol>";
           inNumberedList = false;
         }
-        html += '<ul style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding-left: 0.25rem;">';
+        html += '<ul style="margin-top: 1.25rem; margin-bottom: 1.25rem; padding-left: 0.25rem;">';
         inBulletedList = true;
       }
-      html += `<li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.625rem; line-height: 1.7; color: #d4d4d8;"><span style="color: #fbbf24; font-weight: bold; font-size: 1.1rem; line-height: 1; margin-top: 0.2rem;">•</span><div style="flex: 1 1 0%;">${content}</div></li>`;
+      html += `<li style="margin-bottom: 0.625rem; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8125rem; line-height: 1.65; color: #d4d4d8;"><span style="color: #fbbf24; font-weight: bold; font-size: 0.95rem; line-height: 1; margin-top: 0.15rem;">•</span><div style="flex: 1 1 0%;">${content}</div></li>`;
       continue;
     } else if (inBulletedList) {
       html += "</ul>";
@@ -85,38 +85,37 @@ function blocksToHtml(blocks: any[]): string {
           html += "</ul>";
           inBulletedList = false;
         }
-        html += '<ol style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding-left: 0.25rem;">';
+        html += '<ol style="margin-top: 1.25rem; margin-bottom: 1.25rem; padding-left: 0.25rem;">';
         inNumberedList = true;
       }
-      html += `<li style="margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.625rem; line-height: 1.7; color: #d4d4d8;"><span style="color: #fbbf24; font-weight: bold; margin-top: 0.1rem;">1.</span><div style="flex: 1 1 0%;">${content}</div></li>`;
+      html += `<li style="margin-bottom: 0.625rem; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8125rem; line-height: 1.65; color: #d4d4d8;"><span style="color: #fbbf24; font-weight: bold; font-size: 0.75rem; margin-top: 0.1rem;">1.</span><div style="flex: 1 1 0%;">${content}</div></li>`;
       continue;
     } else if (inNumberedList) {
       html += "</ol>";
       inNumberedList = false;
     }
 
-    // Běžný odstavec – viditelná mezera pod odstavcem (20px)
+    // Odstavce a nadpisy (kompaktní font-size)
     if (type === "paragraph") {
       if (content.trim()) {
-        html += `<p style="margin-bottom: 1.35rem; line-height: 1.75; color: #d4d4d8;">${content}</p>`;
+        html += `<p style="margin-bottom: 1.15rem; font-size: 0.8125rem; line-height: 1.7; color: #d4d4d8;">${content}</p>`;
       } else {
-        // Prázdný řádek v Notion (Enter navíc)
-        html += `<div style="height: 1.25rem;"></div>`;
+        html += `<div style="height: 0.875rem;"></div>`;
       }
     } else if (type === "heading_1") {
-      html += `<h1 style="margin-top: 2.25rem; margin-bottom: 0.875rem; font-size: 1.35rem; font-weight: 700; color: #f4f4f5; line-height: 1.3;">${content}</h1>`;
+      html += `<h1 style="margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.15rem; font-weight: 700; color: #f4f4f5; line-height: 1.3;">${content}</h1>`;
     } else if (type === "heading_2") {
-      html += `<h2 style="margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.2rem; font-weight: 700; color: #f4f4f5; line-height: 1.35;">${content}</h2>`;
+      html += `<h2 style="margin-top: 1.75rem; margin-bottom: 0.625rem; font-size: 1.05rem; font-weight: 700; color: #f4f4f5; line-height: 1.35;">${content}</h2>`;
     } else if (type === "heading_3") {
-      html += `<h3 style="margin-top: 1.75rem; margin-bottom: 0.625rem; font-size: 1.05rem; font-weight: 600; color: #fcd34d; line-height: 1.4;">${content}</h3>`;
+      html += `<h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 600; color: #fcd34d; line-height: 1.4;">${content}</h3>`;
     } else if (type === "quote") {
-      html += `<blockquote style="border-left: 2px solid #fbbf24; padding-left: 1rem; font-style: italic; color: #a1a1aa; margin-top: 1.5rem; margin-bottom: 1.5rem; line-height: 1.7;">${content}</blockquote>`;
+      html += `<blockquote style="border-left: 2px solid #fbbf24; padding-left: 0.875rem; font-style: italic; font-size: 0.8125rem; color: #a1a1aa; margin-top: 1.25rem; margin-bottom: 1.25rem; line-height: 1.65;">${content}</blockquote>`;
     } else if (type === "callout") {
-      html += `<div style="padding: 1rem; background-color: rgba(39, 39, 42, 0.5); border: 1px solid rgba(63, 63, 70, 0.6); border-radius: 0.75rem; margin-top: 1.5rem; margin-bottom: 1.5rem; color: #e4e4e7; line-height: 1.7;">${content}</div>`;
+      html += `<div style="padding: 0.875rem; background-color: rgba(39, 39, 42, 0.5); border: 1px solid rgba(63, 63, 70, 0.6); border-radius: 0.75rem; margin-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.8125rem; color: #e4e4e7; line-height: 1.65;">${content}</div>`;
     } else if (type === "image") {
       const imgUrl = data?.external?.url || data?.file?.url;
       if (imgUrl) {
-        html += `<div style="margin-top: 1.5rem; margin-bottom: 1.5rem;"><img src="${imgUrl}" alt="" style="border-radius: 1rem; max-width: 100%; border: 1px solid #27272a;" /></div>`;
+        html += `<div style="margin-top: 1.25rem; margin-bottom: 1.25rem;"><img src="${imgUrl}" alt="" style="border-radius: 1rem; max-width: 100%; border: 1px solid #27272a;" /></div>`;
       }
     }
   }
