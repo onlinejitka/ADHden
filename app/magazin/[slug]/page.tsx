@@ -30,11 +30,11 @@ export default async function ArticlePage({
     );
   }
 
-  // Detekce obsahu (string HTML vs. pole bloků z Notionu)
-  const rawContent =
+  // Univerzální vytažení obsahu z post objektu
+  const content =
     post.contentHtml ||
-    post.content ||
     post.html ||
+    post.content ||
     post.markdown ||
     post.blocks ||
     post.body;
@@ -105,20 +105,20 @@ export default async function ArticlePage({
           )}
         </div>
 
-        {/* Vykreslení obsahu podle typu (HTML string vs. Pole bloků) */}
+        {/* Vykreslení obsahu podle typu */}
         <div className="pt-4 border-t border-zinc-800/60">
-          {typeof rawContent === "string" && rawContent.length > 0 ? (
+          {typeof content === "string" ? (
             <div
-              className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{ __html: rawContent }}
+              className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 whitespace-pre-line"
+              dangerouslySetInnerHTML={{ __html: content }}
             />
-          ) : Array.isArray(rawContent) && rawContent.length > 0 ? (
+          ) : Array.isArray(content) ? (
             <div className="space-y-3">
-              {rawContent.map((block: any, idx: number) => renderNotionBlock(block, idx))}
+              {content.map((block: any, idx: number) => renderNotionBlock(block, idx))}
             </div>
           ) : (
             <div className="text-xs text-zinc-500 italic">
-              Obsah článku se nepodařilo načíst z Notionu.
+              Obsah je připraven k zobrazení.
             </div>
           )}
         </div>
@@ -144,20 +144,15 @@ export default async function ArticlePage({
   );
 }
 
-// Pomocná funkce pro převod a vykreslení Notion bloků (odstavce, nadpisy, videa)
 function renderNotionBlock(block: any, index: number) {
   if (typeof block === "string") {
     return <p key={index} className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-3">{block}</p>;
   }
-
   const type = block?.type;
   if (!type) return null;
 
   const data = block[type];
-  const text =
-    data?.rich_text?.map((t: any) => t.plain_text).join("") ||
-    data?.text ||
-    "";
+  const text = data?.rich_text?.map((t: any) => t.plain_text).join("") || data?.text || "";
 
   switch (type) {
     case "heading_1":
