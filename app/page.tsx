@@ -12,9 +12,7 @@ import {
   CheckCircle2,
   Clock,
   ChevronRight,
-  Info,
-  ShoppingBag,
-  Zap
+  FileText
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -218,120 +216,32 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* SEKCE: ADHD LEDOVEC (Průvodce zdarma) */}
-          <section className="space-y-6 pt-6">
-            <div className="p-8 bg-zinc-800/40 border border-zinc-800 rounded-3xl text-center space-y-6 shadow-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-[11px] text-amber-300">
-                <Info className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>Neurodivergentní průvodce zdarma</span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100">
-                ADHD <span className="text-amber-300">LEDOVEC</span>
-              </h2>
-
-              <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
-                Ucelený vizuální průvodce podstatou ADHD mozku. Zjistěte, co se skrývá pod hladinou viditelných projevů a jak pracovat s vlastní neurologií bez pocitů viny.
-              </p>
-
-              <div>
-                <a
-                  href="https://eshop.adhden.cz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-lg shadow-amber-400/10"
-                >
-                  <ShoppingBag className="w-4 h-4" strokeWidth={1.75} />
-                  <span>Získat zdarma v e-shopu: ADHD Ledovec</span>
-                </a>
-              </div>
-            </div>
-
-            {/* KARTY LEDOVCE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Karta 1 */}
-              <div className="p-6 bg-zinc-800/30 border border-zinc-800/80 rounded-2xl space-y-3">
-                <h3 className="text-xs font-semibold text-amber-300 flex items-center gap-2">
-                  <Info className="w-4 h-4 text-amber-400" strokeWidth={1.5} />
-                  Co je a NENÍ ADHD?
-                </h3>
-                <p className="text-[11px] text-zinc-400 leading-relaxed">
-                  ADHD je celoživotní neurovývojové onemocnění spojené s odlišnou hladinou dopaminu a noradrenalinu v prefrontální kůře.
-                </p>
-                <ul className="text-[11px] space-y-1.5 text-zinc-300 pt-1">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-teal-400 font-bold">✓</span>
-                    <span>NENÍ to selhání výchovy ani nedostatku vůle.</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-teal-400 font-bold">✓</span>
-                    <span>NENÍ to způsobeno sladkostmi ani displeji.</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-teal-400 font-bold">✓</span>
-                    <span>Je to organická porucha chemického paliva mozku.</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Karta 2 */}
-              <div className="p-6 bg-zinc-800/30 border border-zinc-800/80 rounded-2xl space-y-3">
-                <h3 className="text-xs font-semibold text-amber-300 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-400" strokeWidth={1.5} />
-                  Pod hladinou ledovce
-                </h3>
-                <p className="text-[11px] text-zinc-400 leading-relaxed">
-                  Okolí vidí prokrastinaci a neklid. Uvnitř však probíhá:
-                </p>
-                <ul className="text-[11px] space-y-2 text-zinc-300 pt-1">
-                  <li>
-                    <b className="text-zinc-200">Dopaminový deficit:</b> Chemické ticho při nudných úkolech.
-                  </li>
-                  <li>
-                    <b className="text-zinc-200">Exekutivní paralýza:</b> Fyzická nemožnost začít pracovat.
-                  </li>
-                  <li>
-                    <b className="text-zinc-200">Skotom času:</b> Vnímání času pouze jako "TEĎ" nebo "NĚKDY JINDY".
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Karta 3: Překonání paralýzy */}
-            <div className="p-6 bg-zinc-800/30 border border-zinc-800/80 rounded-2xl space-y-4">
-              <h3 className="text-xs font-semibold text-amber-300 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" strokeWidth={1.5} />
-                Jak překonat exekutivní paralýzu?
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3.5 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1">
-                  <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wide">
-                    1. Pravidlo 2 minut
-                  </div>
-                  <p className="text-[10px] text-zinc-400 leading-relaxed">
-                    Zadejte si pouze mikro-krok (např. odnést 1 skleničku). První dopamin nastartuje další akce.
+          {/* ELEGANTNÍ UPOUTÁVKA NA PRŮVODCE ZDARMA */}
+          <section className="pt-2">
+            <Link
+              href="/adhd-ledovec"
+              className="group block p-6 sm:p-8 bg-zinc-800/30 hover:bg-zinc-800/50 border border-zinc-800 hover:border-amber-400/40 rounded-3xl transition-all"
+            >
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="space-y-2 text-center sm:text-left">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-[11px] font-medium border border-amber-400/20">
+                    <FileText className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    <span>Neurodivergentní průvodce zdarma</span>
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-zinc-100 group-hover:text-amber-300 transition">
+                    ADHD LEDOVEC
+                  </h3>
+                  <p className="text-xs text-zinc-400 max-w-lg leading-relaxed">
+                    Ucelený vizuální e-book o podstatě ADHD mozku, dopaminovém deficitu a exekutivní paralýze. Stáhněte si ho bezplatně v PDF.
                   </p>
                 </div>
 
-                <div className="p-3.5 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1">
-                  <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wide">
-                    2. Tělesné dvojče
-                  </div>
-                  <p className="text-[10px] text-zinc-400 leading-relaxed">
-                    Pracujte v přítomnosti další osoby. Zvyšuje to noradrenalin a usnadňuje fokus.
-                  </p>
-                </div>
-
-                <div className="p-3.5 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1">
-                  <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wide">
-                    3. Hnědý šum
-                  </div>
-                  <p className="text-[10px] text-zinc-400 leading-relaxed">
-                    Poslech hnědého šumu (Brown Noise) pomáhá vypnout vnitřní monolog a zklidnit smysly.
-                  </p>
+                <div className="flex-shrink-0 bg-amber-400 group-hover:bg-amber-300 text-zinc-950 font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 transition">
+                  <span>Prohlédnout & Stáhnout</span>
+                  <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
                 </div>
               </div>
-            </div>
+            </Link>
           </section>
 
           {/* Sekce Magazínu */}
@@ -395,11 +305,10 @@ export default function LandingPage() {
         </main>
       </div>
 
-      {/* ZÁPATÍ (FOOTER) PODLE VZORU */}
+      {/* ZÁPATÍ (FOOTER) */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           
-          {/* Autorské prohlášení */}
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
               © 2026 Noční Knihovna. Všechna práva vyhrazená.
@@ -411,7 +320,6 @@ export default function LandingPage() {
 
           <div className="border-t border-zinc-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             
-            {/* Provozovatel */}
             <div className="space-y-0.5 text-center sm:text-left">
               <p className="font-bold text-zinc-200">
                 Provozovatel: Jitka Pekárková
@@ -424,7 +332,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Odkazy */}
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
               <Link href="/o-autorce" className="text-amber-300 hover:underline">
                 O autorce
