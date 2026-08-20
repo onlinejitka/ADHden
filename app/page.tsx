@@ -273,7 +273,7 @@ export default function LandingPage() {
       <div className="h-5" />
 
           {/* Sekce Magazínu */}
-          <section className="space-y-6 border-t border-zinc-800/60 pt-12">
+          <section className="space-y-6 border-t border-zinc-800/60 pt-0">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-200">
