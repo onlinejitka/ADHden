@@ -9,7 +9,6 @@ const NOTION_DATABASE_ID = (
   ""
 ).trim();
 
-// Převod bohatého textu z Notion (tučné, kurzíva, odkazy + Shift+Enter \n)
 function richTextToHtml(richText: any[]): string {
   if (!richText || !Array.isArray(richText)) return "";
   return richText
@@ -17,7 +16,6 @@ function richTextToHtml(richText: any[]): string {
       let text = t.plain_text || t.text?.content || "";
       if (!text) return "";
 
-      // Ošetření HTML a zachování Shift+Enter s mikromezerou
       text = text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -46,7 +44,6 @@ function richTextToHtml(richText: any[]): string {
     .join("");
 }
 
-// Převod bloků z Notion do HTML s kompaktní velikostí písma
 function blocksToHtml(blocks: any[]): string {
   if (!blocks || !Array.isArray(blocks)) return "";
 
@@ -61,7 +58,6 @@ function blocksToHtml(blocks: any[]): string {
     const data = block[type];
     const content = data?.rich_text ? richTextToHtml(data.rich_text) : "";
 
-    // Odrážky
     if (type === "bulleted_list_item") {
       if (!inBulletedList) {
         if (inNumberedList) {
@@ -78,7 +74,6 @@ function blocksToHtml(blocks: any[]): string {
       inBulletedList = false;
     }
 
-    // Číslovaný seznam
     if (type === "numbered_list_item") {
       if (!inNumberedList) {
         if (inBulletedList) {
@@ -95,7 +90,6 @@ function blocksToHtml(blocks: any[]): string {
       inNumberedList = false;
     }
 
-    // Odstavce a nadpisy (kompaktní font-size)
     if (type === "paragraph") {
       if (content.trim()) {
         html += `<p style="margin-bottom: 1.15rem; font-size: 0.8125rem; line-height: 1.7; color: #d4d4d8;">${content}</p>`;
@@ -148,7 +142,7 @@ export async function getPublishedPosts() {
 
     const data = await res.json();
 
-    return data.results.map((page: any) => {
+    const posts = data.results.map((page: any) => {
       const props = page.properties;
       const getPropText = (prop: any) => {
         if (!prop) return "";
@@ -157,14 +151,17 @@ export async function getPublishedPosts() {
         return "";
       };
 
+      const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
+
       return {
         id: page.id,
         title: getPropText(props.Title) || getPropText(props.Název) || "Bez názvu",
         slug: getPropText(props.Slug) || page.id,
         description: getPropText(props.Perex) || getPropText(props.Popis) || "",
         category: props.Category?.select?.name || props.Kategorie?.select?.name || "ADHD & Čas",
-        date: props.Date?.date?.start || props.Datum?.date?.start
-          ? new Date(props.Date?.date?.start || props.Datum?.date?.start).toLocaleDateString("cs-CZ", {
+        dateRaw,
+        date: dateRaw
+          ? new Date(dateRaw).toLocaleDateString("cs-CZ", {
               day: "numeric",
               month: "long",
               year: "numeric",
@@ -172,6 +169,13 @@ export async function getPublishedPosts() {
           : "",
         youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
       };
+    });
+
+    // Seřazení článků podle data (od nejnovějšího po nejstarší)
+    return posts.sort((a: any, b: any) => {
+      const timeA = a.dateRaw ? new Date(a.dateRaw).getTime() : 0;
+      const timeB = b.dateRaw ? new Date(b.dateRaw).getTime() : 0;
+      return timeB - timeA;
     });
   } catch (error) {
     console.error("Chyba getPublishedPosts:", error);
