@@ -23,42 +23,42 @@ export default function AdhdLedovecPage() {
       
       <div>
         {/* Záhlaví */}
-        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
-              ADHDen
-            </span>
-            <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
-              cz
-            </span>
-          </Link>
+     <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+  {/* Logo v záhlaví */}
+  <Link href="/" className="flex items-center group">
+    <img
+      src="/ADHden%20logo.jpg"
+      alt="ADHDen.cz logo"
+      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+    />
+  </Link>
 
-          <div className="flex items-center gap-3 sm:gap-5">
-            <Link
-              href="/adhd-ledovec"
-              className="text-xs text-amber-300 font-medium flex items-center gap-1.5"
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-300" strokeWidth={1.5} />
-              <span>ADHD Ledovec</span>
-            </Link>
+  <div className="flex items-center gap-3 sm:gap-5">
+    <Link
+      href="/adhd-ledovec"
+      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+    >
+      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+      <span>ADHD Ledovec</span>
+    </Link>
 
-            <Link
-              href="/magazin"
-              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-            >
-              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-              <span>Magazín</span>
-            </Link>
+    <Link
+      href="/magazin"
+      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+    >
+      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+      <span>Magazín</span>
+    </Link>
 
-            <Link
-              href="/app"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-            >
-              <span>Spustit aplikaci</span>
-              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-            </Link>
-          </div>
-        </header>
+    <Link
+      href="/app"
+      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+    >
+      <span>Spustit aplikaci</span>
+      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+    </Link>
+  </div>
+</header>
 
         {/* Hlavní obsah */}
         <main className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-12">
