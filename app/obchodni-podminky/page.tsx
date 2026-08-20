@@ -70,7 +70,6 @@ export default function ObchodniPodminkyPage() {
                 <p>IČO: 87458021</p>
                 <p>Fyzická osoba zapsaná v živnostenském rejstříku.</p>
               </div>
-            </p>
             </section>
 
             <section className="space-y-2">
@@ -100,7 +99,7 @@ export default function ObchodniPodminkyPage() {
             <section className="space-y-2">
               <h2 className="text-base font-semibold text-zinc-100">5. Kontaktní údaje</h2>
               <p>
-                Pro jakékoliv dotazy nebo reklamace můžete využit e-mailovou adresu: <a href="mailto:jitka@jitkap.cz" className="text-amber-300 underline">jitka@jitkap.cz</a>.
+                Pro jakékoliv dotazy nebo reklamace můžete využít e-mailovou adresu: <a href="mailto:jitka@jitkap.cz" className="text-amber-300 underline">jitka@jitkap.cz</a>.
               </p>
             </section>
           </div>
