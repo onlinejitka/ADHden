@@ -94,14 +94,18 @@ export default function LandingPage() {
               <span>♡ Laskavý systém pro neurodivergentní mozek</span>
             </div>
 
+            
+      {/* Prázdný spacer mezi sekcemi */}
+      <div className="h-20" />
+
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
               Zkrotit chaos, časovou slepotu
               <p>a paralýzu{" "}
               <span className="text-amber-300 font-normal">bez pocitu viny.</span></p>
             </h1>
 
-            <p>
-            </p>
+      {/* Prázdný spacer mezi sekcemi */}
+      <div className="h-20" />
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
