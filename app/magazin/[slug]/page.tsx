@@ -7,9 +7,13 @@ export const revalidate = 60;
 export default async function ArticlePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }> | { slug: string };
 }) {
-  const post = await getPostBySlug(params.slug);
+  // Ošetření asynchronních params
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
+
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return (
@@ -27,18 +31,18 @@ export default async function ArticlePage({
     );
   }
 
+  // Bezpečná záloha pro HTML obsah
+  const htmlContent = post.contentHtml || post.content || post.html || "";
+
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300">
-      {/* Jednotné záhlaví */}
+      {/* Záhlaví */}
       <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-        <Link
-          href="/"
-          className="flex items-center gap-2 group"
-        >
+        <Link href="/" className="flex items-center gap-2 group">
           <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
             ADHDen
           </span>
-          <span className="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
+          <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
             cz
           </span>
         </Link>
@@ -86,7 +90,7 @@ export default async function ArticlePage({
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-100 leading-snug">
-            {post.title}
+            {post.title || "Bez názvu"}
           </h1>
 
           {post.description && (
@@ -96,13 +100,19 @@ export default async function ArticlePage({
           )}
         </div>
 
-        {/* Samotný text z Notion */}
-        <div
-          className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60"
-          dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-        />
+        {/* Vykreslení HTML z Notionu s ošetřením */}
+        {htmlContent ? (
+          <div
+            className="prose prose-invert prose-zinc max-w-none text-xs sm:text-sm leading-relaxed space-y-4 pt-4 border-t border-zinc-800/60"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        ) : (
+          <div className="pt-4 border-t border-zinc-800/60 text-xs text-zinc-500 italic">
+            Obsah článku se nepodařilo načíst z Notionu.
+          </div>
+        )}
 
-        {/* Výzva k aplikaci na konci článku */}
+        {/* Výzva na konci článku */}
         <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
           <h3 className="text-sm font-semibold text-zinc-200">
             Chcete si tyto techniky vyzkoušet v praxi?
