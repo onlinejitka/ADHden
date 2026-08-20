@@ -231,8 +231,6 @@ export default async function ArticlePage({
         </div>
       </footer>
     </div>
-  );
-}
 
 function renderNotionBlock(block: any, index: number) {
   if (typeof block === "string") {
