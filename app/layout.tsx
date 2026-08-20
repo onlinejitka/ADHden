@@ -9,8 +9,41 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "ADHDen",
-  description: "Zkroťte chaos, časovou slepotu a paralýzu bez pocitu viny.",
+  metadataBase: new URL("https://www.adhden.cz"),
+  title: {
+    default: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
+    template: "%s | ADHDen.cz",
+  },
+  description:
+    "Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
+  keywords: [
+    "ADHD",
+    "ADHD nástroje",
+    "Time Timer",
+    "Hnědý šum",
+    "Exekutivní paralýza",
+    "Body Doubling",
+    "ADHD ledovec",
+    "Časová slepota",
+  ],
+  authors: [{ name: "Jitka Pekárková" }],
+  openGraph: {
+    title: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
+    description:
+      "Nástroje navržené přímo pro ADHD – bez tlaku, výčitek a bez nutnosti registrace.",
+    url: "https://www.adhden.cz",
+    siteName: "ADHDen",
+    locale: "cs_CZ",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -18,8 +51,30 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "ADHDen",
+    url: "https://www.adhden.cz",
+    applicationCategory: "HealthApplication",
+    operatingSystem: "All",
+    description:
+      "Aplikace a průvodce pro zvládání ADHD, exekutivní paralýzy a časové slepoty.",
+    author: {
+      "@type": "Person",
+      name: "Jitka Pekárková",
+      url: "https://jitkap.cz/",
+    },
+  };
+
   return (
     <html lang="cs" className={lexend.variable}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="bg-[#121214] text-zinc-200 font-sans antialiased min-h-screen selection:bg-amber-400/20 selection:text-amber-300">
         {children}
       </body>
