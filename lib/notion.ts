@@ -9,7 +9,7 @@ const NOTION_DATABASE_ID = (
   ""
 ).trim();
 
-// Převod bohatého textu z Notion (tučné, kurzíva, odkazy) do HTML
+// Převod bohatého textu z Notion (tučné, kurzíva, odkazy + Shift+Enter \n -> <br/>)
 function richTextToHtml(richText: any[]): string {
   if (!richText || !Array.isArray(richText)) return "";
   return richText
@@ -17,10 +17,12 @@ function richTextToHtml(richText: any[]): string {
       let text = t.plain_text || t.text?.content || "";
       if (!text) return "";
 
+      // Ošetření HTML a zachování Shift+Enter
       text = text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, "<br />");
 
       if (t.annotations?.bold) {
         text = `<strong class="font-bold text-zinc-100">${text}</strong>`;
@@ -44,7 +46,7 @@ function richTextToHtml(richText: any[]): string {
     .join("");
 }
 
-// Převod bloků z Notion (odstavce, odrážky, nadpisy) do HTML
+// Převod bloků z Notion (odstavce, odrážky, nadpisy) do HTML s jasnými odstupovými mezerami
 function blocksToHtml(blocks: any[]): string {
   if (!blocks || !Array.isArray(blocks)) return "";
 
@@ -59,14 +61,14 @@ function blocksToHtml(blocks: any[]): string {
     const data = block[type];
     const content = data?.rich_text ? richTextToHtml(data.rich_text) : "";
 
-    // Odrážky
+    // Odrážky s dostatečným horním i spodním odstupem (my-6)
     if (type === "bulleted_list_item") {
       if (!inBulletedList) {
         if (inNumberedList) {
           html += "</ol>";
           inNumberedList = false;
         }
-        html += '<ul class="space-y-3 my-4 pl-1">';
+        html += '<ul class="space-y-3 my-6 pl-1">';
         inBulletedList = true;
       }
       html += `<li class="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed"><span class="text-amber-400 font-bold text-base leading-none mt-0.5">•</span><div class="flex-1">${content}</div></li>`;
@@ -83,7 +85,7 @@ function blocksToHtml(blocks: any[]): string {
           html += "</ul>";
           inBulletedList = false;
         }
-        html += '<ol class="space-y-3 my-4 pl-1">';
+        html += '<ol class="space-y-3 my-6 pl-1">';
         inNumberedList = true;
       }
       html += `<li class="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 leading-relaxed"><span class="text-amber-400 font-bold text-xs mt-0.5">1.</span><div class="flex-1">${content}</div></li>`;
@@ -93,21 +95,21 @@ function blocksToHtml(blocks: any[]): string {
       inNumberedList = false;
     }
 
-    // Odstavce a nadpisy
+    // Odstavce a nadpisy s jasným řádkováním
     if (type === "paragraph") {
       if (content.trim()) {
-        html += `<p class="mb-4 text-xs sm:text-sm text-zinc-300 leading-relaxed">${content}</p>`;
+        html += `<p class="mb-5 text-xs sm:text-sm text-zinc-300 leading-relaxed">${content}</p>`;
       }
     } else if (type === "heading_1") {
-      html += `<h1 class="text-xl sm:text-2xl font-bold text-zinc-100 mt-8 mb-3">${content}</h1>`;
+      html += `<h1 class="text-xl sm:text-2xl font-bold text-zinc-100 mt-10 mb-4">${content}</h1>`;
     } else if (type === "heading_2") {
-      html += `<h2 class="text-lg sm:text-xl font-bold text-zinc-100 mt-8 mb-3">${content}</h2>`;
+      html += `<h2 class="text-lg sm:text-xl font-bold text-zinc-100 mt-9 mb-3">${content}</h2>`;
     } else if (type === "heading_3") {
-      html += `<h3 class="text-base sm:text-lg font-semibold text-amber-300 mt-6 mb-2">${content}</h3>`;
+      html += `<h3 class="text-base sm:text-lg font-semibold text-amber-300 mt-7 mb-3">${content}</h3>`;
     } else if (type === "quote") {
-      html += `<blockquote class="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-6">${content}</blockquote>`;
+      html += `<blockquote class="border-l-2 border-amber-400 pl-4 italic text-zinc-400 my-6 leading-relaxed">${content}</blockquote>`;
     } else if (type === "callout") {
-      html += `<div class="p-4 bg-zinc-800/40 border border-zinc-700/60 rounded-xl my-6 text-xs sm:text-sm text-zinc-200">${content}</div>`;
+      html += `<div class="p-4 bg-zinc-800/40 border border-zinc-700/60 rounded-xl my-6 text-xs sm:text-sm text-zinc-200 leading-relaxed">${content}</div>`;
     } else if (type === "image") {
       const imgUrl = data?.external?.url || data?.file?.url;
       if (imgUrl) {
