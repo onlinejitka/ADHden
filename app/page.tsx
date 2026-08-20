@@ -202,6 +202,8 @@ export default async function LandingPage() {
             </div>
           </section>
 
+          <div className="h-5" /> {/* Mezera 64 px */}
+
           {/* Upoutávka na průvodce */}
           <section className="pt-2">
             <Link
@@ -230,8 +232,10 @@ export default async function LandingPage() {
             </Link>
           </section>
 
+          <div className="h-10" /> {/* Mezera 64 px */}
+
           {/* Sekce 3 nejnovějších článků z Notion */}
-          <section className="space-y-6 border-t border-zinc-800/60 pt-12">
+          <section className="space-y-6 pt-0">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-200">
