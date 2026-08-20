@@ -539,17 +539,13 @@ export default function ADHDApp() {
 
         {/* Hlavička aplikace s proklikem na úvod */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
-          <Link href="/" className="group flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-xl font-bold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
-                ADHDen
-              </h1>
-              <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1 py-0.2 rounded font-mono">
-                cz
-              </span>
-            </div>
-            <p className="text-xs text-zinc-400 mt-0.5">Laskavý průvodce pro klidnou mysl</p>
-          </Link>
+          <Link href="/" className="flex items-center group">
+    <img
+      src="/ADHden%20logo.jpg"
+      alt="ADHDen.cz logo"
+      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+    />
+  </Link>
 
           <button
             onClick={() => setIsPro(!isPro)}
