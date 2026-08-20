@@ -106,7 +106,7 @@ export default async function LandingPage() {
             </div>
           </div>
 
-          <div className="h-10" /> {/* Mezera 64 px */}
+          <div className="h-5" /> {/* Mezera 64 px */}
 
           {/* Sekce Nástrojů */}
           <section className="space-y-6 text-left">
@@ -232,7 +232,7 @@ export default async function LandingPage() {
             </Link>
           </section>
 
-          <div className="h-10" /> {/* Mezera 64 px */}
+          <div className="h-5" /> {/* Mezera 64 px */}
 
           {/* Sekce 3 nejnovějších článků z Notion */}
           <section className="space-y-6 pt-0">
