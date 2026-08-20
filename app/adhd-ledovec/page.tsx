@@ -10,7 +10,8 @@ import {
   Zap,
   Sparkles,
   BookOpen,
-  CheckCircle2
+  CheckCircle2,
+  FileText
 } from "lucide-react";
 
 export default function AdhdLedovecPage() {
@@ -21,7 +22,7 @@ export default function AdhdLedovecPage() {
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       
       <div>
-{/* Hlavička */}
+        {/* Záhlaví */}
         <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
           <Link href="/" className="flex items-center gap-2 group">
             <span className="text-lg font-semibold tracking-wider text-amber-300 group-hover:text-amber-200 transition">
@@ -35,9 +36,9 @@ export default function AdhdLedovecPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <Link
               href="/adhd-ledovec"
-              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+              className="text-xs text-amber-300 font-medium flex items-center gap-1.5"
             >
-              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <FileText className="w-3.5 h-3.5 text-amber-300" strokeWidth={1.5} />
               <span>ADHD Ledovec</span>
             </Link>
 
@@ -238,7 +239,10 @@ export default function AdhdLedovecPage() {
           
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHDen. Všechna práva vyhrazena.
+              © 2026 Noční Knihovna. Všechna práva vyhrazená.
+            </p>
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
             </p>
           </div>
 
@@ -257,32 +261,32 @@ export default function AdhdLedovecPage() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
-  <a
-    href="https://jitkap.cz/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-amber-300 hover:underline"
-  >
-    O autorce
-  </a>
-  <span className="text-zinc-700">•</span>
-  <a
-    href="https://navigator40k.cz/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-teal-300 hover:underline"
-  >
-    Navigátor 40k
-  </a>
-  <span className="text-zinc-700">•</span>
-  <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
-    Obchodní podmínky
-  </Link>
-  <span className="text-zinc-700">•</span>
-  <Link href="/gdpr" className="text-zinc-300 hover:text-zinc-100">
-    GDPR
-  </Link>
-</div>
+              <a
+                href="https://jitkap.cz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-300 hover:underline"
+              >
+                O autorce
+              </a>
+              <span className="text-zinc-700">•</span>
+              <a
+                href="https://navigator40k.cz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal-300 hover:underline"
+              >
+                Navigátor 40k
+              </a>
+              <span className="text-zinc-700">•</span>
+              <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
+                Obchodní podmínky
+              </Link>
+              <span className="text-zinc-700">•</span>
+              <Link href="/gdpr" className="text-zinc-300 hover:text-zinc-100">
+                GDPR
+              </Link>
+            </div>
 
           </div>
         </div>
