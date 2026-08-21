@@ -77,7 +77,7 @@ export default async function LandingPage() {
               <span className="text-amber-300 font-normal">bez pocitu viny.</span>
             </h1>
 
-           <div className="h-5" /> {/* Mezera 64 px */}
+            <div className="h-5" /> {/* Mezera 64 px */}
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
@@ -234,7 +234,7 @@ export default async function LandingPage() {
 
           <div className="h-5" /> {/* Mezera 64 px */}
 
-          {/* Sekce 3 nejnovějších článků z Notion */}
+          {/* Sekce 3 nejnovějších článků z Notion s obrázky */}
           <section className="space-y-6 pt-0">
             <div className="flex items-center justify-between">
               <div>
@@ -265,31 +265,44 @@ export default async function LandingPage() {
                   <Link
                     key={art.id}
                     href={`/magazin/${art.slug}`}
-                    className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-3"
+                    className="group flex flex-col p-4 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all"
                   >
-                    <div className="space-y-2.5">
-                      <div className="flex items-center justify-between text-[11px] text-zinc-500">
-                        <span className="text-amber-300/90 font-medium">
-                          {art.category}
-                        </span>
+                    {/* Renderování náhledového obrázku z Notion */}
+                    {art.coverImage && (
+                      <div className="w-full h-36 rounded-xl overflow-hidden mb-3.5 border border-zinc-800/60 bg-zinc-900">
+                        <img 
+                          src={art.coverImage} 
+                          alt={art.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                          <span className="text-amber-300/90 font-medium">
+                            {art.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
+                          {art.title}
+                        </h3>
+
+                        {art.description && (
+                          <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
+                            {art.description}
+                          </p>
+                        )}
                       </div>
 
-                      <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
-                        {art.title}
-                      </h3>
-
-                      {art.description && (
-                        <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
-                          {art.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="pt-2 text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition border-t border-zinc-800/40">
-                      <span>{art.date}</span>
-                      <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5">
-                        Číst <ChevronRight className="w-3 h-3" />
-                      </span>
+                      <div className="pt-2 mt-auto text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition border-t border-zinc-800/40">
+                        <span>{art.date}</span>
+                        <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5 font-medium">
+                          Číst <ChevronRight className="w-3 h-3" />
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 ))}
