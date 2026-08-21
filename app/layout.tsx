@@ -8,6 +8,16 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ECKT5B013D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ECKT5B013D');
+</script>
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.adhden.cz"),
   title: {
