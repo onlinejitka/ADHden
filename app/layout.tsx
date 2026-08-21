@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const lexend = Lexend({
@@ -8,15 +9,14 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.adhden.cz"),
   title: {
-    default: "ADHden.cz | Laskavý systém pro neurodivergentní mozek",
-    template: "%s | ADHden.cz",
+    default: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
+    template: "%s | ADHDen.cz",
   },
   description:
-    "Magazín o/pro ADHD. Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
+    "Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
   keywords: [
     "ADHD",
     "ADHD nástroje",
@@ -34,11 +34,11 @@ export const metadata: Metadata = {
     apple: "/ADHden%20favikon.png",
   },
   openGraph: {
-    title: "ADHden.cz | Laskavý systém pro neurodivergentní mozek",
+    title: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
     description:
       "Nástroje navržené přímo pro ADHD – bez tlaku, výčitek a bez nutnosti registrace.",
     url: "https://www.adhden.cz",
-    siteName: "ADHden",
+    siteName: "ADHDen",
     locale: "cs_CZ",
     type: "website",
   },
@@ -73,7 +73,7 @@ export default function RootLayout({
     },
   };
 
- return (
+  return (
     <html lang="cs" className={lexend.variable}>
       <head>
         <script
