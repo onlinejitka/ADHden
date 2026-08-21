@@ -52,42 +52,42 @@ export default async function ArticlePage({
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
-       <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  {/* Logo v záhlaví */}
-  <Link href="/" className="flex items-center group">
-    <img
-      src="/ADHden%20logo.jpg"
-      alt="ADHDen.cz logo"
-      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
-    />
-  </Link>
+        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+          {/* Logo v záhlaví */}
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/ADHden%20logo.jpg"
+              alt="ADHDen.cz logo"
+              className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+            />
+          </Link>
 
-  <div className="flex items-center gap-3 sm:gap-5">
-    <Link
-      href="/adhd-ledovec"
-      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
-    >
-      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>ADHD Ledovec</span>
-    </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/adhd-ledovec"
+              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>ADHD Ledovec</span>
+            </Link>
 
-    <Link
-      href="/magazin"
-      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-    >
-      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>Magazín</span>
-    </Link>
+            <Link
+              href="/magazin"
+              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>Magazín</span>
+            </Link>
 
-    <Link
-      href="/app"
-      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-    >
-      <span>Spustit aplikaci</span>
-      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-    </Link>
-  </div>
-</header>
+            <Link
+              href="/app"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+            >
+              <span>Spustit aplikaci</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </Link>
+          </div>
+        </header>
 
         <main className="max-w-3xl mx-auto px-6 pt-10 pb-20 space-y-8">
           <Link
@@ -122,6 +122,17 @@ export default async function ArticlePage({
               </p>
             )}
           </div>
+
+          {/* HLAVNÍ OBRÁZEK Z NOTIONU */}
+          {post.coverImage && (
+            <div className="my-8 w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-xl">
+              <img 
+                src={post.coverImage} 
+                alt={post.title} 
+                className="w-full h-auto object-cover max-h-[450px]" 
+              />
+            </div>
+          )}
 
           {youtubeEmbedUrl && (
             <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
