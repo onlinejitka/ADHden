@@ -128,7 +128,10 @@ export default async function MagazinIndexPage() {
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHden - Všechna práva vyhrazená.
+               © 2026 ADHden - Všechna práva vyhrazená.
+            </p>
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
+              Důležité upozornění: Obsah tohoto webu a aplikace má pouze informativní, vzdělávací a seberozvojový charakter. Autorka není lékař, psychiatr ani psychoterapeut. Veškeré informace a aplikace nenahrazují odbornou lékařskou či psychologickou péči. Použití nástrojů je na vlastní zodpovědnost uživatele.
             </p>
           </div>
 
