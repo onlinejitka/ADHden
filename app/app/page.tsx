@@ -76,15 +76,15 @@ export default function ADHDApp() {
   const wakeLockRef = useRef<any>(null);
 
   useEffect(() => {
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    const tabParam = params.get("tab") as Tab;
-    const validTabs: Tab[] = ["timer", "kouskovac", "rutiny", "klid", "uspechy", "bodydoubling"];
-    if (tabParam && validTabs.includes(tabParam)) {
-      setActiveTab(tabParam);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as Tab;
+      const validTabs: Tab[] = ["timer", "kouskovac", "rutiny", "klid", "uspechy", "bodydoubling"];
+      if (tabParam && validTabs.includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
     }
-  }
-}, []);
+  }, []);
 
   useEffect(() => {
     async function requestWakeLock() {
@@ -350,6 +350,36 @@ export default function ADHDApp() {
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
+  // Časovač vypnutí zvuku
+  const [klidTimerMins, setKlidTimerMins] = useState<number | null>(null);
+  const [klidSecsLeft, setKlidSecsLeft] = useState<number | null>(null);
+
+  const startKlidTimer = (mins: number) => {
+    setKlidTimerMins(mins);
+    setKlidSecsLeft(mins * 60);
+  };
+
+  const cancelKlidTimer = () => {
+    setKlidTimerMins(null);
+    setKlidSecsLeft(null);
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (klidSecsLeft !== null && klidSecsLeft > 0 && activeAudioId) {
+      interval = setInterval(() => {
+        setKlidSecsLeft((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+    } else if (klidSecsLeft === 0) {
+      soundEngine?.stopNoise();
+      if (audioPlayerRef.current) audioPlayerRef.current.pause();
+      setActiveAudioId(null);
+      setKlidTimerMins(null);
+      setKlidSecsLeft(null);
+    }
+    return () => clearInterval(interval);
+  }, [klidSecsLeft, activeAudioId]);
+
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPro) return;
     if (customAudios.length >= 3) {
@@ -381,6 +411,7 @@ export default function ADHDApp() {
 
     if (activeAudioId === id) {
       setActiveAudioId(null);
+      cancelKlidTimer();
       return;
     }
 
@@ -540,12 +571,12 @@ export default function ADHDApp() {
         {/* Hlavička aplikace s proklikem na úvod */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <Link href="/" className="flex items-center group">
-    <img
-      src="/ADHden%20logo.jpg"
-      alt="ADHDen.cz logo"
-      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
-    />
-  </Link>
+            <img
+              src="/ADHden%20logo.jpg"
+              alt="ADHDen.cz logo"
+              className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+            />
+          </Link>
 
           <button
             onClick={() => setIsPro(!isPro)}
@@ -936,6 +967,7 @@ export default function ADHDApp() {
                 </p>
               </div>
 
+              {/* SEZNAM ZVUKŮ */}
               <div className="space-y-2.5">
                 {officialAudios.map((audio) => {
                   const isPlaying = activeAudioId === audio.id;
@@ -957,6 +989,45 @@ export default function ADHDApp() {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* ČASOVAČ VYPNUTÍ AUDIA */}
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-teal-400" strokeWidth={1.75} /> Časovač vypnutí zvuku
+                  </span>
+                  {klidSecsLeft !== null && (
+                    <span className="text-amber-300 font-mono font-bold">
+                      vypne za {formatTime(klidSecsLeft)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {[15, 30, 45, 60].map((mins) => (
+                    <button
+                      key={mins}
+                      onClick={() => startKlidTimer(mins)}
+                      className={`py-2 rounded-xl text-xs font-medium transition ${
+                        klidTimerMins === mins
+                          ? "bg-teal-400 text-zinc-950 font-bold"
+                          : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60"
+                      }`}
+                    >
+                      {mins} min
+                    </button>
+                  ))}
+                </div>
+
+                {klidSecsLeft !== null && (
+                  <button
+                    onClick={cancelKlidTimer}
+                    className="w-full py-1.5 text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center justify-center gap-1 transition"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Zrušit časovač
+                  </button>
+                )}
               </div>
 
               {/* VLASTNÍ MP3 */}
@@ -1036,6 +1107,7 @@ export default function ADHDApp() {
                   soundEngine?.stopNoise();
                   if (audioPlayerRef.current) audioPlayerRef.current.pause();
                   setActiveAudioId(null);
+                  cancelKlidTimer();
                 }}
                 className="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-2 transition"
               >
