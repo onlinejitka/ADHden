@@ -8,24 +8,15 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ECKT5B013D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-ECKT5B013D');
-</script>
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.adhden.cz"),
   title: {
-    default: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
-    template: "%s | ADHDen.cz",
+    default: "ADHden.cz | Laskavý systém pro neurodivergentní mozek",
+    template: "%s | ADHden.cz",
   },
   description:
-    "Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
+    "Magazín o/pro ADHD. Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
   keywords: [
     "ADHD",
     "ADHD nástroje",
@@ -43,11 +34,11 @@ export const metadata: Metadata = {
     apple: "/ADHden%20favikon.png",
   },
   openGraph: {
-    title: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
+    title: "ADHden.cz | Laskavý systém pro neurodivergentní mozek",
     description:
       "Nástroje navržené přímo pro ADHD – bez tlaku, výčitek a bez nutnosti registrace.",
     url: "https://www.adhden.cz",
-    siteName: "ADHDen",
+    siteName: "ADHden",
     locale: "cs_CZ",
     type: "website",
   },
@@ -82,7 +73,7 @@ export default function RootLayout({
     },
   };
 
-  return (
+ return (
     <html lang="cs" className={lexend.variable}>
       <head>
         <script
@@ -91,6 +82,20 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#121214] text-zinc-200 font-sans antialiased min-h-screen selection:bg-amber-400/20 selection:text-amber-300">
+        {/* Google Analytics skripty umístěné správně na začátku <body> */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ECKT5B013D"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ECKT5B013D');
+          `}
+        </Script>
+
         {children}
       </body>
     </html>
