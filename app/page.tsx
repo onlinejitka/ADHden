@@ -25,56 +25,60 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       
       <div>
-        {/* Responzivní horní navigace (odladěná pro mobily) */}
+        {/* Horní navigace - optimalizovaná pro mobil */}
         <header className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-zinc-800/60 gap-2">
           <Link href="/" className="flex items-center flex-shrink-0 group">
             <img
               src="/ADHden%20logo.jpg"
               alt="ADHDen.cz logo"
-              className="h-7 sm:h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+              className="h-8 sm:h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-5">
             <Link
               href="/adhd-ledovec"
-              className="text-[11px] sm:text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1"
+              className="text-[11px] sm:text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1 sm:gap-1.5 flex-shrink-0"
             >
-              <FileText className="w-3.5 h-3.5 text-amber-300/80 flex-shrink-0" strokeWidth={1.5} />
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
               <span><span className="hidden sm:inline">ADHD </span>Ledovec</span>
             </Link>
 
             <Link
               href="/magazin"
-              className="text-[11px] sm:text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1"
+              className="text-[11px] sm:text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1 sm:gap-1.5 flex-shrink-0"
             >
-              <BookOpen className="w-3.5 h-3.5 text-amber-300/80 flex-shrink-0" strokeWidth={1.5} />
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
               <span>Magazín</span>
             </Link>
             
             <Link
               href="/app"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs flex items-center gap-1 transition flex-shrink-0"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs flex items-center gap-1 sm:gap-1.5 transition flex-shrink-0"
             >
-              <span>Aplikace</span>
+              <span>Spustit aplikaci</span>
               <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
             </Link>
           </div>
         </header>
 
         {/* Hlavní obsah */}
-        <main className="max-w-4xl mx-auto px-6 pt-10 sm:pt-14 pb-16 space-y-12 sm:space-y-16">
+        <main className="max-w-4xl mx-auto px-6 pt-14 pb-16 space-y-16">
           
           {/* Hero sekce */}
-          <div className="text-center space-y-6 sm:space-y-8">
+          <div className="text-center space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700/50 text-[11px] text-amber-300/90">
               <span>♡ Laskavý systém pro neurodivergentní mozek</span>
             </div>
+
+            <div className="h-10" /> {/* Mezera 64 px */}
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
               Zkrotit chaos, časovou slepotu a paralýzu{" "}
               <span className="text-amber-300 font-normal">bez pocitu viny.</span>
             </h1>
+
+            <div className="h-5" /> {/* Mezera 64 px */}
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
@@ -93,28 +97,32 @@ export default async function LandingPage() {
               </Link>
             </div>
 
-            {/* Jasná informace o Free i rozšiřující PRO verzi */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-[11px] text-zinc-400 pt-2">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" strokeWidth={1.5} />
-                Základní funkce zdarma a bez registrace
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" strokeWidth={1.5} />
-                Žádné výčitky a tresty
-              </span>
-              <span className="flex items-center gap-1.5 text-amber-300/90 font-medium">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" strokeWidth={1.5} />
-                Rozšíření PRO s vyzkoušením na 7 dní zdarma
-              </span>
+            {/* Původní 2 body + Třetí řádek pod nimi */}
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-center gap-6 text-[11px] text-zinc-500">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" strokeWidth={1.5} /> Zdarma bez registrace
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" strokeWidth={1.5} /> Žádné výčitky a tresty
+                </span>
+              </div>
+
+              <div className="flex items-center justify-center text-[11px] text-amber-300/90 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" strokeWidth={1.5} /> Možnost rozšíření na PRO (vyzkoušení na 7 dní zdarma)
+                </span>
+              </div>
             </div>
           </div>
+
+          <div className="h-5" /> {/* Mezera 64 px */}
 
           {/* Sekce Nástrojů */}
           <section className="space-y-6 text-left">
             <div className="text-center space-y-1.5">
               <h2 className="text-lg font-semibold text-zinc-200">
-                Nástroje v aplikaci ADHDen navržené přímo pro ADHD dynamiku.
+                Nástroje v aplikaci ADHden navržené přímo pro ADHD dynamiku.
               </h2>
               <p className="text-xs text-zinc-400">
                 Proč běžné úkolovníky a minutky selhávají a jak vám pomůže ADHDen.
@@ -204,6 +212,8 @@ export default async function LandingPage() {
             </div>
           </section>
 
+          <div className="h-5" /> {/* Mezera 64 px */}
+
           {/* Upoutávka na průvodce */}
           <section className="pt-2">
             <Link
@@ -231,6 +241,8 @@ export default async function LandingPage() {
               </div>
             </Link>
           </section>
+
+          <div className="h-5" /> {/* Mezera 64 px */}
 
           {/* Sekce 3 nejnovějších článků z Notion s obrázky */}
           <section className="space-y-6 pt-0">
@@ -265,6 +277,7 @@ export default async function LandingPage() {
                     href={`/magazin/${art.slug}`}
                     className="group flex flex-col p-4 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all"
                   >
+                    {/* Renderování náhledového obrázku z Notion */}
                     {art.coverImage && (
                       <div className="w-full h-36 rounded-xl overflow-hidden mb-3.5 border border-zinc-800/60 bg-zinc-900">
                         <img 
@@ -310,15 +323,14 @@ export default async function LandingPage() {
         </main>
       </div>
 
-      {/* Kompletní Zápatí s doložkou a Stripe */}
+      {/* Zápatí s doložkou a Stripe */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           
           <div className="space-y-2 text-center max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 ADHDen.cz — Všechna práva vyhrazená.
+              © 2026 ADHden - Všechna práva vyhrazená.
             </p>
-            {/* Právní a lékařské upozornění */}
             <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
               Důležité upozornění: Obsah tohoto webu a aplikace má pouze informativní, vzdělávací a seberozvojový charakter. Autorka není lékař, psychiatr ani psychoterapeut. Veškeré informace a aplikace nenahrazují odbornou lékařskou či psychologickou péči. Použití nástrojů je na vlastní zodpovědnost uživatele.
             </p>
@@ -338,7 +350,6 @@ export default async function LandingPage() {
               </p>
             </div>
 
-            {/* Bezpečné platby přes Stripe + Odkazy */}
             <div className="flex flex-col items-center sm:items-end gap-3">
               <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 bg-zinc-800/40 px-3 py-1 rounded-lg border border-zinc-800">
                 <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
