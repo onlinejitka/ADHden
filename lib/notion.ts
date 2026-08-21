@@ -120,6 +120,20 @@ function blocksToHtml(blocks: any[]): string {
   return html;
 }
 
+// Extrakce URL obrázku z Notionu (Obálka nebo vlastnost Obrázek)
+function extractCoverImage(page: any, props: any): string {
+  if (page.cover) {
+    return page.cover.external?.url || page.cover.file?.url || "";
+  }
+  if (props.Obrázek?.files?.[0]) {
+    return props.Obrázek.files[0].external?.url || props.Obrázek.files[0].file?.url || "";
+  }
+  if (props.Cover?.files?.[0]) {
+    return props.Cover.files[0].external?.url || props.Cover.files[0].file?.url || "";
+  }
+  return "";
+}
+
 export async function getPublishedPosts() {
   if (!NOTION_API_KEY || !NOTION_DATABASE_ID) return [];
 
@@ -168,10 +182,10 @@ export async function getPublishedPosts() {
             })
           : "",
         youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
+        coverImage: extractCoverImage(page, props),
       };
     });
 
-    // Seřazení článků podle data (od nejnovějšího po nejstarší)
     return posts.sort((a: any, b: any) => {
       const timeA = a.dateRaw ? new Date(a.dateRaw).getTime() : 0;
       const timeB = b.dateRaw ? new Date(b.dateRaw).getTime() : 0;
@@ -257,6 +271,7 @@ export async function getPostBySlug(slug: string) {
           })
         : "",
       youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
+      coverImage: extractCoverImage(page, props),
       contentHtml,
     };
   } catch (error) {
