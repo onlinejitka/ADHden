@@ -65,7 +65,7 @@ export default function ADHDApp() {
   const stripeProUrl = "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t";
 
   const [activeTab, setActiveTab] = useState<Tab>("timer");
-  const [isPro, setIsPro] = useState<boolean>(true);
+  const [isPro] = useState<boolean>(false); // Výchozí stav pro návštěvníky (verze zdarma)
 
   // =============================================================
   // 1. TIME TIMER
@@ -582,29 +582,15 @@ export default function ADHDApp() {
             />
           </Link>
 
-          <div className="flex items-center gap-2">
-            <a
-              href={stripeProUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
-            >
-              <Sparkles className="w-3 h-3 fill-current" />
-              <span>Vyzkoušet PRO zdarma</span>
-            </a>
-
-            <button
-              onClick={() => setIsPro(!isPro)}
-              title="Přepnout náhled PRO/FREE"
-              className={`text-[10px] px-2 py-1 rounded-full font-mono transition-all ${
-                isPro
-                  ? "bg-zinc-800 text-amber-300/80 border border-amber-400/20"
-                  : "bg-zinc-800 text-zinc-500 border border-zinc-700"
-              }`}
-            >
-              {isPro ? "PRO Demo" : "FREE Demo"}
-            </button>
-          </div>
+          <a
+            href={stripeProUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
+          >
+            <Sparkles className="w-3 h-3 fill-current" />
+            <span>Vyzkoušet PRO zdarma</span>
+          </a>
         </header>
 
         {/* HLAVNÍ OBSAH */}
