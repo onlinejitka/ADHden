@@ -239,10 +239,10 @@ export default function AdhdLedovecPage() {
           
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-              © 2026 Noční Knihovna. Všechna práva vyhrazená.
+               © 2026 ADHden - Všechna práva vyhrazená.
             </p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Veškeré nahrávky pro Vás zaznamenávám svým vlastním hlasem. Ilustrace jsou spoluvytvářené s pomocí AI a mnou ručně graficky upravené.
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
+              Důležité upozornění: Obsah tohoto webu a aplikace má pouze informativní, vzdělávací a seberozvojový charakter. Autorka není lékař, psychiatr ani psychoterapeut. Veškeré informace a aplikace nenahrazují odbornou lékařskou či psychologickou péči. Použití nástrojů je na vlastní zodpovědnost uživatele.
             </p>
           </div>
 
