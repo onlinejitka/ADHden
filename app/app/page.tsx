@@ -23,7 +23,8 @@ import {
   Video as VideoIcon,
   Clock,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { soundEngine } from "@/lib/audioGenerator";
@@ -61,6 +62,8 @@ interface CustomAudio {
 }
 
 export default function ADHDApp() {
+  const stripeProUrl = "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t";
+
   const [activeTab, setActiveTab] = useState<Tab>("timer");
   const [isPro, setIsPro] = useState<boolean>(true);
 
@@ -264,7 +267,7 @@ export default function ADHDApp() {
       items: [
         { id: "k5", text: "Dojít si na záchod", icon: "🚽", done: false },
         { id: "k6", text: "Vzít čepici a pitíčko", icon: "🧢", done: false },
-        { id: "k7", text: "Vybranou 1 hračku s sebou", icon: "🧸", done: false },
+        { id: "k7", text: "Vybrat 1 hračku s sebou", icon: "🧸", done: false },
       ],
     },
     {
@@ -569,7 +572,7 @@ export default function ADHDApp() {
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
-        {/* Hlavička aplikace s proklikem na úvod */}
+        {/* Hlavička aplikace s proklikem na úvod a tlačítkem na Stripe */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <Link href="/" className="flex items-center group">
             <img
@@ -579,16 +582,29 @@ export default function ADHDApp() {
             />
           </Link>
 
-          <button
-            onClick={() => setIsPro(!isPro)}
-            className={`text-[11px] px-3 py-1 rounded-full font-medium transition-all ${
-              isPro
-                ? "bg-amber-400/10 text-amber-300 border border-amber-400/30"
-                : "bg-zinc-800 text-zinc-400 border border-zinc-700"
-            }`}
-          >
-            {isPro ? "★ PRO Aktivní" : "FREE Režim"}
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href={stripeProUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
+            >
+              <Sparkles className="w-3 h-3 fill-current" />
+              <span>Vyzkoušet PRO zdarma</span>
+            </a>
+
+            <button
+              onClick={() => setIsPro(!isPro)}
+              title="Přepnout náhled PRO/FREE"
+              className={`text-[10px] px-2 py-1 rounded-full font-mono transition-all ${
+                isPro
+                  ? "bg-zinc-800 text-amber-300/80 border border-amber-400/20"
+                  : "bg-zinc-800 text-zinc-500 border border-zinc-700"
+              }`}
+            >
+              {isPro ? "PRO Demo" : "FREE Demo"}
+            </button>
+          </div>
         </header>
 
         {/* HLAVNÍ OBSAH */}
@@ -678,8 +694,20 @@ export default function ADHDApp() {
                   </button>
                 </div>
               ) : (
-                <div className="text-[11px] text-zinc-500 flex items-center gap-1">
-                  <Lock className="w-3 h-3 text-amber-400" strokeWidth={1.75} /> Vlastní čas je v PRO
+                <div className="bg-zinc-800/40 border border-zinc-800 rounded-xl p-3 text-center space-y-1.5">
+                  <div className="text-[11px] text-zinc-400 flex items-center justify-center gap-1 font-medium">
+                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Vlastní nastavení času je v PRO</span>
+                  </div>
+                  <a
+                    href={stripeProUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-amber-300 hover:underline font-semibold"
+                  >
+                    <span>Aktivovat 7 dní PRO zdarma</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               )}
 
@@ -946,9 +974,20 @@ export default function ADHDApp() {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-zinc-500 py-1 flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-amber-400" strokeWidth={1.75} /> Vlastní kroky jsou dostupné v členství PRO.
-                  </p>
+                  <div className="p-3 bg-zinc-800/50 border border-zinc-700/60 rounded-xl flex items-center justify-between">
+                    <span className="text-[11px] text-zinc-400 flex items-center gap-1.5 font-medium">
+                      <Lock className="w-3.5 h-3.5 text-amber-400" /> Vlastní kroky v PRO
+                    </span>
+                    <a
+                      href={stripeProUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-amber-300 hover:underline font-semibold flex items-center gap-1"
+                    >
+                      <span>7 dní zdarma</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
@@ -1033,9 +1072,20 @@ export default function ADHDApp() {
                     )}
                   </>
                 ) : (
-                  <p className="text-[11px] text-zinc-500 flex items-center gap-1 pt-1">
-                    <Lock className="w-3 h-3 text-amber-400" strokeWidth={1.75} /> Časovač automatického vypnutí je dostupný v členství PRO.
-                  </p>
+                  <div className="p-3 bg-zinc-800/50 border border-zinc-700/60 rounded-xl flex items-center justify-between">
+                    <span className="text-[11px] text-zinc-400 flex items-center gap-1.5 font-medium">
+                      <Lock className="w-3.5 h-3.5 text-amber-400" /> Automatické vypnutí zvuku je v PRO
+                    </span>
+                    <a
+                      href={stripeProUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-amber-300 hover:underline font-semibold flex items-center gap-1"
+                    >
+                      <span>7 dní zdarma</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 )}
               </div>
 
