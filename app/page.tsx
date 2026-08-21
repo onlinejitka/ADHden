@@ -73,8 +73,9 @@ export default async function LandingPage() {
             <div className="h-10" /> {/* Mezera 64 px */}
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
-              Zkrotit chaos, časovou slepotu a paralýzu{" "}
-              <span className="text-amber-300 font-normal">bez pocitu viny.</span>
+              Zkroťte chaos, časovou slepotu 
+              <p>a paralýzu{" "}
+              <span className="text-amber-300 font-normal">bez pocitu viny.</span></p>
             </h1>
 
             <div className="h-5" /> {/* Mezera 64 px */}
