@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 import { BookOpen, ArrowLeft, Calendar, Tag, ArrowRight, FileText } from "lucide-react";
 import { getPublishedPosts } from "@/lib/notion";
 
@@ -11,42 +12,42 @@ export default async function MagazinIndexPage() {
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
         {/* Hlavička */}
-       <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-  {/* Logo v záhlaví */}
-  <Link href="/" className="flex items-center group">
-    <img
-      src="/ADHden%20logo.jpg"
-      alt="ADHDen.cz logo"
-      className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
-    />
-  </Link>
+        <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
+          {/* Logo v záhlaví */}
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/ADHden%20logo.jpg"
+              alt="ADHDen.cz logo"
+              className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+            />
+          </Link>
 
-  <div className="flex items-center gap-3 sm:gap-5">
-    <Link
-      href="/adhd-ledovec"
-      className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
-    >
-      <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>ADHD Ledovec</span>
-    </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/adhd-ledovec"
+              className="text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>ADHD Ledovec</span>
+            </Link>
 
-    <Link
-      href="/magazin"
-      className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
-    >
-      <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
-      <span>Magazín</span>
-    </Link>
+            <Link
+              href="/magazin"
+              className="text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>Magazín</span>
+            </Link>
 
-    <Link
-      href="/app"
-      className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
-    >
-      <span>Spustit aplikaci</span>
-      <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-    </Link>
-  </div>
-</header>
+            <Link
+              href="/app"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition"
+            >
+              <span>Spustit aplikaci</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </Link>
+          </div>
+        </header>
 
         {/* Obsah */}
         <main className="max-w-4xl mx-auto px-6 pt-12 pb-20 space-y-8">
@@ -71,36 +72,49 @@ export default async function MagazinIndexPage() {
                 <Link
                   key={post.id}
                   href={`/magazin/${post.slug}`}
-                  className="group p-6 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+                  className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all flex flex-col justify-between space-y-4"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-[11px] text-zinc-500">
-                      {post.category && (
-                        <span className="text-amber-300/90 font-medium flex items-center gap-1">
-                          <Tag className="w-3 h-3" strokeWidth={1.5} /> {post.category}
-                        </span>
-                      )}
-                      {post.date && (
-                        <span className="flex items-center gap-1 ml-auto">
-                          <Calendar className="w-3 h-3" strokeWidth={1.5} /> {post.date}
-                        </span>
+                  {/* Náhledový obrázek z Notion */}
+                  {post.coverImage && (
+                    <div className="w-full h-44 rounded-xl overflow-hidden border border-zinc-800/60 bg-zinc-900">
+                      <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1 flex flex-col justify-between space-y-3">
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                        {post.category && (
+                          <span className="text-amber-300/90 font-medium flex items-center gap-1">
+                            <Tag className="w-3 h-3" strokeWidth={1.5} /> {post.category}
+                          </span>
+                        )}
+                        {post.date && (
+                          <span className="flex items-center gap-1 ml-auto">
+                            <Calendar className="w-3 h-3" strokeWidth={1.5} /> {post.date}
+                          </span>
+                        )}
+                      </div>
+
+                      <h2 className="text-sm font-semibold text-zinc-100 group-hover:text-amber-300 transition leading-snug">
+                        {post.title}
+                      </h2>
+
+                      {post.description && (
+                        <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
+                          {post.description}
+                        </p>
                       )}
                     </div>
 
-                    <h2 className="text-sm font-semibold text-zinc-100 group-hover:text-amber-300 transition leading-snug">
-                      {post.title}
-                    </h2>
-
-                    {post.description && (
-                      <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
-                        {post.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="pt-2 text-[11px] text-amber-300/80 group-hover:text-amber-300 font-medium flex items-center justify-end gap-1 border-t border-zinc-800/40">
-                    <span>Číst článek</span>
-                    <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                    <div className="pt-3 mt-auto text-[11px] text-amber-300/80 group-hover:text-amber-300 font-medium flex items-center justify-end gap-1 border-t border-zinc-800/40">
+                      <span>Číst článek</span>
+                      <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                    </div>
                   </div>
                 </Link>
               ))}
