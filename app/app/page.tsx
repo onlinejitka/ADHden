@@ -264,7 +264,7 @@ export default function ADHDApp() {
       items: [
         { id: "k5", text: "Dojít si na záchod", icon: "🚽", done: false },
         { id: "k6", text: "Vzít čepici a pitíčko", icon: "🧢", done: false },
-        { id: "k7", text: "Vybrat 1 hračku s sebou", icon: "🧸", done: false },
+        { id: "k7", text: "Vybranou 1 hračku s sebou", icon: "🧸", done: false },
       ],
     },
     {
@@ -350,11 +350,12 @@ export default function ADHDApp() {
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
-  // Časovač vypnutí zvuku
+  // Časovač vypnutí zvuku (Dostupný v PRO)
   const [klidTimerMins, setKlidTimerMins] = useState<number | null>(null);
   const [klidSecsLeft, setKlidSecsLeft] = useState<number | null>(null);
 
   const startKlidTimer = (mins: number) => {
+    if (!isPro) return;
     setKlidTimerMins(mins);
     setKlidSecsLeft(mins * 60);
   };
@@ -366,7 +367,7 @@ export default function ADHDApp() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (klidSecsLeft !== null && klidSecsLeft > 0 && activeAudioId) {
+    if (isPro && klidSecsLeft !== null && klidSecsLeft > 0 && activeAudioId) {
       interval = setInterval(() => {
         setKlidSecsLeft((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
@@ -378,7 +379,7 @@ export default function ADHDApp() {
       setKlidSecsLeft(null);
     }
     return () => clearInterval(interval);
-  }, [klidSecsLeft, activeAudioId]);
+  }, [klidSecsLeft, activeAudioId, isPro]);
 
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPro) return;
@@ -945,8 +946,8 @@ export default function ADHDApp() {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-zinc-500 py-1">
-                    🔒 Vlastní kroky jsou dostupné v členství PRO.
+                  <p className="text-[11px] text-zinc-500 py-1 flex items-center gap-1">
+                    <Lock className="w-3 h-3 text-amber-400" strokeWidth={1.75} /> Vlastní kroky jsou dostupné v členství PRO.
                   </p>
                 )}
               </div>
@@ -991,42 +992,50 @@ export default function ADHDApp() {
                 })}
               </div>
 
-              {/* ČASOVAČ VYPNUTÍ AUDIA */}
+              {/* ČASOVAČ VYPNUTÍ AUDIA (PRO) */}
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-teal-400" strokeWidth={1.75} /> Časovač vypnutí zvuku
                   </span>
-                  {klidSecsLeft !== null && (
+                  {isPro && klidSecsLeft !== null && (
                     <span className="text-amber-300 font-mono font-bold">
                       vypne za {formatTime(klidSecsLeft)}
                     </span>
                   )}
                 </div>
 
-                <div className="grid grid-cols-4 gap-2">
-                  {[15, 30, 45, 60].map((mins) => (
-                    <button
-                      key={mins}
-                      onClick={() => startKlidTimer(mins)}
-                      className={`py-2 rounded-xl text-xs font-medium transition ${
-                        klidTimerMins === mins
-                          ? "bg-teal-400 text-zinc-950 font-bold"
-                          : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60"
-                      }`}
-                    >
-                      {mins} min
-                    </button>
-                  ))}
-                </div>
+                {isPro ? (
+                  <>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[15, 30, 45, 60].map((mins) => (
+                        <button
+                          key={mins}
+                          onClick={() => startKlidTimer(mins)}
+                          className={`py-2 rounded-xl text-xs font-medium transition ${
+                            klidTimerMins === mins
+                              ? "bg-teal-400 text-zinc-950 font-bold"
+                              : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60"
+                          }`}
+                        >
+                          {mins} min
+                        </button>
+                      ))}
+                    </div>
 
-                {klidSecsLeft !== null && (
-                  <button
-                    onClick={cancelKlidTimer}
-                    className="w-full py-1.5 text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center justify-center gap-1 transition"
-                  >
-                    <RotateCcw className="w-3 h-3" /> Zrušit časovač
-                  </button>
+                    {klidSecsLeft !== null && (
+                      <button
+                        onClick={cancelKlidTimer}
+                        className="w-full py-1.5 text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center justify-center gap-1 transition"
+                      >
+                        <RotateCcw className="w-3 h-3" /> Zrušit časovač
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[11px] text-zinc-500 flex items-center gap-1 pt-1">
+                    <Lock className="w-3 h-3 text-amber-400" strokeWidth={1.75} /> Časovač automatického vypnutí je dostupný v členství PRO.
+                  </p>
                 )}
               </div>
 
