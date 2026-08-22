@@ -20,6 +20,17 @@ function getYouTubeEmbedUrl(url?: string) {
   return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 }
 
+function getSpotifyEmbedUrl(url?: string) {
+  if (!url) return null;
+  let cleanUrl = url.trim();
+  if (!cleanUrl.includes("spotify.com")) return null;
+  
+  if (!cleanUrl.includes("/embed/")) {
+    cleanUrl = cleanUrl.replace("open.spotify.com/", "open.spotify.com/embed/");
+  }
+  return cleanUrl;
+}
+
 export default async function ArticlePage({
   params,
 }: {
@@ -48,12 +59,12 @@ export default async function ArticlePage({
   }
 
   const youtubeEmbedUrl = getYouTubeEmbedUrl(post.youtube);
+  const spotifyEmbedUrl = getSpotifyEmbedUrl(post.spotify);
 
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
         <header className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-800/60">
-          {/* Logo v záhlaví */}
           <Link href="/" className="flex items-center group">
             <img
               src="/ADHden%20logo.jpg"
@@ -125,7 +136,7 @@ export default async function ArticlePage({
 
           {/* HLAVNÍ OBRÁZEK Z NOTIONU */}
           {post.coverImage && (
-            <div className="my-8 w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-xl">
+            <div className="my-6 w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-xl">
               <img 
                 src={post.coverImage} 
                 alt={post.title} 
@@ -134,8 +145,31 @@ export default async function ArticlePage({
             </div>
           )}
 
+          {/* SPOTIFY PŘEHRÁVAČ (NA ZAČÁTKU ČLÁNKU) */}
+          {spotifyEmbedUrl && (
+            <div className="my-6 w-full rounded-2xl overflow-hidden border border-zinc-800/80 shadow-lg bg-[#121214]">
+              <iframe
+                src={spotifyEmbedUrl}
+                width="100%"
+                height="152"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                className="rounded-2xl"
+              />
+            </div>
+          )}
+
+          {/* HLAVNÍ TEXT ČLÁNKU */}
+          {post.contentHtml && (
+            <div
+              className="pt-4 border-t border-zinc-800/60"
+              dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+            />
+          )}
+
+          {/* YOUTUBE EMBED VIDEO (AŽ NA KONCI ČLÁNKU) */}
           {youtubeEmbedUrl && (
-            <div className="my-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
+            <div className="mt-10 mb-6 aspect-video w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
               <iframe
                 src={youtubeEmbedUrl}
                 className="w-full h-full"
@@ -145,13 +179,7 @@ export default async function ArticlePage({
             </div>
           )}
 
-          {post.contentHtml && (
-            <div
-              className="pt-4 border-t border-zinc-800/60"
-              dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-            />
-          )}
-
+          {/* PROMO BOX APLIKACE */}
           <div className="p-6 bg-zinc-800/30 border border-zinc-800 rounded-2xl text-center space-y-3 mt-12">
             <h3 className="text-sm font-semibold text-zinc-200">
               Chcete si tyto techniky vyzkoušet v praxi?
@@ -174,10 +202,7 @@ export default async function ArticlePage({
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-1.5 text-center text-zinc-400 max-w-2xl mx-auto">
             <p className="font-semibold text-zinc-300">
-               © 2026 ADHden - Všechna práva vyhrazená.
-            </p>
-            <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
-              Důležité upozornění: Obsah tohoto webu a aplikace má pouze informativní, vzdělávací a seberozvojový charakter. Autorka není lékař, psychiatr ani psychoterapeut. Veškeré informace a aplikace nenahrazují odbornou lékařskou či psychologickou péči. Použití nástrojů je na vlastní zodpovědnost uživatele.
+              © 2026 ADHden - Všechna práva vyhrazená.
             </p>
           </div>
 
