@@ -120,16 +120,15 @@ function blocksToHtml(blocks: any[]): string {
   return html;
 }
 
-// Extrakce URL obrázku z Notionu (Obálka nebo vlastnost Obrázek)
 function extractCoverImage(page: any, props: any): string {
   if (page.cover) {
     return page.cover.external?.url || page.cover.file?.url || "";
   }
-  if (props.Obrázek?.files?.[0]) {
-    return props.Obrázek.files[0].external?.url || props.Obrázek.files[0].file?.url || "";
-  }
   if (props.Cover?.files?.[0]) {
     return props.Cover.files[0].external?.url || props.Cover.files[0].file?.url || "";
+  }
+  if (props.Obrázek?.files?.[0]) {
+    return props.Obrázek.files[0].external?.url || props.Obrázek.files[0].file?.url || "";
   }
   return "";
 }
@@ -155,36 +154,64 @@ export async function getPublishedPosts() {
     if (!res.ok) return [];
 
     const data = await res.json();
+    const now = new Date().getTime();
 
-    const posts = data.results.map((page: any) => {
-      const props = page.properties;
-      const getPropText = (prop: any) => {
-        if (!prop) return "";
-        if (prop.title && prop.title.length > 0) return prop.title[0].plain_text;
-        if (prop.rich_text && prop.rich_text.length > 0) return prop.rich_text[0].plain_text;
-        return "";
-      };
+    const posts = data.results
+      .filter((page: any) => {
+        const props = page.properties;
+        
+        // 1. Kontrola zaškrtnutí "Published"
+        const isPublished = props.Published?.checkbox === true || props.Publikováno?.checkbox === true;
+        if (!isPublished) return false;
 
-      const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
+        // 2. Kontrola publikace v 6:30 ráno v daný den
+        const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
+        if (dateRaw) {
+          let publishTime: number;
+          if (dateRaw.includes("T")) {
+            publishTime = new Date(dateRaw).getTime();
+          } else {
+            // Nastaví čas publikace na 06:30:00 daného dne
+            publishTime = new Date(`${dateRaw}T06:30:00`).getTime();
+          }
 
-      return {
-        id: page.id,
-        title: getPropText(props.Title) || getPropText(props.Název) || "Bez názvu",
-        slug: getPropText(props.Slug) || page.id,
-        description: getPropText(props.Perex) || getPropText(props.Popis) || "",
-        category: props.Category?.select?.name || props.Kategorie?.select?.name || "ADHD & Čas",
-        dateRaw,
-        date: dateRaw
-          ? new Date(dateRaw).toLocaleDateString("cs-CZ", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })
-          : "",
-        youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
-        coverImage: extractCoverImage(page, props),
-      };
-    });
+          if (publishTime > now) {
+            return false; // Článek je naplánován do budoucna
+          }
+        }
+
+        return true;
+      })
+      .map((page: any) => {
+        const props = page.properties;
+        const getPropText = (prop: any) => {
+          if (!prop) return "";
+          if (prop.title && prop.title.length > 0) return prop.title[0].plain_text;
+          if (prop.rich_text && prop.rich_text.length > 0) return prop.rich_text[0].plain_text;
+          return "";
+        };
+
+        const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
+
+        return {
+          id: page.id,
+          title: getPropText(props.Title) || getPropText(props.Název) || "Bez názvu",
+          slug: getPropText(props.Slug) || page.id,
+          description: getPropText(props.Perex) || getPropText(props.Popis) || "",
+          category: props.Category?.select?.name || props.Kategorie?.select?.name || "ADHD & Čas",
+          dateRaw,
+          date: dateRaw
+            ? new Date(dateRaw).toLocaleDateString("cs-CZ", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "",
+          youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
+          spotify: props.Spotify?.url || getPropText(props.Spotify) || "",
+          coverImage: extractCoverImage(page, props),
+        };
+      });
 
     return posts.sort((a: any, b: any) => {
       const timeA = a.dateRaw ? new Date(a.dateRaw).getTime() : 0;
@@ -271,6 +298,7 @@ export async function getPostBySlug(slug: string) {
           })
         : "",
       youtube: props.YouTube?.url || getPropText(props.YouTube) || "",
+      spotify: props.Spotify?.url || getPropText(props.Spotify) || "",
       coverImage: extractCoverImage(page, props),
       contentHtml,
     };
