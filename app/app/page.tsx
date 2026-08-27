@@ -103,24 +103,49 @@ const verifySubscription = async (userEmail: string) => {
   }
 };
 
-  // Automatické odemčení PRO při příchodu ze Stripe nebo po zadání kódu
+// Bezpečné načtení a aktivace PRO i v in-app prohlížečích (Gmail, Seznam, Apple Mail)
 useEffect(() => {
-  if (typeof window !== "undefined") {
-    // 1. Kontrola, zda uživatel přišel ze Stripe platebního odkazu
+  if (typeof window === "undefined") return;
+
+  try {
+    // 1. Bezpečná kontrola URL parametru (?pro=active)
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("pro") === "active") {
-      localStorage.setItem("adhden_pro_access", "true");
+    const isProFromUrl = urlParams.get("pro") === "active";
+
+    if (isProFromUrl) {
       setIsPro(true);
-      confetti({ particleCount: 100, spread: 80 });
-      // Vyčistí URL adresu v prohlížeči, aby vypadala čistě
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } 
-    // 2. Kontrola, zda už má uživatel PRO uložené v paměti
-    else if (localStorage.getItem("adhden_pro_access") === "true") {
-      setIsPro(true);
+
+      // Bezpečné uložení do paměti (pokud to webview nezakazuje)
+      try {
+        localStorage.setItem("adhden_pro_access", "true");
+      } catch (storageErr) {
+        console.warn("LocalStorage nedostupný v tomto zobrazení:", storageErr);
+      }
+
+      // Bezpečné vystřelení konfet
+      try {
+        confetti({ particleCount: 80, spread: 70 });
+      } catch {}
+
+      // Vyčištění URL adresy bez pádu
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch {}
+    } else {
+      // 2. Kontrola, zda už má uživatel PRO uloženo z dřívějška
+      try {
+        if (localStorage.getItem("adhden_pro_access") === "true") {
+          setIsPro(true);
+        }
+      } catch (storageErr) {
+        console.warn("Nelze číst z LocalStorage:", storageErr);
+      }
     }
+  } catch (err) {
+    console.error("Chyba při inicializaci aplikace:", err);
   }
 }, []);
+  
 
   useEffect(() => {
     if (typeof window !== "undefined") {
