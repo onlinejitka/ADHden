@@ -5,15 +5,17 @@ class SoundEngine {
 
   private initCtx() {
     if (!this.ctx) {
-      const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtxClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtxClass();
     }
-    if (this.ctx.state === 'suspended') {
+    if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
   }
 
-  // Generátor hnědého šumu (Brown Noise)
+  // Hnědý šum
   playBrownNoise(volume = 0.5) {
     this.stopNoise();
     this.initCtx();
@@ -28,7 +30,7 @@ class SoundEngine {
       const white = Math.random() * 2 - 1;
       output[i] = (lastOut + 0.02 * white) / 1.02;
       lastOut = output[i];
-      output[i] *= 3.5; // Zesílení hloubek
+      output[i] *= 3.5;
     }
 
     const whiteNoise = this.ctx.createBufferSource();
@@ -44,7 +46,7 @@ class SoundEngine {
     this.noiseNode = whiteNoise;
   }
 
-  // Generátor růžového šumu (Pink Noise)
+  // Růžový šum
   playPinkNoise(volume = 0.4) {
     this.stopNoise();
     this.initCtx();
@@ -62,7 +64,7 @@ class SoundEngine {
       b2 = 0.96900 * b2 + white * 0.1538520;
       b3 = 0.86650 * b3 + white * 0.3104856;
       b4 = 0.55000 * b4 + white * 0.5329522;
-      b5 = -0.7616 * b5 - white * 0.0168980;
+      b5 = -0.7616 * b5 - white * 0.016898;
       output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
       output[i] *= 0.11;
       b6 = white * 0.115926;
@@ -81,7 +83,7 @@ class SoundEngine {
     this.noiseNode = pinkSource;
   }
 
-  // Zvuk jemného deště
+  // Zvuk deště
   playRainNoise(volume = 0.4) {
     this.playPinkNoise(volume * 0.8);
   }
@@ -96,7 +98,7 @@ class SoundEngine {
     }
   }
 
-  // Uspokojivý cinkavý tón při dokončení úkolu (Dopamine ding)
+  // Krátký cinkot pro odškrtnutí úkolu
   playSuccessDing() {
     this.initCtx();
     if (!this.ctx) return;
@@ -105,18 +107,51 @@ class SoundEngine {
     const gain = this.ctx.createGain();
 
     osc.type = "sine";
-    osc.frequency.setValueAtTime(587.33, this.ctx.currentTime); // D5
-    osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.15); // A5
+    osc.frequency.setValueAtTime(587.33, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.12);
 
-    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6);
+    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
     osc.start();
-    osc.stop(this.ctx.currentTime + 0.6);
+    osc.stop(this.ctx.currentTime + 0.5);
+  }
+
+  // LASKAVÝ JASNÝ ZVON (Konec časovače - bez infarktu, harmonický 3-tónový akord)
+  playGentleTimerChime() {
+    this.initCtx();
+    if (!this.ctx) return;
+
+    // Harmonický akord E-dur (E5, G#5, B5) s jemným náběhem
+    const frequencies = [659.25, 830.61, 987.77];
+
+    frequencies.forEach((freq, index) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+      const delay = index * 0.08; // Jemné rozložení tónů do arpeggia
+      const startTime = this.ctx.currentTime + delay;
+
+      gain.gain.setValueAtTime(0.0001, startTime);
+      // Měkký náběh (žádný ostrý šok)
+      gain.gain.exponentialRampToValueAtTime(0.18, startTime + 0.04);
+      // Dlouhé příjemné doznívání
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.8);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 1.8);
+    });
   }
 }
 
-export const soundEngine = typeof window !== 'undefined' ? new SoundEngine() : null;
+export const soundEngine = typeof window !== "undefined" ? new SoundEngine() : null;
