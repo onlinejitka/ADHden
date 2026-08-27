@@ -628,26 +628,26 @@ export default function ADHDApp() {
   };
 
   return (
-    // FIXNÍ OKNO NA 100% VÝŠKY DISPLEJE BEZ SCROLLOVÁNÍ
-    <div className="fixed inset-0 w-full h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed overflow-hidden select-none">
-      <div className="w-full max-w-md h-full flex flex-col justify-between bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative p-3 pb-2 overflow-hidden">
+    <div className="w-full min-h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed">
+      {/* Hlavní kontejner aplikace */}
+      <div className="w-full max-w-md min-h-[100dvh] flex flex-col bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative pb-20 px-4 pt-3">
         {/* Skryté přehrávače */}
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
-        {/* HLAVIČKA APLIKACE (Kompaktní 36px) */}
-        <header className="h-9 flex items-center justify-between pb-2 border-b border-zinc-800/80 flex-shrink-0">
+        {/* HLAVIČKA APLIKACE */}
+        <header className="flex items-center justify-between pb-3 border-b border-zinc-800/80 flex-shrink-0">
           <Link href="/" className="flex items-center group">
             <img
               src="/ADHden%20logo.jpg"
               alt="ADHDen.cz logo"
-              className="h-7 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+              className="h-8 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
           </Link>
 
           {isPro ? (
-            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-              <Sparkles className="w-2.5 h-2.5 fill-current text-amber-400" />
+            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+              <Sparkles className="w-3 h-3 fill-current text-amber-400" />
               <span>★ PRO Aktivní</span>
             </span>
           ) : (
@@ -655,34 +655,34 @@ export default function ADHDApp() {
               href={stripeProUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
             >
-              <Sparkles className="w-2.5 h-2.5 fill-current" />
+              <Sparkles className="w-3 h-3 fill-current" />
               <span>Vyzkoušet PRO</span>
             </a>
           )}
         </header>
 
-        {/* HLAVNÍ PROSTOR - Na Timeru se roztáhne přesně bez scrollu */}
-        <main className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden py-1">
+        {/* HLAVNÍ OBSAH */}
+        <main className="flex-1 flex flex-col pt-2 pb-4">
           {/* ========================================================= */}
-          {/* TAB 1: TIME TIMER (100% PŘESNÉ NULOVÉ POSOUVÁNÍ) */}
+          {/* TAB 1: TIME TIMER (KOMPAKTNÍ & NATIVNÍ VZHLED) */}
           {/* ========================================================= */}
           {activeTab === "timer" && (
-            <div className="h-full flex flex-col justify-between items-center py-1">
-              {/* Ciferník (Optimalizovaná výška pro malé i velké displeje) */}
-              <div className="relative w-[170px] h-[170px] rounded-full flex items-center justify-center p-1.5 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
+            <div className="flex-1 flex flex-col items-center justify-center gap-3.5 sm:gap-4 my-auto">
+              {/* Vizuální ciferník */}
+              <div className="relative w-48 h-48 sm:w-52 sm:h-52 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
                 <div
                   className="w-full h-full rounded-full transition-all duration-1000 ease-linear flex items-center justify-center relative overflow-hidden"
                   style={{
                     background: `conic-gradient(${timerColor} ${pieDegrees}deg, #27272a 0deg)`,
                   }}
                 >
-                  <div className="w-[110px] h-[110px] rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-1">
-                    <span className="text-3xl font-extrabold tracking-tight text-zinc-100">
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-2">
+                    <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-100">
                       {formatTime(secondsLeft)}
                     </span>
-                    <span className="text-[9px] text-amber-300 font-medium leading-tight mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] text-amber-300 font-medium mt-1 leading-tight">
                       {isTimerRunning ? "✨ Vnímej přítomnost" : "Pauza"}
                     </span>
                   </div>
@@ -690,27 +690,27 @@ export default function ADHDApp() {
               </div>
 
               {/* Tlačítka Play / Reset */}
-              <div className="flex items-center gap-3.5 flex-shrink-0">
+              <div className="flex items-center gap-4 flex-shrink-0">
                 <button
                   onClick={toggleTimer}
-                  className="w-12 h-12 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
+                  className="w-13 h-13 sm:w-14 sm:h-14 p-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
                 >
                   {isTimerRunning ? (
-                    <Pause className="w-5 h-5" strokeWidth={2.2} />
+                    <Pause className="w-6 h-6" strokeWidth={2} />
                   ) : (
-                    <Play className="w-5 h-5 ml-0.5" strokeWidth={2.2} />
+                    <Play className="w-6 h-6 ml-0.5" strokeWidth={2} />
                   )}
                 </button>
                 <button
                   onClick={() => resetTimer()}
-                  className="w-9 h-9 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center active:scale-95 transition border border-zinc-700/60"
+                  className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center active:scale-95 transition border border-zinc-700/60"
                 >
                   <RotateCcw className="w-4 h-4" strokeWidth={2} />
                 </button>
               </div>
 
               {/* Rychlé předvolby */}
-              <div className="flex gap-1.5 flex-shrink-0">
+              <div className="flex gap-1.5 sm:gap-2 flex-shrink-0">
                 {[5, 10, 15, 25, 45].map((mins) => (
                   <button
                     key={mins}
@@ -718,7 +718,7 @@ export default function ADHDApp() {
                       setTimerMinutes(mins);
                       resetTimer(mins);
                     }}
-                    className={`px-2 py-0.5 rounded-lg text-[11px] font-medium transition ${
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                       timerMinutes === mins
                         ? "bg-zinc-800 text-amber-300 border border-amber-400/40"
                         : "bg-zinc-800/40 text-zinc-400 border border-zinc-800 hover:bg-zinc-800"
@@ -732,8 +732,8 @@ export default function ADHDApp() {
               {/* Vlastní čas */}
               <div className="flex-shrink-0">
                 {isPro ? (
-                  <div className="flex items-center gap-1.5 bg-zinc-800/40 border border-zinc-800 rounded-xl px-2.5 py-0.5">
-                    <span className="text-[10px] text-amber-300 font-medium whitespace-nowrap">
+                  <div className="flex items-center gap-2 bg-zinc-800/40 border border-zinc-800 rounded-xl px-3 py-1">
+                    <span className="text-xs text-amber-300 font-medium whitespace-nowrap">
                       ★ Vlastní (min):
                     </span>
                     <input
@@ -743,12 +743,12 @@ export default function ADHDApp() {
                       value={customTimeMinutes}
                       onChange={(e) => setCustomTimeMinutes(e.target.value)}
                       placeholder="8"
-                      className="w-10 bg-[#121214] border border-zinc-700 rounded px-1 text-[11px] text-amber-300 text-center focus:outline-none"
+                      className="w-12 bg-[#121214] border border-zinc-700 rounded px-2 py-0.5 text-xs text-amber-300 text-center focus:outline-none"
                     />
                     <button
                       onClick={setCustomMinutesHandler}
                       disabled={!customTimeMinutes}
-                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 font-bold px-2 py-0.5 rounded text-[10px] transition"
+                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 font-bold px-2.5 py-0.5 rounded text-xs transition"
                     >
                       Uložit
                     </button>
@@ -759,9 +759,9 @@ export default function ADHDApp() {
                       href={stripeProUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[10px] text-zinc-400 hover:text-amber-300 transition"
+                      className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-300 transition"
                     >
-                      <Lock className="w-2.5 h-2.5 text-amber-400" />
+                      <Lock className="w-3 h-3 text-amber-400" />
                       <span>Vlastní čas a zvuky v PRO</span>
                       <ExternalLink className="w-2.5 h-2.5" />
                     </a>
@@ -770,18 +770,18 @@ export default function ADHDApp() {
               </div>
 
               {/* Zvuková kulisa & Barvy */}
-              <div className="w-full bg-zinc-800/30 border border-zinc-800 rounded-xl p-2 space-y-1.5 flex-shrink-0">
-                <div className="flex items-center justify-between text-[10px] font-medium text-zinc-300">
-                  <span className="flex items-center gap-1">
-                    <Volume2 className="w-3 h-3 text-teal-400" /> Zvuková kulisa
+              <div className="w-full bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2.5 flex-shrink-0">
+                <div className="flex items-center justify-between text-xs font-medium text-zinc-300">
+                  <span className="flex items-center gap-1.5">
+                    <Volume2 className="w-3.5 h-3.5 text-teal-400" /> Zvuková kulisa
                   </span>
-                  <div className="flex gap-1.5 items-center">
+                  <div className="flex gap-2 items-center">
                     {["#fbbf24", "#2dd4bf", "#c084fc", "#f87171", "#38bdf8"].map((c) => (
                       <button
                         key={c}
                         onClick={() => setTimerColor(c)}
                         style={{ backgroundColor: c }}
-                        className={`w-3.5 h-3.5 rounded-full transition-all ${
+                        className={`w-4 h-4 rounded-full transition-all ${
                           timerColor === c ? "ring-2 ring-zinc-100 scale-110" : "opacity-40"
                         }`}
                       />
@@ -789,13 +789,13 @@ export default function ADHDApp() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-1">
+                <div className="grid grid-cols-4 gap-1.5">
                   <button
                     onClick={() => {
                       setSoundtrack("brown");
                       if (isTimerRunning) soundEngine?.playBrownNoise();
                     }}
-                    className={`py-1 text-[10px] rounded-lg transition ${
+                    className={`py-1.5 text-xs rounded-lg transition ${
                       soundtrack === "brown"
                         ? "bg-teal-500/15 text-teal-300 border border-teal-500/40"
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
@@ -809,7 +809,7 @@ export default function ADHDApp() {
                       setSoundtrack("pink");
                       if (isTimerRunning) soundEngine?.playPinkNoise();
                     }}
-                    className={`py-1 text-[10px] rounded-lg transition ${
+                    className={`py-1.5 text-xs rounded-lg transition ${
                       soundtrack === "pink"
                         ? "bg-teal-500/15 text-teal-300 border border-teal-500/40"
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
@@ -823,7 +823,7 @@ export default function ADHDApp() {
                       setSoundtrack("rain");
                       if (isTimerRunning) soundEngine?.playRainNoise();
                     }}
-                    className={`py-1 text-[10px] rounded-lg transition ${
+                    className={`py-1.5 text-xs rounded-lg transition ${
                       soundtrack === "rain"
                         ? "bg-teal-500/15 text-teal-300 border border-teal-500/40"
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
@@ -836,7 +836,7 @@ export default function ADHDApp() {
                       setSoundtrack("none");
                       soundEngine?.stopNoise();
                     }}
-                    className={`py-1 text-[10px] rounded-lg transition ${
+                    className={`py-1.5 text-xs rounded-lg transition ${
                       soundtrack === "none"
                         ? "bg-zinc-700 text-zinc-200 border border-zinc-600"
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
@@ -853,70 +853,73 @@ export default function ADHDApp() {
           {/* TAB 2: KOUSKOVAČ ÚKOLŮ */}
           {/* ========================================================= */}
           {activeTab === "kouskovac" && (
-            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3.5 space-y-2">
-                <h2 className="text-xs font-semibold text-purple-300 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <div className="space-y-4 py-1">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
+                <h2 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-purple-400" />
                   Kouskovač velkých úkolů
                 </h2>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Rozpad velkého úkolu na malé zvládnutelné kroky bez paralýzy.
+                </p>
 
                 <textarea
                   value={rawTask}
                   onChange={(e) => setRawTask(e.target.value)}
-                  placeholder="Napište úkol (např. Uklidit stůl)..."
-                  rows={2}
-                  className="w-full bg-[#121214] border border-zinc-700/80 rounded-xl p-2 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-purple-400 resize-none"
+                  placeholder="Napište úkol (např. Uklidit pracovní stůl)..."
+                  rows={3}
+                  className="w-full bg-[#121214] border border-zinc-700/80 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-purple-400 resize-none"
                 />
 
                 {errorMessage && (
-                  <div className="p-1.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-[11px] text-rose-300">
+                  <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300">
                     {errorMessage}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-0.5">
-                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                    <span>Kroků:</span>
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center gap-2 text-xs text-zinc-400">
+                    <span>Počet kroků:</span>
                     <select
                       value={customStepCount}
                       onChange={(e) => setCustomStepCount(Number(e.target.value))}
-                      className="bg-[#121214] border border-zinc-700 rounded px-1.5 py-0.5 text-xs text-purple-300"
+                      className="bg-[#121214] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-purple-300"
                     >
-                      <option value={3}>3</option>
-                      <option value={5}>5</option>
+                      <option value={3}>3 kroky</option>
+                      <option value={5}>5 kroků</option>
                     </select>
                   </div>
 
                   <button
                     onClick={() => handleBreakdown(customStepCount)}
                     disabled={isLoadingSteps || !rawTask.trim()}
-                    className="bg-purple-400 hover:bg-purple-300 disabled:opacity-40 text-zinc-950 font-bold px-3 py-1 rounded-xl text-xs transition"
+                    className="bg-purple-400 hover:bg-purple-300 disabled:opacity-40 text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs transition"
                   >
-                    {isLoadingSteps ? "Rozpadám..." : "Rozkouskovat"}
+                    {isLoadingSteps ? "Rozkládám..." : "Rozkouskovat"}
                   </button>
                 </div>
               </div>
 
               {steps.length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-2.5 pt-1">
                   {steps.map((step, idx) => {
                     const isDone = completedSteps.includes(idx);
                     return (
                       <div
                         key={idx}
                         onClick={() => toggleStepDone(idx)}
-                        className={`p-2.5 rounded-xl border transition cursor-pointer flex items-start gap-2.5 ${
+                        className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
                           isDone
                             ? "bg-teal-950/20 border-teal-500/30 text-teal-300 line-through opacity-70"
-                            : "bg-zinc-800/40 border-zinc-700/70 text-zinc-200"
+                            : "bg-zinc-800/40 border-zinc-700/70 hover:border-purple-400/50 text-zinc-200"
                         }`}
                       >
                         {isDone ? (
-                          <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />
                         ) : (
-                          <Circle className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" />
+                          <Circle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                         )}
-                        <span className="text-xs font-medium">{step}</span>
+                        <span className="text-xs font-medium leading-relaxed">{step}</span>
                       </div>
                     );
                   })}
@@ -929,14 +932,14 @@ export default function ADHDApp() {
           {/* TAB 3: RUTINY */}
           {/* ========================================================= */}
           {activeTab === "rutiny" && (
-            <div className="h-full overflow-y-auto no-scrollbar space-y-2.5 py-1">
-              <div className="flex bg-zinc-800/60 p-0.5 rounded-xl border border-zinc-800 flex-shrink-0">
+            <div className="space-y-3.5 py-1">
+              <div className="flex bg-zinc-800/60 p-1 rounded-xl border border-zinc-800">
                 <button
                   onClick={() => {
                     setRoutineAudience("adults");
                     setActiveSectionId("ad-morning");
                   }}
-                  className={`flex-1 py-1 text-xs font-medium rounded-lg transition ${
+                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition ${
                     routineAudience === "adults" ? "bg-zinc-700 text-amber-300" : "text-zinc-400"
                   }`}
                 >
@@ -947,45 +950,45 @@ export default function ADHDApp() {
                     setRoutineAudience("kids");
                     setActiveSectionId("kd-morning");
                   }}
-                  className={`flex-1 py-1 text-xs font-medium rounded-lg transition ${
+                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition ${
                     routineAudience === "kids" ? "bg-zinc-700 text-teal-300" : "text-zinc-400"
                   }`}
                 >
-                  Pro děti
+                  Pro děti (s ikonami)
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-1.5 flex-shrink-0">
+              <div className="grid grid-cols-2 gap-2">
                 {currentSections.map((sec) => (
                   <button
                     key={sec.id}
                     onClick={() => setActiveSectionId(sec.id)}
-                    className={`p-2 rounded-xl text-xs font-medium flex items-center gap-2 transition border ${
+                    className={`p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition border ${
                       activeSectionId === sec.id
                         ? "bg-zinc-800 text-amber-300 border-amber-400/40"
-                        : "bg-zinc-800/30 text-zinc-400 border-zinc-800"
+                        : "bg-zinc-800/30 text-zinc-400 border-zinc-800 hover:bg-zinc-800/60"
                     }`}
                   >
                     <span className="text-sm">{sec.icon}</span>
-                    <span className="truncate text-[11px]">{sec.name}</span>
+                    <span className="truncate">{sec.name}</span>
                   </button>
                 ))}
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2 pt-1">
                 {currentActiveSection.items.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => toggleRoutineItem(item.id)}
-                    className={`p-2.5 rounded-xl border transition cursor-pointer flex items-center justify-between ${
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                       item.done
                         ? "bg-teal-950/20 border-teal-500/30 text-teal-300"
                         : "bg-zinc-800/40 border-zinc-800 text-zinc-200"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      {item.icon && <span className="text-base">{item.icon}</span>}
-                      <span className={`text-xs ${item.done ? "line-through opacity-60" : ""}`}>
+                    <div className="flex items-center gap-2.5">
+                      {item.icon && <span className="text-lg">{item.icon}</span>}
+                      <span className={`text-xs font-medium ${item.done ? "line-through opacity-60" : ""}`}>
                         {item.text}
                       </span>
                     </div>
@@ -998,26 +1001,28 @@ export default function ADHDApp() {
                 ))}
               </div>
 
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-xl p-2 space-y-1.5 flex-shrink-0">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2">
                 {isPro ? (
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       value={newRoutineText}
                       onChange={(e) => setNewRoutineText(e.target.value)}
-                      placeholder="Přidat krok..."
-                      className="flex-1 bg-[#121214] border border-zinc-700 rounded-lg px-2 py-1 text-xs text-zinc-100"
+                      placeholder="Přidat vlastní krok..."
+                      className="flex-1 bg-[#121214] border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-zinc-100"
                     />
                     <button
                       onClick={addCustomRoutineItem}
                       disabled={!newRoutineText.trim()}
-                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 px-2.5 py-1 rounded-lg text-xs font-bold"
+                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 px-3 py-1.5 rounded-xl text-xs font-bold"
                     >
-                      <Plus className="w-3.5 h-3.5" />
+                      <Plus className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
-                  <span className="text-[10px] text-zinc-500 block text-center">🔒 Vlastní kroky v PRO</span>
+                  <div className="text-center py-1">
+                    <span className="text-[11px] text-zinc-400">🔒 Vlastní kroky v PRO</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -1027,19 +1032,26 @@ export default function ADHDApp() {
           {/* TAB 4: KLIDOVÁ ZÓNA */}
           {/* ========================================================= */}
           {activeTab === "klid" && (
-            <div className="h-full overflow-y-auto no-scrollbar space-y-2.5 py-1">
-              <div className="space-y-1.5">
+            <div className="space-y-3.5 py-1">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3.5 space-y-1">
+                <h2 className="text-sm font-semibold text-teal-300 flex items-center gap-2">
+                  <Volume2 className="w-4 h-4 text-teal-400" /> Zklidnění & Senzorické zvuky
+                </h2>
+                <p className="text-xs text-zinc-400">Monotónní zvuky pro úlevu od přetížení smyslů.</p>
+              </div>
+
+              <div className="space-y-2">
                 {officialAudios.map((audio) => {
                   const isPlaying = activeAudioId === audio.id;
                   return (
-                    <div key={audio.id} className="p-2.5 bg-zinc-800/40 border border-zinc-800 rounded-xl flex items-center justify-between">
+                    <div key={audio.id} className="p-3 bg-zinc-800/40 border border-zinc-800 rounded-xl flex items-center justify-between">
                       <div>
                         <div className="text-xs font-medium text-zinc-200">{audio.name}</div>
-                        <div className="text-[10px] text-teal-400/80">{audio.desc}</div>
+                        <div className="text-[10px] text-teal-400/80 mt-0.5">{audio.desc}</div>
                       </div>
                       <button
                         onClick={() => playAudioTrack(audio.id, audio.type, (audio as any).url)}
-                        className={`px-2.5 py-1 font-semibold rounded-lg text-xs flex items-center gap-1 ${
+                        className={`px-3 py-1.5 font-semibold rounded-lg text-xs flex items-center gap-1 transition ${
                           isPlaying ? "bg-teal-400 text-zinc-950" : "bg-zinc-700 text-zinc-200"
                         }`}
                       >
@@ -1052,25 +1064,25 @@ export default function ADHDApp() {
               </div>
 
               {/* ČASOVAČ VYPNUTÍ */}
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-xl p-2.5 space-y-1.5">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-200 text-[11px] font-medium flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-teal-400" /> Časovač vypnutí zvuku
+                  <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-teal-400" /> Časovač vypnutí zvuku
                   </span>
                   {isPro && klidSecsLeft !== null && (
-                    <span className="text-amber-300 font-mono font-bold text-[11px]">
-                      {formatTime(klidSecsLeft)}
+                    <span className="text-amber-300 font-mono font-bold text-xs">
+                      vypne za {formatTime(klidSecsLeft)}
                     </span>
                   )}
                 </div>
 
                 {isPro ? (
-                  <div className="grid grid-cols-4 gap-1">
+                  <div className="grid grid-cols-4 gap-1.5">
                     {[15, 30, 45, 60].map((mins) => (
                       <button
                         key={mins}
                         onClick={() => startKlidTimer(mins)}
-                        className={`py-1 rounded-lg text-[10px] font-medium transition ${
+                        className={`py-1.5 rounded-xl text-xs font-medium transition ${
                           klidTimerMins === mins
                             ? "bg-teal-400 text-zinc-950 font-bold"
                             : "bg-zinc-800 text-zinc-300 border border-zinc-700/60"
@@ -1081,7 +1093,7 @@ export default function ADHDApp() {
                     ))}
                   </div>
                 ) : (
-                  <span className="text-[10px] text-zinc-500 block text-center">
+                  <span className="text-[11px] text-zinc-500 block text-center py-1">
                     🔒 Časovač vypnutí je v PRO
                   </span>
                 )}
@@ -1094,7 +1106,7 @@ export default function ADHDApp() {
                   setActiveAudioId(null);
                   cancelKlidTimer();
                 }}
-                className="w-full py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-1"
+                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5"
               >
                 <VolumeX className="w-3.5 h-3.5" /> Zastavit přehrávání
               </button>
@@ -1105,8 +1117,17 @@ export default function ADHDApp() {
           {/* TAB 5: DNEŠNÍ ÚSPĚCHY */}
           {/* ========================================================= */}
           {activeTab === "uspechy" && (
-            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-4 py-1">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-1">
+                <h2 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-amber-400" /> Dnešní laskavost k sobě
+                </h2>
+                <p className="text-xs text-zinc-400">
+                  Žádný tlak na výkon. Zaznamenejte si i ty nejmenší kroky, které jste dnes zvládli.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
                 {[
                   { key: "water", label: "Dostatek vody", icon: "💧" },
                   { key: "food", label: "Výživné jídlo", icon: "🥪" },
@@ -1118,14 +1139,14 @@ export default function ADHDApp() {
                     <button
                       key={item.key}
                       onClick={() => toggleWin(item.key as keyof typeof wins)}
-                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition active:scale-95 ${
+                      className={`p-3.5 rounded-xl border flex flex-col items-center justify-center gap-2 transition active:scale-95 ${
                         isChecked
                           ? "bg-amber-400/10 border-amber-400/40 text-amber-300"
                           : "bg-zinc-800/30 border-zinc-800 text-zinc-400 hover:bg-zinc-800/60"
                       }`}
                     >
                       <span className="text-2xl">{item.icon}</span>
-                      <span className="text-xs font-medium">{item.label}</span>
+                      <span className="text-xs font-medium text-center">{item.label}</span>
                       {isChecked && <span className="text-[10px] text-amber-300 font-bold">✓ Mám!</span>}
                     </button>
                   );
@@ -1138,40 +1159,42 @@ export default function ADHDApp() {
           {/* TAB 6: BODY DOUBLING */}
           {/* ========================================================= */}
           {activeTab === "bodydoubling" && (
-            <div className="h-full overflow-y-auto no-scrollbar space-y-2 py-1">
+            <div className="space-y-3.5 py-1">
               {activeSession ? (
-                <div className="bg-zinc-800/50 border border-teal-500/30 rounded-2xl p-3 text-center flex flex-col items-center space-y-2.5">
+                <div className="bg-zinc-800/50 border border-teal-500/30 rounded-2xl p-4 text-center flex flex-col items-center space-y-4">
                   <div className="text-xs text-teal-300 font-semibold tracking-wider uppercase">
                     {activeSession.title}
                   </div>
 
-                  <div className="relative w-36 h-36 rounded-full flex items-center justify-center p-1.5 bg-[#121214] border border-zinc-800">
+                  <div className="relative w-44 h-44 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800">
                     <div
                       className="w-full h-full rounded-full transition-all duration-1000 ease-linear flex items-center justify-center relative overflow-hidden"
                       style={{
                         background: `conic-gradient(#2dd4bf ${sessionPieDegrees}deg, #27272a 0deg)`,
                       }}
                     >
-                      <div className="w-24 h-24 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10">
-                        <span className="text-2xl font-bold tracking-tight text-zinc-100">
+                      <div className="w-28 h-28 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10">
+                        <span className="text-3xl font-bold tracking-tight text-zinc-100">
                           {formatTime(sessionSecs)}
                         </span>
-                        <span className="text-[9px] text-teal-300 font-medium">
+                        <span className="text-[10px] text-teal-300 font-medium mt-0.5">
                           {activeSession.mediaUrl && activeSession.type === "audio"
                             ? isSessionAudioMuted
                               ? "Ztlumeno"
                               : "Audio hraje"
-                            : "V akci"}
+                            : "Společně v akci"}
                         </span>
                       </div>
                     </div>
                   </div>
 
+                  <p className="text-xs text-zinc-300 max-w-xs">{activeSession.desc}</p>
+
                   <div className="flex items-center gap-2">
                     {activeSession.mediaUrl && activeSession.type === "audio" && (
                       <button
                         onClick={toggleSessionAudio}
-                        className={`px-3 py-1 rounded-xl text-xs font-medium flex items-center gap-1 ${
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition ${
                           isSessionAudioMuted
                             ? "bg-zinc-700 text-amber-300 border border-amber-400/30"
                             : "bg-zinc-700 text-zinc-200"
@@ -1184,24 +1207,24 @@ export default function ADHDApp() {
 
                     <button
                       onClick={endSession}
-                      className="px-3 py-1 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-xs text-zinc-300 font-medium"
+                      className="px-4 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-xs text-zinc-300 font-medium"
                     >
                       Ukončit
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {sessions.map((item) => (
                     <div
                       key={item.id}
-                      className="p-2.5 bg-zinc-800/30 border border-zinc-800 rounded-xl flex items-center justify-between"
+                      className="p-3 bg-zinc-800/30 border border-zinc-800 rounded-xl flex items-center justify-between"
                     >
                       <div>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <span className="text-xs font-semibold text-zinc-200">{item.title}</span>
                           {item.type === "audio" && (
-                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[9px] px-1 py-0.2 rounded font-medium">
+                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[9px] px-1.5 py-0.2 rounded font-medium">
                               Audio
                             </span>
                           )}
@@ -1211,7 +1234,7 @@ export default function ADHDApp() {
                       <button
                         disabled={!item.free && !isPro}
                         onClick={() => startSession(item)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition ${
                           item.free || isPro
                             ? "bg-teal-400 hover:bg-teal-300 text-zinc-950"
                             : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
@@ -1228,66 +1251,66 @@ export default function ADHDApp() {
           )}
         </main>
 
-        {/* SPODNÍ NAVIGAČNÍ PANEL (Kompaktní 44px - vždy 100% viditelný) */}
-        <nav className="h-11 flex-shrink-0 bg-[#121214] border border-zinc-800/80 rounded-2xl px-1.5 py-0.5 flex justify-around items-center z-50">
+        {/* SPODNÍ NAVIGAČNÍ PANEL (VŽDY PEVNĚ DOLE A 100% VIDITELNÝ) */}
+        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#121214]/95 backdrop-blur-md border-t border-zinc-800/80 px-2 py-2 flex justify-around items-center z-50">
           <button
             onClick={() => setActiveTab("timer")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "timer" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Timer className="w-4 h-4" strokeWidth={activeTab === "timer" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Timer</span>
+            <Timer className="w-5 h-5" strokeWidth={activeTab === "timer" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Timer</span>
           </button>
 
           <button
             onClick={() => setActiveTab("kouskovac")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "kouskovac" ? "text-purple-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Sparkles className="w-4 h-4" strokeWidth={activeTab === "kouskovac" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Kouskovač</span>
+            <Sparkles className="w-5 h-5" strokeWidth={activeTab === "kouskovac" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Kouskovač</span>
           </button>
 
           <button
             onClick={() => setActiveTab("rutiny")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "rutiny" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <ListTodo className="w-4 h-4" strokeWidth={activeTab === "rutiny" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Rutiny</span>
+            <ListTodo className="w-5 h-5" strokeWidth={activeTab === "rutiny" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Rutiny</span>
           </button>
 
           <button
             onClick={() => setActiveTab("klid")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "klid" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Volume2 className="w-4 h-4" strokeWidth={activeTab === "klid" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Klid</span>
+            <Volume2 className="w-5 h-5" strokeWidth={activeTab === "klid" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Klid</span>
           </button>
 
           <button
             onClick={() => setActiveTab("uspechy")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "uspechy" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Smile className="w-4 h-4" strokeWidth={activeTab === "uspechy" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Úspěchy</span>
+            <Smile className="w-5 h-5" strokeWidth={activeTab === "uspechy" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Úspěchy</span>
           </button>
 
           <button
             onClick={() => setActiveTab("bodydoubling")}
-            className={`flex flex-col items-center gap-0.5 py-0.5 px-2 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
               activeTab === "bodydoubling" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Users className="w-4 h-4" strokeWidth={activeTab === "bodydoubling" ? 2.2 : 1.5} />
-            <span className="text-[9px] font-medium">Parťák</span>
+            <Users className="w-5 h-5" strokeWidth={activeTab === "bodydoubling" ? 2 : 1.5} />
+            <span className="text-[10px] font-medium">Parťák</span>
           </button>
         </nav>
       </div>
