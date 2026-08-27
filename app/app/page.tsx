@@ -628,26 +628,26 @@ export default function ADHDApp() {
   };
 
   return (
-    <div className="w-full h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed overflow-hidden">
-      {/* Hlavní kontejner aplikace */}
+    // HLAVNÍ PEVNÝ OBAL: Ukotvený na 100% okna bez možnosti posuvu celé stránky
+    <div className="fixed inset-0 w-full h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed overflow-hidden select-none">
       <div className="w-full max-w-md h-full flex flex-col justify-between bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative px-4 pt-3 pb-3 overflow-hidden">
-        {/* Skryté přehrávače */}
+        {/* Skryté audio přehrávače */}
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
-        {/* HLAVIČKA APLIKACE */}
-        <header className="flex items-center justify-between pb-2 border-b border-zinc-800/80 flex-shrink-0">
+        {/* PEVNÉ HORNÍ ZÁHLAVÍ */}
+        <header className="h-9 flex items-center justify-between pb-2 border-b border-zinc-800/80 flex-shrink-0">
           <Link href="/" className="flex items-center group">
             <img
               src="/ADHden%20logo.jpg"
               alt="ADHDen.cz logo"
-              className="h-8 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
+              className="h-7 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
           </Link>
 
           {isPro ? (
-            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-              <Sparkles className="w-3 h-3 fill-current text-amber-400" />
+            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+              <Sparkles className="w-2.5 h-2.5 fill-current text-amber-400" />
               <span>★ PRO Aktivní</span>
             </span>
           ) : (
@@ -655,30 +655,30 @@ export default function ADHDApp() {
               href={stripeProUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
             >
-              <Sparkles className="w-3 h-3 fill-current" />
+              <Sparkles className="w-2.5 h-2.5 fill-current" />
               <span>Vyzkoušet PRO</span>
             </a>
           )}
         </header>
 
-        {/* HLAVNÍ OBSAH */}
+        {/* STŘEDOVÝ PROSTOR: Přesně dimenzovaný bez možnosti přetečení */}
         <main className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden py-1">
           {/* ========================================================= */}
-          {/* TAB 1: TIME TIMER (ČISTÝ VZHLED BEZ POSUVNÍKU) */}
+          {/* TAB 1: TIME TIMER (PŘIROZENĚ VYVÁŽENÝ BEZ DĚR A BEZ SCROLLU) */}
           {/* ========================================================= */}
           {activeTab === "timer" && (
-            <div className="flex flex-col items-center justify-center gap-2.5 my-auto">
-              {/* Vizuální ciferník */}
-              <div className="relative w-44 h-44 sm:w-48 sm:h-48 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
+            <div className="flex flex-col items-center justify-center gap-3 my-auto">
+              {/* Vizuální ciferník (Krásný plný disk 190 px) */}
+              <div className="relative w-48 h-48 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
                 <div
                   className="w-full h-full rounded-full transition-all duration-1000 ease-linear flex items-center justify-center relative overflow-hidden"
                   style={{
                     background: `conic-gradient(${timerColor} ${pieDegrees}deg, #27272a 0deg)`,
                   }}
                 >
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-2">
+                  <div className="w-32 h-32 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-2">
                     <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-100">
                       {formatTime(secondsLeft)}
                     </span>
@@ -690,15 +690,15 @@ export default function ADHDApp() {
               </div>
 
               {/* Tlačítka Play / Reset */}
-              <div className="flex items-center gap-4 flex-shrink-0">
+              <div className="flex items-center gap-3.5 flex-shrink-0">
                 <button
                   onClick={toggleTimer}
-                  className="w-12 h-12 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
+                  className="w-13 h-13 p-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
                 >
                   {isTimerRunning ? (
-                    <Pause className="w-5 h-5" strokeWidth={2} />
+                    <Pause className="w-6 h-6" strokeWidth={2} />
                   ) : (
-                    <Play className="w-5 h-5 ml-0.5" strokeWidth={2} />
+                    <Play className="w-6 h-6 ml-0.5" strokeWidth={2} />
                   )}
                 </button>
                 <button
@@ -748,7 +748,7 @@ export default function ADHDApp() {
                     <button
                       onClick={setCustomMinutesHandler}
                       disabled={!customTimeMinutes}
-                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 font-bold px-2.5 py-0.5 rounded text-xs transition"
+                      className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 font-bold px-2 py-0.5 rounded text-xs transition"
                     >
                       Uložit
                     </button>
@@ -850,11 +850,11 @@ export default function ADHDApp() {
           )}
 
           {/* ========================================================= */}
-          {/* TAB 2: KOUSKOVAČ ÚKOLŮ */}
+          {/* TAB 2: KOUSKOVAČ ÚKOLŮ (Se samostatným vnitřním scrollem) */}
           {/* ========================================================= */}
           {activeTab === "kouskovac" && (
             <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3.5 space-y-2.5">
                 <h2 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-400" />
                   Kouskovač velkých úkolů
@@ -874,7 +874,7 @@ export default function ADHDApp() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center justify-between pt-0.5">
                   <div className="flex items-center gap-2 text-xs text-zinc-400">
                     <span>Počet kroků:</span>
                     <select
@@ -930,7 +930,7 @@ export default function ADHDApp() {
           {/* ========================================================= */}
           {activeTab === "rutiny" && (
             <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
-              <div className="flex bg-zinc-800/60 p-1 rounded-xl border border-zinc-800">
+              <div className="flex bg-zinc-800/60 p-1 rounded-xl border border-zinc-800 flex-shrink-0">
                 <button
                   onClick={() => {
                     setRoutineAudience("adults");
@@ -955,7 +955,7 @@ export default function ADHDApp() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 flex-shrink-0">
                 {currentSections.map((sec) => (
                   <button
                     key={sec.id}
@@ -998,7 +998,7 @@ export default function ADHDApp() {
                 ))}
               </div>
 
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2 flex-shrink-0">
                 {isPro ? (
                   <div className="flex gap-2">
                     <input
@@ -1006,7 +1006,7 @@ export default function ADHDApp() {
                       value={newRoutineText}
                       onChange={(e) => setNewRoutineText(e.target.value)}
                       placeholder="Přidat vlastní krok..."
-                      className="flex-1 bg-[#121214] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100"
+                      className="flex-1 bg-[#121214] border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-zinc-100"
                     />
                     <button
                       onClick={addCustomRoutineItem}
@@ -1054,7 +1054,7 @@ export default function ADHDApp() {
               </div>
 
               {/* ČASOVAČ VYPNUTÍ */}
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2">
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2 flex-shrink-0">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-teal-400" /> Časovač vypnutí zvuku
@@ -1096,7 +1096,7 @@ export default function ADHDApp() {
                   setActiveAudioId(null);
                   cancelKlidTimer();
                 }}
-                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-2"
+                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-2 flex-shrink-0"
               >
                 <VolumeX className="w-4 h-4" /> Zastavit přehrávání
               </button>
@@ -1205,12 +1205,12 @@ export default function ADHDApp() {
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-semibold text-zinc-200">{item.title}</span>
                           {item.type === "audio" && (
-                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[10px] px-1.5 py-0.2 rounded font-medium">
+                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[9px] px-1.5 py-0.2 rounded font-medium">
                               Audio
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-zinc-400">{item.desc}</div>
+                        <div className="text-[10px] text-zinc-400">{item.desc}</div>
                       </div>
                       <button
                         disabled={!item.free && !isPro}
@@ -1232,65 +1232,65 @@ export default function ADHDApp() {
           )}
         </main>
 
-        {/* SPODNÍ NAVIGAČNÍ PANEL (Vždy přirozeně ukotven uvnitř kontejneru) */}
-        <nav className="flex-shrink-0 bg-[#121214] border border-zinc-800/80 rounded-2xl px-2 py-1.5 flex justify-around items-center z-50">
+        {/* PEVNÝ SPODNÍ NAVIGAČNÍ PANEL */}
+        <nav className="h-12 flex-shrink-0 bg-[#121214] border border-zinc-800/80 rounded-2xl px-2 py-1 flex justify-around items-center z-50">
           <button
             onClick={() => setActiveTab("timer")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "timer" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Timer className="w-5 h-5" strokeWidth={activeTab === "timer" ? 2 : 1.5} />
+            <Timer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "timer" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Timer</span>
           </button>
 
           <button
             onClick={() => setActiveTab("kouskovac")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "kouskovac" ? "text-purple-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Sparkles className="w-5 h-5" strokeWidth={activeTab === "kouskovac" ? 2 : 1.5} />
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "kouskovac" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Kouskovač</span>
           </button>
 
           <button
             onClick={() => setActiveTab("rutiny")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "rutiny" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <ListTodo className="w-5 h-5" strokeWidth={activeTab === "rutiny" ? 2 : 1.5} />
+            <ListTodo className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "rutiny" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Rutiny</span>
           </button>
 
           <button
             onClick={() => setActiveTab("klid")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "klid" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Volume2 className="w-5 h-5" strokeWidth={activeTab === "klid" ? 2 : 1.5} />
+            <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "klid" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Klid</span>
           </button>
 
           <button
             onClick={() => setActiveTab("uspechy")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "uspechy" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Smile className="w-5 h-5" strokeWidth={activeTab === "uspechy" ? 2 : 1.5} />
+            <Smile className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "uspechy" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Úspěchy</span>
           </button>
 
           <button
             onClick={() => setActiveTab("bodydoubling")}
-            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-lg transition ${
               activeTab === "bodydoubling" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
-            <Users className="w-5 h-5" strokeWidth={activeTab === "bodydoubling" ? 2 : 1.5} />
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={activeTab === "bodydoubling" ? 2 : 1.5} />
             <span className="text-[10px] font-medium">Parťák</span>
           </button>
         </nav>
