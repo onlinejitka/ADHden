@@ -65,7 +65,7 @@ export default function ADHDApp() {
   const stripeProUrl = "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t";
 
   const [activeTab, setActiveTab] = useState<Tab>("timer");
-  const [isPro] = useState<boolean>(false); // Výchozí stav pro návštěvníky (verze zdarma)
+  const [isPro, setIsPro] = useState<boolean>(false); // OPRAVENO: Přidáno setIsPro
 
   // =============================================================
   // 1. TIME TIMER
@@ -79,73 +79,72 @@ export default function ADHDApp() {
   const wakeLockRef = useRef<any>(null);
 
   // Funkce pro ověření předplatného podle e-mailu
-const verifySubscription = async (userEmail: string) => {
-  try {
-    const res = await fetch("/api/verify-sub", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail }),
-    });
-    const data = await res.json();
+  const verifySubscription = async (userEmail: string) => {
+    try {
+      const res = await fetch("/api/verify-sub", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail }),
+      });
+      const data = await res.json();
 
-    if (data.isPro) {
-      setIsPro(true);
-      localStorage.setItem("adhden_user_email", userEmail);
-      localStorage.setItem("adhden_pro_access", "true");
-      alert("PRO přístup je aktivní!");
-    } else {
-      setIsPro(false);
-      localStorage.removeItem("adhden_pro_access");
-      alert("Vaše zkušební doba vypršela nebo předplatné není aktivní.");
-    }
-  } catch (e) {
-    alert("Nepodařilo se ověřit předplatné.");
-  }
-};
-
-// Bezpečné načtení a aktivace PRO i v in-app prohlížečích (Gmail, Seznam, Apple Mail)
-useEffect(() => {
-  if (typeof window === "undefined") return;
-
-  try {
-    // 1. Bezpečná kontrola URL parametru (?pro=active)
-    const urlParams = new URLSearchParams(window.location.search);
-    const isProFromUrl = urlParams.get("pro") === "active";
-
-    if (isProFromUrl) {
-      setIsPro(true);
-
-      // Bezpečné uložení do paměti (pokud to webview nezakazuje)
-      try {
+      if (data.isPro) {
+        setIsPro(true);
+        localStorage.setItem("adhden_user_email", userEmail);
         localStorage.setItem("adhden_pro_access", "true");
-      } catch (storageErr) {
-        console.warn("LocalStorage nedostupný v tomto zobrazení:", storageErr);
+        alert("PRO přístup je aktivní!");
+      } else {
+        setIsPro(false);
+        localStorage.removeItem("adhden_pro_access");
+        alert("Vaše zkušební doba vypršela nebo předplatné není aktivní.");
       }
-
-      // Bezpečné vystřelení konfet
-      try {
-        confetti({ particleCount: 80, spread: 70 });
-      } catch {}
-
-      // Vyčištění URL adresy bez pádu
-      try {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      } catch {}
-    } else {
-      // 2. Kontrola, zda už má uživatel PRO uloženo z dřívějška
-      try {
-        if (localStorage.getItem("adhden_pro_access") === "true") {
-          setIsPro(true);
-        }
-      } catch (storageErr) {
-        console.warn("Nelze číst z LocalStorage:", storageErr);
-      }
+    } catch (e) {
+      alert("Nepodařilo se ověřit předplatné.");
     }
-  } catch (err) {
-    console.error("Chyba při inicializaci aplikace:", err);
-  }
-}, []);
-  
+  };
+
+  // Bezpečné načtení a aktivace PRO i v in-app prohlížečích (Gmail, Seznam, Apple Mail)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      // 1. Bezpečná kontrola URL parametru (?pro=active)
+      const urlParams = new URLSearchParams(window.location.search);
+      const isProFromUrl = urlParams.get("pro") === "active";
+
+      if (isProFromUrl) {
+        setIsPro(true);
+
+        // Bezpečné uložení do paměti (pokud to webview nezakazuje)
+        try {
+          localStorage.setItem("adhden_pro_access", "true");
+        } catch (storageErr) {
+          console.warn("LocalStorage nedostupný v tomto zobrazení:", storageErr);
+        }
+
+        // Bezpečné vystřelení konfet
+        try {
+          confetti({ particleCount: 80, spread: 70 });
+        } catch {}
+
+        // Vyčištění URL adresy bez pádu
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch {}
+      } else {
+        // 2. Kontrola, zda už má uživatel PRO uloženo z dřívějška
+        try {
+          if (localStorage.getItem("adhden_pro_access") === "true") {
+            setIsPro(true);
+          }
+        } catch (storageErr) {
+          console.warn("Nelze číst z LocalStorage:", storageErr);
+        }
+      }
+    } catch (err) {
+      console.error("Chyba při inicializaci aplikace:", err);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -641,7 +640,7 @@ useEffect(() => {
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
-        {/* Hlavička aplikace s proklikem na úvod a tlačítkem na Stripe */}
+        {/* Hlavička aplikace s dynamickým zobrazením stavu PRO */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <Link href="/" className="flex items-center group">
             <img
@@ -651,15 +650,23 @@ useEffect(() => {
             />
           </Link>
 
-          <a
-            href={stripeProUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
-          >
-            <Sparkles className="w-3 h-3 fill-current" />
-            <span>Vyzkoušet PRO zdarma</span>
-          </a>
+          {/* DYNAMICKÝ ODZNAK PRO / ODKAZ NA TRIAL */}
+          {isPro ? (
+            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm">
+              <Sparkles className="w-3 h-3 fill-current text-amber-400" />
+              <span>★ PRO Aktivní</span>
+            </span>
+          ) : (
+            <a
+              href={stripeProUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 transition shadow-sm active:scale-95"
+            >
+              <Sparkles className="w-3 h-3 fill-current" />
+              <span>Vyzkoušet PRO zdarma</span>
+            </a>
+          )}
         </header>
 
         {/* HLAVNÍ OBSAH */}
