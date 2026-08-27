@@ -628,15 +628,15 @@ export default function ADHDApp() {
   };
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed">
+    <div className="w-full h-[100dvh] bg-[#121214] text-zinc-200 flex justify-center tracking-wide font-sans leading-relaxed overflow-hidden">
       {/* Hlavní kontejner aplikace */}
-      <div className="w-full max-w-md min-h-[100dvh] flex flex-col bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative pb-20 px-4 pt-3">
+      <div className="w-full max-w-md h-full flex flex-col justify-between bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative px-4 pt-3 pb-3 overflow-hidden">
         {/* Skryté přehrávače */}
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
         {/* HLAVIČKA APLIKACE */}
-        <header className="flex items-center justify-between pb-3 border-b border-zinc-800/80 flex-shrink-0">
+        <header className="flex items-center justify-between pb-2 border-b border-zinc-800/80 flex-shrink-0">
           <Link href="/" className="flex items-center group">
             <img
               src="/ADHden%20logo.jpg"
@@ -664,25 +664,25 @@ export default function ADHDApp() {
         </header>
 
         {/* HLAVNÍ OBSAH */}
-        <main className="flex-1 flex flex-col pt-2 pb-4">
+        <main className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden py-1">
           {/* ========================================================= */}
-          {/* TAB 1: TIME TIMER (KOMPAKTNÍ & NATIVNÍ VZHLED) */}
+          {/* TAB 1: TIME TIMER (ČISTÝ VZHLED BEZ POSUVNÍKU) */}
           {/* ========================================================= */}
           {activeTab === "timer" && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-3.5 sm:gap-4 my-auto">
+            <div className="flex flex-col items-center justify-center gap-2.5 my-auto">
               {/* Vizuální ciferník */}
-              <div className="relative w-48 h-48 sm:w-52 sm:h-52 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
+              <div className="relative w-44 h-44 sm:w-48 sm:h-48 rounded-full flex items-center justify-center p-2 bg-[#121214] border border-zinc-800 shadow-xl flex-shrink-0">
                 <div
                   className="w-full h-full rounded-full transition-all duration-1000 ease-linear flex items-center justify-center relative overflow-hidden"
                   style={{
                     background: `conic-gradient(${timerColor} ${pieDegrees}deg, #27272a 0deg)`,
                   }}
                 >
-                  <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-2">
+                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#18181b] border border-zinc-700/60 flex flex-col items-center justify-center z-10 text-center px-2">
                     <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-100">
                       {formatTime(secondsLeft)}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] text-amber-300 font-medium mt-1 leading-tight">
+                    <span className="text-[10px] text-amber-300 font-medium mt-0.5 leading-tight">
                       {isTimerRunning ? "✨ Vnímej přítomnost" : "Pauza"}
                     </span>
                   </div>
@@ -693,24 +693,24 @@ export default function ADHDApp() {
               <div className="flex items-center gap-4 flex-shrink-0">
                 <button
                   onClick={toggleTimer}
-                  className="w-13 h-13 sm:w-14 sm:h-14 p-3.5 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
+                  className="w-12 h-12 rounded-full bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold flex items-center justify-center transition active:scale-95 shadow-md shadow-amber-400/15"
                 >
                   {isTimerRunning ? (
-                    <Pause className="w-6 h-6" strokeWidth={2} />
+                    <Pause className="w-5 h-5" strokeWidth={2} />
                   ) : (
-                    <Play className="w-6 h-6 ml-0.5" strokeWidth={2} />
+                    <Play className="w-5 h-5 ml-0.5" strokeWidth={2} />
                   )}
                 </button>
                 <button
                   onClick={() => resetTimer()}
-                  className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center active:scale-95 transition border border-zinc-700/60"
+                  className="w-9 h-9 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center active:scale-95 transition border border-zinc-700/60"
                 >
                   <RotateCcw className="w-4 h-4" strokeWidth={2} />
                 </button>
               </div>
 
               {/* Rychlé předvolby */}
-              <div className="flex gap-1.5 sm:gap-2 flex-shrink-0">
+              <div className="flex gap-1.5 flex-shrink-0">
                 {[5, 10, 15, 25, 45].map((mins) => (
                   <button
                     key={mins}
@@ -718,7 +718,7 @@ export default function ADHDApp() {
                       setTimerMinutes(mins);
                       resetTimer(mins);
                     }}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
                       timerMinutes === mins
                         ? "bg-zinc-800 text-amber-300 border border-amber-400/40"
                         : "bg-zinc-800/40 text-zinc-400 border border-zinc-800 hover:bg-zinc-800"
@@ -732,7 +732,7 @@ export default function ADHDApp() {
               {/* Vlastní čas */}
               <div className="flex-shrink-0">
                 {isPro ? (
-                  <div className="flex items-center gap-2 bg-zinc-800/40 border border-zinc-800 rounded-xl px-3 py-1">
+                  <div className="flex items-center gap-2 bg-zinc-800/40 border border-zinc-800 rounded-xl px-3 py-0.5">
                     <span className="text-xs text-amber-300 font-medium whitespace-nowrap">
                       ★ Vlastní (min):
                     </span>
@@ -743,7 +743,7 @@ export default function ADHDApp() {
                       value={customTimeMinutes}
                       onChange={(e) => setCustomTimeMinutes(e.target.value)}
                       placeholder="8"
-                      className="w-12 bg-[#121214] border border-zinc-700 rounded px-2 py-0.5 text-xs text-amber-300 text-center focus:outline-none"
+                      className="w-12 bg-[#121214] border border-zinc-700 rounded px-1.5 py-0.5 text-xs text-amber-300 text-center focus:outline-none"
                     />
                     <button
                       onClick={setCustomMinutesHandler}
@@ -754,7 +754,7 @@ export default function ADHDApp() {
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center">
+                  <div className="text-center py-0.5">
                     <a
                       href={stripeProUrl}
                       target="_blank"
@@ -770,7 +770,7 @@ export default function ADHDApp() {
               </div>
 
               {/* Zvuková kulisa & Barvy */}
-              <div className="w-full bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3 space-y-2.5 flex-shrink-0">
+              <div className="w-full bg-zinc-800/30 border border-zinc-800 rounded-2xl p-2.5 space-y-2 flex-shrink-0">
                 <div className="flex items-center justify-between text-xs font-medium text-zinc-300">
                   <span className="flex items-center gap-1.5">
                     <Volume2 className="w-3.5 h-3.5 text-teal-400" /> Zvuková kulisa
@@ -853,26 +853,23 @@ export default function ADHDApp() {
           {/* TAB 2: KOUSKOVAČ ÚKOLŮ */}
           {/* ========================================================= */}
           {activeTab === "kouskovac" && (
-            <div className="space-y-4 py-1">
+            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
                 <h2 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-400" />
                   Kouskovač velkých úkolů
                 </h2>
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  Rozpad velkého úkolu na malé zvládnutelné kroky bez paralýzy.
-                </p>
 
                 <textarea
                   value={rawTask}
                   onChange={(e) => setRawTask(e.target.value)}
                   placeholder="Napište úkol (např. Uklidit pracovní stůl)..."
-                  rows={3}
-                  className="w-full bg-[#121214] border border-zinc-700/80 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-purple-400 resize-none"
+                  rows={2}
+                  className="w-full bg-[#121214] border border-zinc-700/80 rounded-xl p-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-purple-400 resize-none"
                 />
 
                 {errorMessage && (
-                  <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300">
+                  <div className="p-2 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300">
                     {errorMessage}
                   </div>
                 )}
@@ -883,7 +880,7 @@ export default function ADHDApp() {
                     <select
                       value={customStepCount}
                       onChange={(e) => setCustomStepCount(Number(e.target.value))}
-                      className="bg-[#121214] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-purple-300"
+                      className="bg-[#121214] border border-zinc-700 rounded-lg px-2 py-1 text-xs text-purple-300"
                     >
                       <option value={3}>3 kroky</option>
                       <option value={5}>5 kroků</option>
@@ -893,7 +890,7 @@ export default function ADHDApp() {
                   <button
                     onClick={() => handleBreakdown(customStepCount)}
                     disabled={isLoadingSteps || !rawTask.trim()}
-                    className="bg-purple-400 hover:bg-purple-300 disabled:opacity-40 text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs transition"
+                    className="bg-purple-400 hover:bg-purple-300 disabled:opacity-40 text-zinc-950 font-bold px-3.5 py-1.5 rounded-xl text-xs transition"
                   >
                     {isLoadingSteps ? "Rozkládám..." : "Rozkouskovat"}
                   </button>
@@ -932,14 +929,14 @@ export default function ADHDApp() {
           {/* TAB 3: RUTINY */}
           {/* ========================================================= */}
           {activeTab === "rutiny" && (
-            <div className="space-y-3.5 py-1">
+            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
               <div className="flex bg-zinc-800/60 p-1 rounded-xl border border-zinc-800">
                 <button
                   onClick={() => {
                     setRoutineAudience("adults");
                     setActiveSectionId("ad-morning");
                   }}
-                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition ${
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition ${
                     routineAudience === "adults" ? "bg-zinc-700 text-amber-300" : "text-zinc-400"
                   }`}
                 >
@@ -950,11 +947,11 @@ export default function ADHDApp() {
                     setRoutineAudience("kids");
                     setActiveSectionId("kd-morning");
                   }}
-                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition ${
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition ${
                     routineAudience === "kids" ? "bg-zinc-700 text-teal-300" : "text-zinc-400"
                   }`}
                 >
-                  Pro děti (s ikonami)
+                  Pro děti
                 </button>
               </div>
 
@@ -966,11 +963,11 @@ export default function ADHDApp() {
                     className={`p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition border ${
                       activeSectionId === sec.id
                         ? "bg-zinc-800 text-amber-300 border-amber-400/40"
-                        : "bg-zinc-800/30 text-zinc-400 border-zinc-800 hover:bg-zinc-800/60"
+                        : "bg-zinc-800/30 text-zinc-400 border-zinc-800"
                     }`}
                   >
                     <span className="text-sm">{sec.icon}</span>
-                    <span className="truncate">{sec.name}</span>
+                    <span className="truncate text-xs">{sec.name}</span>
                   </button>
                 ))}
               </div>
@@ -980,7 +977,7 @@ export default function ADHDApp() {
                   <div
                     key={item.id}
                     onClick={() => toggleRoutineItem(item.id)}
-                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                    className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${
                       item.done
                         ? "bg-teal-950/20 border-teal-500/30 text-teal-300"
                         : "bg-zinc-800/40 border-zinc-800 text-zinc-200"
@@ -1009,7 +1006,7 @@ export default function ADHDApp() {
                       value={newRoutineText}
                       onChange={(e) => setNewRoutineText(e.target.value)}
                       placeholder="Přidat vlastní krok..."
-                      className="flex-1 bg-[#121214] border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-zinc-100"
+                      className="flex-1 bg-[#121214] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100"
                     />
                     <button
                       onClick={addCustomRoutineItem}
@@ -1032,14 +1029,7 @@ export default function ADHDApp() {
           {/* TAB 4: KLIDOVÁ ZÓNA */}
           {/* ========================================================= */}
           {activeTab === "klid" && (
-            <div className="space-y-3.5 py-1">
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-3.5 space-y-1">
-                <h2 className="text-sm font-semibold text-teal-300 flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-teal-400" /> Zklidnění & Senzorické zvuky
-                </h2>
-                <p className="text-xs text-zinc-400">Monotónní zvuky pro úlevu od přetížení smyslů.</p>
-              </div>
-
+            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
               <div className="space-y-2">
                 {officialAudios.map((audio) => {
                   const isPlaying = activeAudioId === audio.id;
@@ -1047,11 +1037,11 @@ export default function ADHDApp() {
                     <div key={audio.id} className="p-3 bg-zinc-800/40 border border-zinc-800 rounded-xl flex items-center justify-between">
                       <div>
                         <div className="text-xs font-medium text-zinc-200">{audio.name}</div>
-                        <div className="text-[10px] text-teal-400/80 mt-0.5">{audio.desc}</div>
+                        <div className="text-[10px] text-teal-400/80">{audio.desc}</div>
                       </div>
                       <button
                         onClick={() => playAudioTrack(audio.id, audio.type, (audio as any).url)}
-                        className={`px-3 py-1.5 font-semibold rounded-lg text-xs flex items-center gap-1 transition ${
+                        className={`px-3 py-1 font-semibold rounded-lg text-xs flex items-center gap-1 transition ${
                           isPlaying ? "bg-teal-400 text-zinc-950" : "bg-zinc-700 text-zinc-200"
                         }`}
                       >
@@ -1106,9 +1096,9 @@ export default function ADHDApp() {
                   setActiveAudioId(null);
                   cancelKlidTimer();
                 }}
-                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium flex items-center justify-center gap-2"
               >
-                <VolumeX className="w-3.5 h-3.5" /> Zastavit přehrávání
+                <VolumeX className="w-4 h-4" /> Zastavit přehrávání
               </button>
             </div>
           )}
@@ -1117,16 +1107,7 @@ export default function ADHDApp() {
           {/* TAB 5: DNEŠNÍ ÚSPĚCHY */}
           {/* ========================================================= */}
           {activeTab === "uspechy" && (
-            <div className="space-y-4 py-1">
-              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-1">
-                <h2 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-amber-400" /> Dnešní laskavost k sobě
-                </h2>
-                <p className="text-xs text-zinc-400">
-                  Žádný tlak na výkon. Zaznamenejte si i ty nejmenší kroky, které jste dnes zvládli.
-                </p>
-              </div>
-
+            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
               <div className="grid grid-cols-2 gap-2.5">
                 {[
                   { key: "water", label: "Dostatek vody", icon: "💧" },
@@ -1139,7 +1120,7 @@ export default function ADHDApp() {
                     <button
                       key={item.key}
                       onClick={() => toggleWin(item.key as keyof typeof wins)}
-                      className={`p-3.5 rounded-xl border flex flex-col items-center justify-center gap-2 transition active:scale-95 ${
+                      className={`p-3.5 rounded-2xl border flex flex-col items-center justify-center gap-2 transition active:scale-95 ${
                         isChecked
                           ? "bg-amber-400/10 border-amber-400/40 text-amber-300"
                           : "bg-zinc-800/30 border-zinc-800 text-zinc-400 hover:bg-zinc-800/60"
@@ -1159,7 +1140,7 @@ export default function ADHDApp() {
           {/* TAB 6: BODY DOUBLING */}
           {/* ========================================================= */}
           {activeTab === "bodydoubling" && (
-            <div className="space-y-3.5 py-1">
+            <div className="h-full overflow-y-auto no-scrollbar space-y-3 py-1">
               {activeSession ? (
                 <div className="bg-zinc-800/50 border border-teal-500/30 rounded-2xl p-4 text-center flex flex-col items-center space-y-4">
                   <div className="text-xs text-teal-300 font-semibold tracking-wider uppercase">
@@ -1190,7 +1171,7 @@ export default function ADHDApp() {
 
                   <p className="text-xs text-zinc-300 max-w-xs">{activeSession.desc}</p>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     {activeSession.mediaUrl && activeSession.type === "audio" && (
                       <button
                         onClick={toggleSessionAudio}
@@ -1200,14 +1181,14 @@ export default function ADHDApp() {
                             : "bg-zinc-700 text-zinc-200"
                         }`}
                       >
-                        {isSessionAudioMuted ? <VolumeX className="w-3.5 h-3.5 text-amber-300" /> : <Volume2 className="w-3.5 h-3.5 text-teal-300" />}
+                        {isSessionAudioMuted ? <VolumeX className="w-4 h-4 text-amber-300" /> : <Volume2 className="w-4 h-4 text-teal-300" />}
                         {isSessionAudioMuted ? "Zapnout" : "Ztlumit"}
                       </button>
                     )}
 
                     <button
                       onClick={endSession}
-                      className="px-4 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-xs text-zinc-300 font-medium"
+                      className="px-4 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-xs text-zinc-300 font-medium transition"
                     >
                       Ukončit
                     </button>
@@ -1224,12 +1205,12 @@ export default function ADHDApp() {
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-semibold text-zinc-200">{item.title}</span>
                           {item.type === "audio" && (
-                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[9px] px-1.5 py-0.2 rounded font-medium">
+                            <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 text-[10px] px-1.5 py-0.2 rounded font-medium">
                               Audio
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-zinc-400">{item.desc}</div>
+                        <div className="text-[11px] text-zinc-400">{item.desc}</div>
                       </div>
                       <button
                         disabled={!item.free && !isPro}
@@ -1251,11 +1232,11 @@ export default function ADHDApp() {
           )}
         </main>
 
-        {/* SPODNÍ NAVIGAČNÍ PANEL (VŽDY PEVNĚ DOLE A 100% VIDITELNÝ) */}
-        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#121214]/95 backdrop-blur-md border-t border-zinc-800/80 px-2 py-2 flex justify-around items-center z-50">
+        {/* SPODNÍ NAVIGAČNÍ PANEL (Vždy přirozeně ukotven uvnitř kontejneru) */}
+        <nav className="flex-shrink-0 bg-[#121214] border border-zinc-800/80 rounded-2xl px-2 py-1.5 flex justify-around items-center z-50">
           <button
             onClick={() => setActiveTab("timer")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "timer" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
@@ -1265,7 +1246,7 @@ export default function ADHDApp() {
 
           <button
             onClick={() => setActiveTab("kouskovac")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "kouskovac" ? "text-purple-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
@@ -1275,7 +1256,7 @@ export default function ADHDApp() {
 
           <button
             onClick={() => setActiveTab("rutiny")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "rutiny" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
@@ -1285,7 +1266,7 @@ export default function ADHDApp() {
 
           <button
             onClick={() => setActiveTab("klid")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "klid" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
@@ -1295,7 +1276,7 @@ export default function ADHDApp() {
 
           <button
             onClick={() => setActiveTab("uspechy")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "uspechy" ? "text-amber-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
@@ -1305,7 +1286,7 @@ export default function ADHDApp() {
 
           <button
             onClick={() => setActiveTab("bodydoubling")}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
               activeTab === "bodydoubling" ? "text-teal-300" : "text-zinc-500 hover:text-zinc-400"
             }`}
           >
