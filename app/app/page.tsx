@@ -78,6 +78,25 @@ export default function ADHDApp() {
   const [customTimeMinutes, setCustomTimeMinutes] = useState<string>("");
   const wakeLockRef = useRef<any>(null);
 
+  // Automatické odemčení PRO při příchodu ze Stripe nebo po zadání kódu
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    // 1. Kontrola, zda uživatel přišel ze Stripe platebního odkazu
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("pro") === "active") {
+      localStorage.setItem("adhden_pro_access", "true");
+      setIsPro(true);
+      confetti({ particleCount: 100, spread: 80 });
+      // Vyčistí URL adresu v prohlížeči, aby vypadala čistě
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } 
+    // 2. Kontrola, zda už má uživatel PRO uložené v paměti
+    else if (localStorage.getItem("adhden_pro_access") === "true") {
+      setIsPro(true);
+    }
+  }
+}, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
