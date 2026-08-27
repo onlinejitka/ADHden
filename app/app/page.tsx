@@ -78,6 +78,31 @@ export default function ADHDApp() {
   const [customTimeMinutes, setCustomTimeMinutes] = useState<string>("");
   const wakeLockRef = useRef<any>(null);
 
+  // Funkce pro ověření předplatného podle e-mailu
+const verifySubscription = async (userEmail: string) => {
+  try {
+    const res = await fetch("/api/verify-sub", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    const data = await res.json();
+
+    if (data.isPro) {
+      setIsPro(true);
+      localStorage.setItem("adhden_user_email", userEmail);
+      localStorage.setItem("adhden_pro_access", "true");
+      alert("PRO přístup je aktivní!");
+    } else {
+      setIsPro(false);
+      localStorage.removeItem("adhden_pro_access");
+      alert("Vaše zkušební doba vypršela nebo předplatné není aktivní.");
+    }
+  } catch (e) {
+    alert("Nepodařilo se ověřit předplatné.");
+  }
+};
+
   // Automatické odemčení PRO při příchodu ze Stripe nebo po zadání kódu
 useEffect(() => {
   if (typeof window !== "undefined") {
