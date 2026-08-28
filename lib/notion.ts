@@ -133,7 +133,7 @@ function extractCoverImage(page: any, props: any): string {
   return "";
 }
 
-export async function getPublishedPosts() {
+export async function getPublishedPosts(lang: "CS" | "EN" = "CS") {
   if (!NOTION_API_KEY || !NOTION_DATABASE_ID) return [];
 
   try {
@@ -164,19 +164,28 @@ export async function getPublishedPosts() {
         const isPublished = props.Published?.checkbox === true || props.Publikováno?.checkbox === true;
         if (!isPublished) return false;
 
-        // 2. Kontrola publikace v 6:30 ráno v daný den
+        // 2. Filtrování podle jazyka (Language sloupec v Notion)
+        const postLang = (
+          props.Language?.select?.name ||
+          props.Jazyk?.select?.name ||
+          "CS"
+        ).toUpperCase();
+
+        if (lang === "EN" && postLang !== "EN") return false;
+        if (lang === "CS" && postLang === "EN") return false;
+
+        // 3. Kontrola publikace v 6:30 ráno v daný den
         const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
         if (dateRaw) {
           let publishTime: number;
           if (dateRaw.includes("T")) {
             publishTime = new Date(dateRaw).getTime();
           } else {
-            // Nastaví čas publikace na 06:30:00 daného dne
             publishTime = new Date(`${dateRaw}T06:30:00`).getTime();
           }
 
           if (publishTime > now) {
-            return false; // Článek je naplánován do budoucna
+            return false;
           }
         }
 
@@ -192,16 +201,18 @@ export async function getPublishedPosts() {
         };
 
         const dateRaw = props.Date?.date?.start || props.Datum?.date?.start || "";
+        const postLang = (props.Language?.select?.name || props.Jazyk?.select?.name || "CS").toUpperCase();
 
         return {
           id: page.id,
           title: getPropText(props.Title) || getPropText(props.Název) || "Bez názvu",
           slug: getPropText(props.Slug) || page.id,
           description: getPropText(props.Perex) || getPropText(props.Popis) || "",
-          category: props.Category?.select?.name || props.Kategorie?.select?.name || "ADHD & Čas",
+          category: props.Category?.select?.name || props.Kategorie?.select?.name || (postLang === "EN" ? "ADHD & Focus" : "ADHD & Čas"),
+          lang: postLang,
           dateRaw,
           date: dateRaw
-            ? new Date(dateRaw).toLocaleDateString("cs-CZ", {
+            ? new Date(dateRaw).toLocaleDateString(postLang === "EN" ? "en-US" : "cs-CZ", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -255,7 +266,9 @@ export async function getPostBySlug(slug: string) {
     let page = queryData.results[0];
 
     if (!page) {
-      const allPosts = await getPublishedPosts();
+      const allPostsCS = await getPublishedPosts("CS");
+      const allPostsEN = await getPublishedPosts("EN");
+      const allPosts = [...allPostsCS, ...allPostsEN];
       page = allPosts.find((p: any) => p.slug === slug || p.id === slug);
       if (!page) return null;
     }
@@ -285,13 +298,16 @@ export async function getPostBySlug(slug: string) {
       contentHtml = blocksToHtml(blocksData.results);
     }
 
+    const postLang = (props.Language?.select?.name || props.Jazyk?.select?.name || "CS").toUpperCase();
+
     return {
       id: page.id,
       title: getPropText(props.Title) || getPropText(props.Název) || "Bez názvu",
       description: getPropText(props.Perex) || getPropText(props.Popis) || "",
-      category: props.Category?.select?.name || props.Kategorie?.select?.name || "ADHD & Čas",
+      category: props.Category?.select?.name || props.Kategorie?.select?.name || (postLang === "EN" ? "ADHD & Focus" : "ADHD & Čas"),
+      lang: postLang,
       date: props.Date?.date?.start || props.Datum?.date?.start
-        ? new Date(props.Date?.date?.start || props.Datum?.date?.start).toLocaleDateString("cs-CZ", {
+        ? new Date(props.Date?.date?.start || props.Datum?.date?.start).toLocaleDateString(postLang === "EN" ? "en-US" : "cs-CZ", {
             day: "numeric",
             month: "long",
             year: "numeric",
