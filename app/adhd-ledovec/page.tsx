@@ -281,7 +281,7 @@ export default async function AdhdLedovecPage({
         </main>
       </div>
 
-      {/* ZÁPATÍ (FOOTER SE VŠEMI PŮVODNÍMI ÚDAJI) */}
+      {/* ZÁPATÍ */}
       <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
         <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
           <div className="space-y-2 text-center max-w-2xl mx-auto">
