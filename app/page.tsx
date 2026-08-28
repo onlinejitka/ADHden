@@ -36,7 +36,7 @@ export default async function LandingPage({
         <header className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-zinc-800/60 gap-2">
           <Link href={isEn ? "/?lang=en" : "/"} className="flex items-center flex-shrink-0 group">
             <img
-              src={isEn ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
+              src={isEn ? "/ADHday%20logo%20EN.jpg" : "/ADHden%20logo.jpg"}
               alt="ADHDen logo"
               className="h-8 sm:h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
