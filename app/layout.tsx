@@ -12,20 +12,22 @@ const lexend = Lexend({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.adhden.cz"),
   title: {
-    default: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
-    template: "%s | ADHDen.cz",
+    default: "ADHDen | Gentle Focus & Daily OS for the ADHD Brain",
+    template: "%s | ADHDen",
   },
   description:
-    "Webové nástroje navržené pro ADHD dynamiku – vizuální Time Timer, hnědý šum, AI rozkouskování úkolů a tichý parťák pro zklidnění paralýzy.",
+    "Web-based tools designed for ADHD dynamics – visual Time Timer, browser brown noise, AI task micro-chunking, and quiet body doubling to unfreeze executive paralysis.",
   keywords: [
     "ADHD",
-    "ADHD nástroje",
+    "ADHD tools",
+    "Visual Timer",
     "Time Timer",
-    "Hnědý šum",
-    "Exekutivní paralýza",
+    "Brown Noise",
+    "Executive Dysfunction",
+    "Task Paralysis",
     "Body Doubling",
-    "ADHD ledovec",
-    "Časová slepota",
+    "Time Blindness",
+    "Neurodivergent OS",
   ],
   authors: [{ name: "Jitka Pekárková" }],
   icons: {
@@ -34,12 +36,12 @@ export const metadata: Metadata = {
     apple: "/ADHden%20favikon.png",
   },
   openGraph: {
-    title: "ADHDen.cz | Laskavý systém pro neurodivergentní mozek",
+    title: "ADHDen | Gentle Daily Tools for ADHD & Neurodivergence",
     description:
-      "Nástroje navržené přímo pro ADHD – bez tlaku, výčitek a bez nutnosti registrace.",
+      "Tools designed specifically for ADHD – zero pressure, no guilt, and no sign-up required.",
     url: "https://www.adhden.cz",
     siteName: "ADHDen",
-    locale: "cs_CZ",
+    locale: "en_US",
     type: "website",
   },
   robots: {
@@ -65,7 +67,7 @@ export default function RootLayout({
     applicationCategory: "HealthApplication",
     operatingSystem: "All",
     description:
-      "Aplikace a průvodce pro zvládání ADHD, exekutivní paralýzy a časové slepoty.",
+      "Web application and compassionate guides for navigating ADHD, executive dysfunction, and time blindness.",
     author: {
       "@type": "Person",
       name: "Jitka Pekárková",
@@ -74,7 +76,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="cs" className={lexend.variable}>
+    <html lang="en" className={lexend.variable}>
       <head>
         <script
           type="application/ld+json"
