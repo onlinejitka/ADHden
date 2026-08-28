@@ -66,6 +66,7 @@ export default function ADHDApp() {
 
   const [activeTab, setActiveTab] = useState<Tab>("timer");
   const [isPro, setIsPro] = useState<boolean>(false);
+  const [lang, setLang] = useState<"cs" | "en">("cs");
 
   // =============================================================
   // 1. TIME TIMER
@@ -78,13 +79,21 @@ export default function ADHDApp() {
   const [customTimeMinutes, setCustomTimeMinutes] = useState<string>("");
   const wakeLockRef = useRef<any>(null);
 
+  // Bezpečné načtení a aktivace PRO + detekce jazyka z URL
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const isProFromUrl = urlParams.get("pro") === "active";
+      
+      // Detekce jazyka z URL (?lang=en)
+      const langParam = urlParams.get("lang")?.toLowerCase();
+      if (langParam === "en") {
+        setLang("en");
+      }
 
+      // Detekce aktivace PRO (?pro=active)
+      const isProFromUrl = urlParams.get("pro") === "active";
       if (isProFromUrl) {
         setIsPro(true);
         try {
@@ -105,7 +114,9 @@ export default function ADHDApp() {
           }
         } catch (storageErr) {}
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error("Chyba inicializace:", err);
+    }
   }, []);
 
   useEffect(() => {
@@ -186,7 +197,7 @@ export default function ADHDApp() {
   const pieDegrees = progressRatio * 360;
 
   // =============================================================
-  // 2. TASK CHUNKER
+  // 2. KOUSKOVAČ ÚKOLŮ
   // =============================================================
   const [rawTask, setRawTask] = useState("");
   const [steps, setSteps] = useState<string[]>([]);
@@ -204,7 +215,7 @@ export default function ADHDApp() {
       const res = await fetch("/api/breakdown", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: rawTask, stepsCount: stepsCountToUse }),
+        body: JSON.stringify({ task: rawTask, stepsCount: stepsCountToUse, lang }),
       });
       const data = await res.json();
       if (data.steps && Array.isArray(data.steps)) {
@@ -213,7 +224,7 @@ export default function ADHDApp() {
         setErrorMessage(data.error);
       }
     } catch (e: any) {
-      setErrorMessage("Could not connect to server.");
+      setErrorMessage(lang === "en" ? "Could not connect to server." : "Nepodařilo se spojit se serverem.");
     } finally {
       setIsLoadingSteps(false);
     }
@@ -232,49 +243,49 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 3. ROUTINES
+  // 3. RUTINY
   // =============================================================
   const [routineAudience, setRoutineAudience] = useState<"adults" | "kids">("adults");
 
   const [adultSections, setAdultSections] = useState<RoutineSection[]>([
     {
       id: "ad-morning",
-      name: "Morning Launch",
+      name: lang === "en" ? "Morning Launch" : "Ranní start",
       icon: "☀️",
       items: [
-        { id: "a1", text: "Drink a tall glass of water", done: false },
-        { id: "a2", text: "Take morning meds / vitamins", done: false },
-        { id: "a3", text: "Pick 1 primary focus for today", done: false },
+        { id: "a1", text: lang === "en" ? "Drink a tall glass of water" : "Vypít sklenici čisté vody", done: false },
+        { id: "a2", text: lang === "en" ? "Take morning meds / vitamins" : "Vzít léky / ranní vitamíny", done: false },
+        { id: "a3", text: lang === "en" ? "Check 1 primary focus for today" : "Zkontrolovat 1 hlavní cíl dne", done: false },
       ],
     },
     {
       id: "ad-evening",
-      name: "Night Wind-Down",
+      name: lang === "en" ? "Night Wind-Down" : "Večerní klid",
       icon: "🌙",
       items: [
-        { id: "a4", text: "Put phone to charge away from bed", done: false },
-        { id: "a5", text: "Lay out clothes for tomorrow", done: false },
-        { id: "a6", text: "5 minutes of mindful breathing", done: false },
+        { id: "a4", text: lang === "en" ? "Phone to charge away from bed" : "Dát telefon nabíjet mimo postel", done: false },
+        { id: "a5", text: lang === "en" ? "Lay out clothes for tomorrow" : "Připravit oblečení na zítra", done: false },
+        { id: "a6", text: lang === "en" ? "5 minutes of calm breathing" : "5 minut klidného dýchání", done: false },
       ],
     },
     {
       id: "ad-cleaning",
-      name: "Quick Reset",
+      name: lang === "en" ? "Quick Reset" : "Rychlý úklid",
       icon: "🧹",
       items: [
-        { id: "a7", text: "Dishes into the dishwasher/sink", done: false },
-        { id: "a8", text: "Toss stray trash off the desk", done: false },
-        { id: "a9", text: "Fluff pillows and straighten bed", done: false },
+        { id: "a7", text: lang === "en" ? "Dishes into the dishwasher/sink" : "Odnést hrnky a talíře do myčky", done: false },
+        { id: "a8", text: lang === "en" ? "Toss stray wrappers off the desk" : "Vyhodit obaly a odpadky ze stolu", done: false },
+        { id: "a9", text: lang === "en" ? "Fluff pillows and straighten bed" : "Srovnat polštáře a deku", done: false },
       ],
     },
     {
       id: "ad-work",
-      name: "Deep Focus",
+      name: lang === "en" ? "Deep Focus" : "Pracovní fokus",
       icon: "💻",
       items: [
-        { id: "a10", text: "Close unnecessary browser tabs", done: false },
-        { id: "a11", text: "Pour fresh water or hot tea", done: false },
-        { id: "a12", text: "Start a 25-min visual timer", done: false },
+        { id: "a10", text: lang === "en" ? "Close unnecessary browser tabs" : "Zavřít nepotřebné záložky", done: false },
+        { id: "a11", text: lang === "en" ? "Pour fresh water or hot tea" : "Nalít si čerstvý čaj / vodu", done: false },
+        { id: "a12", text: lang === "en" ? "Start a 25-min visual timer" : "Spustit Time Timer na 25 min", done: false },
       ],
     },
   ]);
@@ -282,43 +293,43 @@ export default function ADHDApp() {
   const [kidsSections, setKidsSections] = useState<RoutineSection[]>([
     {
       id: "kd-morning",
-      name: "Morning Launch",
+      name: lang === "en" ? "Morning Launch" : "Ranní odchod",
       icon: "🎒",
       items: [
-        { id: "k1", text: "Brush teeth (2 minutes)", icon: "🪥", done: false },
-        { id: "k2", text: "Put on pants and cozy socks", icon: "🧦", done: false },
-        { id: "k3", text: "Water bottle in backpack", icon: "💧", done: false },
-        { id: "k4", text: "Shoes and jacket at the door", icon: "👟", done: false },
+        { id: "k1", text: lang === "en" ? "Brush teeth (2 minutes)" : "Vyčistit zoubky (2 minuty)", icon: "🪥", done: false },
+        { id: "k2", text: lang === "en" ? "Put on pants and cozy socks" : "Obléknout kalhoty a ponožky", icon: "🧦", done: false },
+        { id: "k3", text: lang === "en" ? "Water bottle in backpack" : "Dát lahvičku s pitím do batůžku", icon: "💧", done: false },
+        { id: "k4", text: lang === "en" ? "Shoes and jacket at the door" : "Obout botičky u dveří", icon: "👟", done: false },
       ],
     },
     {
       id: "kd-playground",
-      name: "Heading Outside",
+      name: lang === "en" ? "Heading Outside" : "Jdeme na hřiště",
       icon: "⚽",
       items: [
-        { id: "k5", text: "Use the bathroom", icon: "🚽", done: false },
-        { id: "k6", text: "Grab hat and water bottle", icon: "🧢", done: false },
-        { id: "k7", text: "Pick 1 favorite toy to bring", icon: "🧸", done: false },
+        { id: "k5", text: lang === "en" ? "Use the bathroom" : "Dojít si na záchod", icon: "🚽", done: false },
+        { id: "k6", text: lang === "en" ? "Grab hat and water bottle" : "Vzít čepici a pitíčko", icon: "🧢", done: false },
+        { id: "k7", text: lang === "en" ? "Pick 1 favorite toy to bring" : "Vybrat 1 hračku s sebou", icon: "🧸", done: false },
       ],
     },
     {
       id: "kd-home",
-      name: "Back Home",
+      name: lang === "en" ? "Back Home" : "Návrat domů",
       icon: "🏡",
       items: [
-        { id: "k8", text: "Shoes off and into the rack", icon: "👞", done: false },
-        { id: "k9", text: "Wash hands with warm soap", icon: "🧼", done: false },
-        { id: "k10", text: "Put snack box into the sink", icon: "🥪", done: false },
+        { id: "k8", text: lang === "en" ? "Shoes off and into the rack" : "Zout boty a uklidit do botníku", icon: "👞", done: false },
+        { id: "k9", text: lang === "en" ? "Wash hands with warm soap" : "Čistě si umýt ruce mýdlem", icon: "🧼", done: false },
+        { id: "k10", text: lang === "en" ? "Put snack box into the sink" : "Dát krabičku od svačiny do dřezu", icon: "🥪", done: false },
       ],
     },
     {
       id: "kd-evening",
-      name: "Bedtime & Teeth",
+      name: lang === "en" ? "Bedtime & Teeth" : "Večerka & Zoubky",
       icon: "✨",
       items: [
-        { id: "k11", text: "Put on pajamas", icon: "👕", done: false },
-        { id: "k12", text: "Thoroughly brush teeth", icon: "🪥", done: false },
-        { id: "k13", text: "Bedtime story & goodnight cuddle", icon: "📖", done: false },
+        { id: "k11", text: lang === "en" ? "Put on pajamas" : "Obléknout pyžámko", icon: "👕", done: false },
+        { id: "k12", text: lang === "en" ? "Thoroughly brush teeth" : "Důkladně vyčistit zoubky", icon: "🪥", done: false },
+        { id: "k13", text: lang === "en" ? "Bedtime story & cuddle" : "Pohádka na dobrou noc", icon: "📖", done: false },
       ],
     },
   ]);
@@ -373,11 +384,11 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 4. CALM ZONE
+  // 4. KLIDOVÁ ZÓNA
   // =============================================================
   const [officialAudios] = useState([
-    { id: "oa-brown", name: "Deep Brown Noise", desc: "Soothing neurological grounding", type: "builtin-brown", free: true },
-    { id: "oa-rain", name: "Night Raindrops", desc: "Monotonous steady rain focus", type: "builtin-rain", free: true },
+    { id: "oa-brown", name: lang === "en" ? "Deep Brown Noise" : "Hnědý šum (Brown Noise)", desc: lang === "en" ? "Soothing neurological grounding" : "Zklidnění nervové soustavy", type: "builtin-brown", free: true },
+    { id: "oa-rain", name: lang === "en" ? "Night Raindrops" : "Klidný noční déšť", desc: lang === "en" ? "Monotonous steady rain focus" : "Monotónní zvuk kapek", type: "builtin-rain", free: true },
   ]);
 
   const [customAudios, setCustomAudios] = useState<CustomAudio[]>([]);
@@ -417,7 +428,7 @@ export default function ADHDApp() {
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPro) return;
     if (customAudios.length >= 3) {
-      alert("In PRO mode, you can upload up to 3 custom tracks.");
+      alert(lang === "en" ? "In PRO mode, you can upload up to 3 custom tracks." : "V PRO verzi můžete mít nahrané maximálně 3 vlastní skladby.");
       return;
     }
     const file = e.target.files?.[0];
@@ -464,7 +475,7 @@ export default function ADHDApp() {
   };
 
   // =============================================================
-  // 5. DAILY WINS
+  // 5. DNEŠNÍ ÚSPĚCHY
   // =============================================================
   const [wins, setWins] = useState({
     water: false,
@@ -487,8 +498,8 @@ export default function ADHDApp() {
   const [sessions] = useState<BodyDoublingSession[]>([
     {
       id: "bd-teeth",
-      title: "Brush Teeth With Me",
-      desc: "2.5 minutes for clean teeth with upbeat rhythm",
+      title: lang === "en" ? "Brush Teeth With Me" : "Čištění zubů se mnou",
+      desc: lang === "en" ? "2.5 minutes for clean teeth with upbeat rhythm" : "2,5 minuty pro čisté zoubky s rytmickým doprovodem",
       time: 2.5,
       type: "audio",
       mediaUrl: "/Cisteni-zubu-Sunrise_on_the_Boulevard.mp3",
@@ -496,24 +507,24 @@ export default function ADHDApp() {
     },
     {
       id: "bd-desk",
-      title: "Desk Surface Quick Reset",
-      desc: "5 minutes: dishes out, trash tossed, pens sorted",
+      title: lang === "en" ? "Desk Surface Quick Reset" : "Rychlý reset stolu",
+      desc: lang === "en" ? "5 minutes: dishes out, trash tossed, pens sorted" : "5 minut: odnést nádobí, vyhodit papíry, uklidit tužky",
       time: 5,
       type: "timer",
       free: true,
     },
     {
       id: "bd-stretch",
-      title: "Desk Stretch & Decompress",
-      desc: "3 minutes of neck, shoulder, and back relief",
+      title: lang === "en" ? "Desk Stretch & Decompress" : "Společné protažení u stolu",
+      desc: lang === "en" ? "3 minutes of neck and shoulder relief" : "3 minuty cviků na uvolnění krku a zad",
       time: 3,
       type: "video",
       free: true,
     },
     {
       id: "bd-laundry",
-      title: "Fold Laundry Without Dread",
-      desc: "15 minutes of calm rhythmic folding flow",
+      title: lang === "en" ? "Fold Laundry Without Dread" : "Skládání prádla bez odkládání",
+      desc: lang === "en" ? "15 minutes of calm rhythmic folding flow" : "15 minut fokus se zklidňujícím rytmem",
       time: 15,
       type: "audio",
       mediaUrl: "/Skladani-pradla-Amber_Hours.mp3",
@@ -521,8 +532,8 @@ export default function ADHDApp() {
     },
     {
       id: "bd-mail",
-      title: "Inbox Zero Power Sprint",
-      desc: "10 minutes of supported email processing",
+      title: lang === "en" ? "Inbox Zero Power Sprint" : "Vyřízení 3 e-mailů",
+      desc: lang === "en" ? "10 minutes of focused email processing" : "10 minut soustředěné práce",
       time: 10,
       type: "audio",
       mediaUrl: "/Klid-u-pocitace-Where_the_Pencil_Meets_Paper.mp3",
@@ -605,35 +616,57 @@ export default function ADHDApp() {
         <audio ref={audioPlayerRef} className="hidden" />
         <audio ref={bodyDoublingAudioRef} className="hidden" />
 
-        {/* HEADER */}
+        {/* HLAVIČKA APLIKACE S PŘEPÍNAČEM JAZYKŮ A LOGEM */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80 mb-6 flex-shrink-0">
-          <Link href="/" className="flex items-center group">
+          <Link href={lang === "en" ? "/?lang=en" : "/"} className="flex items-center group">
             <img
-              src="/ADHden%20logo.jpg"
+              src={lang === "en" ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
               alt="ADHDen logo"
               className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
           </Link>
 
-          {isPro ? (
-            <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 fill-current text-amber-400" />
-              <span>★ PRO Active</span>
-            </span>
-          ) : (
-            <a
-              href={stripeProUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition shadow-sm active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5 fill-current" />
-              <span>Try PRO Free</span>
-            </a>
-          )}
+          <div className="flex items-center gap-2">
+            {/* PŘEPÍNAČ JAZYKŮ V APLIKACI */}
+            <div className="flex bg-zinc-900 border border-zinc-800 p-0.5 rounded-xl text-xs font-bold">
+              <button
+                onClick={() => setLang("cs")}
+                className={`px-2 py-1 rounded-lg transition ${
+                  lang === "cs" ? "bg-amber-400 text-zinc-950 font-bold shadow" : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                CZ
+              </button>
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2 py-1 rounded-lg transition ${
+                  lang === "en" ? "bg-amber-400 text-zinc-950 font-bold shadow" : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                EN
+              </button>
+            </div>
+
+            {isPro ? (
+              <span className="bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 fill-current text-amber-400" />
+                <span>★ {lang === "en" ? "PRO Active" : "PRO Aktivní"}</span>
+              </span>
+            ) : (
+              <a
+                href={stripeProUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition shadow-sm active:scale-95"
+              >
+                <Sparkles className="w-3.5 h-3.5 fill-current" />
+                <span>{lang === "en" ? "Try PRO" : "Vyzkoušet PRO"}</span>
+              </a>
+            )}
+          </div>
         </header>
 
-        {/* MAIN CONTENT */}
+        {/* HLAVNÍ OBSAH */}
         <main className="flex-1 flex flex-col justify-center">
           {/* TAB 1: TIME TIMER */}
           {activeTab === "timer" && (
@@ -650,13 +683,13 @@ export default function ADHDApp() {
                       {formatTime(secondsLeft)}
                     </span>
                     <span className="text-xs text-amber-300 font-medium mt-1 leading-tight">
-                      {isTimerRunning ? "✨ Be present" : "Paused"}
+                      {isTimerRunning ? (lang === "en" ? "✨ Be present" : "✨ Vnímej přítomnost") : (lang === "en" ? "Paused" : "Pauza")}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Controls */}
+              {/* Tlačítka */}
               <div className="flex items-center gap-5 flex-shrink-0 pt-1">
                 <button
                   onClick={toggleTimer}
@@ -676,7 +709,7 @@ export default function ADHDApp() {
                 </button>
               </div>
 
-              {/* Quick Presets */}
+              {/* Předvolby */}
               <div className="flex gap-2 flex-shrink-0 pt-1">
                 {[5, 10, 15, 25, 45].map((mins) => (
                   <button
@@ -696,12 +729,12 @@ export default function ADHDApp() {
                 ))}
               </div>
 
-              {/* Custom Time */}
+              {/* Vlastní čas */}
               <div className="flex-shrink-0">
                 {isPro ? (
                   <div className="flex items-center gap-2.5 bg-zinc-800/50 border border-zinc-800 rounded-2xl px-4 py-1.5">
                     <span className="text-xs text-amber-300 font-medium whitespace-nowrap">
-                      ★ Custom (min):
+                      ★ {lang === "en" ? "Custom (min):" : "Vlastní čas (min):"}
                     </span>
                     <input
                       type="number"
@@ -717,7 +750,7 @@ export default function ADHDApp() {
                       disabled={!customTimeMinutes}
                       className="bg-amber-400 hover:bg-amber-300 disabled:opacity-30 text-zinc-950 font-bold px-3 py-1 rounded-lg text-xs transition"
                     >
-                      Save
+                      {lang === "en" ? "Save" : "Uložit"}
                     </button>
                   </div>
                 ) : (
@@ -729,18 +762,18 @@ export default function ADHDApp() {
                       className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-300 transition"
                     >
                       <Lock className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Custom timer & sounds in PRO</span>
+                      <span>{lang === "en" ? "Custom timer & sounds in PRO" : "Vlastní nastavení času a zvuky v PRO"}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                 )}
               </div>
 
-              {/* Ambient Sound Box */}
+              {/* Zvuková kulisa */}
               <div className="w-full bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3 flex-shrink-0">
                 <div className="flex items-center justify-between text-xs font-medium text-zinc-300">
                   <span className="flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-teal-400" /> Focus Ambient Sound
+                    <Volume2 className="w-4 h-4 text-teal-400" /> {lang === "en" ? "Focus Ambient Sound" : "Zvuková kulisa při práci"}
                   </span>
                   <div className="flex gap-2 items-center">
                     {["#fbbf24", "#2dd4bf", "#c084fc", "#f87171", "#38bdf8"].map((c) => (
@@ -768,7 +801,7 @@ export default function ADHDApp() {
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
                     }`}
                   >
-                    Brown
+                    {lang === "en" ? "Brown" : "Hnědý"}
                   </button>
                   <button
                     disabled={!isPro}
@@ -782,7 +815,7 @@ export default function ADHDApp() {
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
                     } ${!isPro && "opacity-40 cursor-not-allowed"}`}
                   >
-                    Pink {!isPro && "🔒"}
+                    {lang === "en" ? "Pink" : "Růžový"} {!isPro && "🔒"}
                   </button>
                   <button
                     disabled={!isPro}
@@ -796,7 +829,7 @@ export default function ADHDApp() {
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
                     } ${!isPro && "opacity-40 cursor-not-allowed"}`}
                   >
-                    Rain {!isPro && "🔒"}
+                    {lang === "en" ? "Rain" : "Déšť"} {!isPro && "🔒"}
                   </button>
                   <button
                     onClick={() => {
@@ -809,29 +842,31 @@ export default function ADHDApp() {
                         : "bg-zinc-800/60 text-zinc-400 border border-zinc-800"
                     }`}
                   >
-                    Mute
+                    {lang === "en" ? "Mute" : "Ticho"}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 2: CHUNKER */}
+          {/* TAB 2: KOUSKOVAČ */}
           {activeTab === "kouskovac" && (
             <div className="space-y-6">
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-5 space-y-3.5">
                 <h2 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-400" />
-                  Task Micro-Chunker
+                  {lang === "en" ? "Task Micro-Chunker" : "Kouskovač velkých úkolů"}
                 </h2>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Break down overwhelming tasks into 3 frictionless, physically doable steps.
+                  {lang === "en"
+                    ? "Break down overwhelming tasks into 3 frictionless, physically doable steps."
+                    : "Rozpad paralyzujícího úkolu na 3 malé, snadno zahájitelné kroky bez stresu."}
                 </p>
 
                 <textarea
                   value={rawTask}
                   onChange={(e) => setRawTask(e.target.value)}
-                  placeholder="Type a task you dread starting (e.g., Clean off my desk)..."
+                  placeholder={lang === "en" ? "Type a task you dread starting..." : "Napište úkol (např. Uklidit pracovní stůl)..."}
                   rows={3}
                   className="w-full bg-[#121214] border border-zinc-700/80 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-purple-400 resize-none leading-relaxed"
                 />
@@ -844,14 +879,14 @@ export default function ADHDApp() {
 
                 <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <span>Steps:</span>
+                    <span>{lang === "en" ? "Steps:" : "Počet kroků:"}</span>
                     <select
                       value={customStepCount}
                       onChange={(e) => setCustomStepCount(Number(e.target.value))}
                       className="bg-[#121214] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-purple-300 focus:outline-none"
                     >
-                      <option value={3}>3 steps</option>
-                      <option value={5}>5 steps</option>
+                      <option value={3}>{lang === "en" ? "3 steps" : "3 kroky"}</option>
+                      <option value={5}>{lang === "en" ? "5 steps" : "5 kroků"}</option>
                     </select>
                   </div>
 
@@ -860,7 +895,7 @@ export default function ADHDApp() {
                     disabled={isLoadingSteps || !rawTask.trim()}
                     className="bg-purple-400 hover:bg-purple-300 disabled:opacity-40 text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs transition active:scale-95"
                   >
-                    {isLoadingSteps ? "Chunking..." : "Break it down"}
+                    {isLoadingSteps ? (lang === "en" ? "Chunking..." : "Rozkládám...") : (lang === "en" ? "Break it down" : "Rozkouskovat")}
                   </button>
                 </div>
               </div>
@@ -868,7 +903,7 @@ export default function ADHDApp() {
               {steps.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider px-1">
-                    Your Micro-Steps:
+                    {lang === "en" ? "Your Micro-Steps:" : "Jednotlivé kroky:"}
                   </h3>
                   {steps.map((step, idx) => {
                     const isDone = completedSteps.includes(idx);
@@ -896,7 +931,7 @@ export default function ADHDApp() {
             </div>
           )}
 
-          {/* TAB 3: ROUTINES */}
+          {/* TAB 3: RUTINY */}
           {activeTab === "rutiny" && (
             <div className="space-y-5">
               <div className="flex bg-zinc-800/60 p-1 rounded-xl border border-zinc-800">
@@ -909,7 +944,7 @@ export default function ADHDApp() {
                     routineAudience === "adults" ? "bg-zinc-700 text-amber-300 shadow" : "text-zinc-400"
                   }`}
                 >
-                  For Adults
+                  {lang === "en" ? "For Adults" : "Pro dospělé"}
                 </button>
                 <button
                   onClick={() => {
@@ -920,7 +955,7 @@ export default function ADHDApp() {
                     routineAudience === "kids" ? "bg-zinc-700 text-teal-300 shadow" : "text-zinc-400"
                   }`}
                 >
-                  For Kids (Visual)
+                  {lang === "en" ? "For Kids (Visual)" : "Pro děti (s ikonami)"}
                 </button>
               </div>
 
@@ -969,7 +1004,7 @@ export default function ADHDApp() {
 
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-2.5">
                 <div className="text-xs text-zinc-400 font-medium">
-                  Add step to <b>{currentActiveSection.name}</b>:
+                  {lang === "en" ? `Add step to ${currentActiveSection.name}:` : `Přidat krok do sekce ${currentActiveSection.name}:`}
                 </div>
                 {isPro ? (
                   <div className="flex gap-2">
@@ -977,7 +1012,7 @@ export default function ADHDApp() {
                       type="text"
                       value={newRoutineText}
                       onChange={(e) => setNewRoutineText(e.target.value)}
-                      placeholder="e.g., Check backpack keys..."
+                      placeholder={lang === "en" ? "e.g., Check backpack keys..." : "Např. Připravit klíče..."}
                       className="flex-1 bg-[#121214] border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-amber-400"
                     />
                     <button
@@ -991,7 +1026,7 @@ export default function ADHDApp() {
                 ) : (
                   <div className="p-3 bg-zinc-800/50 border border-zinc-700/60 rounded-xl flex items-center justify-between">
                     <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
-                      <Lock className="w-3.5 h-3.5 text-amber-400" /> Custom steps in PRO
+                      <Lock className="w-3.5 h-3.5 text-amber-400" /> {lang === "en" ? "Custom steps in PRO" : "Vlastní kroky v PRO"}
                     </span>
                     <a
                       href={stripeProUrl}
@@ -999,7 +1034,7 @@ export default function ADHDApp() {
                       rel="noopener noreferrer"
                       className="text-xs text-amber-300 hover:underline font-semibold flex items-center gap-1"
                     >
-                      <span>7 days free</span>
+                      <span>{lang === "en" ? "7 days free" : "7 dní zdarma"}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
@@ -1008,15 +1043,15 @@ export default function ADHDApp() {
             </div>
           )}
 
-          {/* TAB 4: CALM ZONE */}
+          {/* TAB 4: KLIDOVÁ ZÓNA */}
           {activeTab === "klid" && (
             <div className="space-y-5">
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-1">
                 <h2 className="text-sm font-semibold text-teal-300 flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-teal-400" /> Sensory Calm & White Noise
+                  <Volume2 className="w-4 h-4 text-teal-400" /> {lang === "en" ? "Sensory Calm & Sounds" : "Zklidnění & Senzorické zvuky"}
                 </h2>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Monotonous grounding sounds for nervous system decompression.
+                  {lang === "en" ? "Grounding sounds for mind decompression." : "Monotónní zvuky pro úlevu od přetížení smyslů."}
                 </p>
               </div>
 
@@ -1036,22 +1071,22 @@ export default function ADHDApp() {
                         }`}
                       >
                         {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                        {isPlaying ? "Playing" : "Play"}
+                        {isPlaying ? (lang === "en" ? "Playing" : "Hraje") : (lang === "en" ? "Play" : "Přehrát")}
                       </button>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Sleep Timer */}
+              {/* Časovač vypnutí */}
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-teal-400" /> Audio Sleep Timer
+                    <Clock className="w-4 h-4 text-teal-400" /> {lang === "en" ? "Audio Sleep Timer" : "Časovač vypnutí zvuku"}
                   </span>
                   {isPro && klidSecsLeft !== null && (
                     <span className="text-amber-300 font-mono font-bold">
-                      turns off in {formatTime(klidSecsLeft)}
+                      {lang === "en" ? `turns off in ${formatTime(klidSecsLeft)}` : `vypne za ${formatTime(klidSecsLeft)}`}
                     </span>
                   )}
                 </div>
@@ -1074,7 +1109,7 @@ export default function ADHDApp() {
                   </div>
                 ) : (
                   <span className="text-xs text-zinc-400 block text-center py-1">
-                    🔒 Audio sleep timer is available in PRO
+                    🔒 {lang === "en" ? "Sleep timer is in PRO" : "Automatické vypnutí zvuku je součástí PRO"}
                   </span>
                 )}
               </div>
@@ -1088,29 +1123,29 @@ export default function ADHDApp() {
                 }}
                 className="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
               >
-                <VolumeX className="w-4 h-4" /> Stop All Audio
+                <VolumeX className="w-4 h-4" /> {lang === "en" ? "Stop All Audio" : "Zastavit veškeré přehrávání"}
               </button>
             </div>
           )}
 
-          {/* TAB 5: WINS */}
+          {/* TAB 5: DNEŠNÍ ÚSPĚCHY */}
           {activeTab === "uspechy" && (
             <div className="space-y-5">
               <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-1">
                 <h2 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-amber-400" /> Daily Self-Care Wins
+                  <Heart className="w-4 h-4 text-amber-400" /> {lang === "en" ? "Daily Self-Care Wins" : "Dnešní laskavost k sobě"}
                 </h2>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Zero pressure for perfection. Simply celebrate the small things you nourished today.
+                  {lang === "en" ? "Zero pressure. Simply celebrate the small things you did today." : "Žádný tlak na výkon. Zaznamenejte si i ty nejmenší kroky, které jste dnes zvládli."}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { key: "water", label: "Hydrated body", icon: "💧" },
-                  { key: "food", label: "Nourished body", icon: "🥪" },
-                  { key: "rest", label: "Mindful rest", icon: "🛋️" },
-                  { key: "movement", label: "Gentle stretch", icon: "🧘" },
+                  { key: "water", label: lang === "en" ? "Hydrated body" : "Dostatek vody", icon: "💧" },
+                  { key: "food", label: lang === "en" ? "Nourished body" : "Výživné jídlo", icon: "🥪" },
+                  { key: "rest", label: lang === "en" ? "Mindful rest" : "Krátký odpočinek", icon: "🛋️" },
+                  { key: "movement", label: lang === "en" ? "Gentle stretch" : "Protažení těla", icon: "🧘" },
                 ].map((item) => {
                   const isChecked = wins[item.key as keyof typeof wins];
                   return (
@@ -1125,7 +1160,7 @@ export default function ADHDApp() {
                     >
                       <span className="text-3xl">{item.icon}</span>
                       <span className="text-xs font-semibold text-center">{item.label}</span>
-                      {isChecked && <span className="text-[11px] text-amber-300 font-bold">✓ Got it!</span>}
+                      {isChecked && <span className="text-[11px] text-amber-300 font-bold">✓ {lang === "en" ? "Done!" : "Splněno!"}</span>}
                     </button>
                   );
                 })}
@@ -1156,9 +1191,9 @@ export default function ADHDApp() {
                         <span className="text-[10px] text-teal-300 font-medium mt-1">
                           {activeSession.mediaUrl && activeSession.type === "audio"
                             ? isSessionAudioMuted
-                              ? "Muted"
-                              : "Audio playing"
-                            : "Working together"}
+                              ? (lang === "en" ? "Muted" : "Ztlumeno")
+                              : (lang === "en" ? "Audio playing" : "Audio hraje")
+                            : (lang === "en" ? "Working together" : "Společně v akci")}
                         </span>
                       </div>
                     </div>
@@ -1177,7 +1212,7 @@ export default function ADHDApp() {
                         }`}
                       >
                         {isSessionAudioMuted ? <VolumeX className="w-4 h-4 text-amber-300" /> : <Volume2 className="w-4 h-4 text-teal-300" />}
-                        {isSessionAudioMuted ? "Unmute" : "Mute"}
+                        {isSessionAudioMuted ? (lang === "en" ? "Unmute" : "Zapnout hudbu") : (lang === "en" ? "Mute" : "Ztlumit")}
                       </button>
                     )}
 
@@ -1185,7 +1220,7 @@ export default function ADHDApp() {
                       onClick={endSession}
                       className="px-5 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-xs text-zinc-300 font-semibold transition"
                     >
-                      Finish
+                      {lang === "en" ? "Finish" : "Ukončit"}
                     </button>
                   </div>
                 </div>
@@ -1227,7 +1262,7 @@ export default function ADHDApp() {
           )}
         </main>
 
-        {/* BOTTOM NAVIGATION */}
+        {/* SPODNÍ NAVIGAČNÍ PANEL */}
         <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#121214]/95 backdrop-blur-md border-t border-zinc-800/90 px-3 py-2.5 flex justify-around items-center z-50 shadow-2xl">
           <button
             onClick={() => setActiveTab("timer")}
@@ -1236,7 +1271,7 @@ export default function ADHDApp() {
             }`}
           >
             <Timer className="w-5 h-5" strokeWidth={activeTab === "timer" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Timer</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Timer" : "Timer"}</span>
           </button>
 
           <button
@@ -1246,7 +1281,7 @@ export default function ADHDApp() {
             }`}
           >
             <Sparkles className="w-5 h-5" strokeWidth={activeTab === "kouskovac" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Chunker</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Chunker" : "Kouskovač"}</span>
           </button>
 
           <button
@@ -1256,7 +1291,7 @@ export default function ADHDApp() {
             }`}
           >
             <ListTodo className="w-5 h-5" strokeWidth={activeTab === "rutiny" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Routines</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Routines" : "Rutiny"}</span>
           </button>
 
           <button
@@ -1266,7 +1301,7 @@ export default function ADHDApp() {
             }`}
           >
             <Volume2 className="w-5 h-5" strokeWidth={activeTab === "klid" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Calm</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Calm" : "Klid"}</span>
           </button>
 
           <button
@@ -1276,7 +1311,7 @@ export default function ADHDApp() {
             }`}
           >
             <Smile className="w-5 h-5" strokeWidth={activeTab === "uspechy" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Wins</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Wins" : "Úspěchy"}</span>
           </button>
 
           <button
@@ -1286,7 +1321,7 @@ export default function ADHDApp() {
             }`}
           >
             <Users className="w-5 h-5" strokeWidth={activeTab === "bodydoubling" ? 2.2 : 1.5} />
-            <span className="text-[10px] font-medium">Partner</span>
+            <span className="text-[10px] font-medium">{lang === "en" ? "Partner" : "Parťák"}</span>
           </button>
         </nav>
       </div>
