@@ -24,7 +24,7 @@ export default async function MagazinIndexPage({
           {/* Logo v záhlaví (Podle jazyka) */}
           <Link href="/" className="flex items-center group">
             <img
-              src={isEn ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
+              src={isEn ? "/ADHday%20logo%20EN.jpg" : "/ADHden%20logo.jpg"}
               alt="ADHDen.cz logo"
               className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
