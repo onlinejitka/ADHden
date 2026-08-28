@@ -661,7 +661,7 @@ export default function ADHDApp() {
               </span>
             ) : (
               <a
-                href={stripeProUrl}
+                href={currentStripeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition shadow-sm active:scale-95"
@@ -763,7 +763,7 @@ export default function ADHDApp() {
                 ) : (
                   <div className="text-center py-1">
                     <a
-                      href={stripeProUrl}
+                      href={currentStripeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-300 transition"
@@ -1036,7 +1036,7 @@ export default function ADHDApp() {
                       <Lock className="w-3.5 h-3.5 text-amber-400" /> {lang === "en" ? "Custom steps in PRO" : "Vlastní kroky v PRO"}
                     </span>
                     <a
-                      href={stripeProUrl}
+                      href={currentStripeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-amber-300 hover:underline font-semibold flex items-center gap-1"
