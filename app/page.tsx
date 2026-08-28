@@ -1,188 +1,445 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { Timer, Sparkles, Volume2, Users, ArrowRight, BookOpen, CheckCircle2, ShieldCheck, Heart } from "lucide-react";
+import {
+  Timer,
+  Volume2,
+  Sparkles,
+  Users,
+  BookOpen,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  ChevronRight,
+  FileText,
+  ShieldCheck
+} from "lucide-react";
+import { getPublishedPosts } from "@/lib/notion";
 
-export default function LandingPage() {
-  const [lang, setLang] = useState<"cs" | "en">("cs");
+export const revalidate = 60;
+
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const isEn = resolvedParams?.lang?.toLowerCase() === "en";
+  const currentLang = isEn ? "EN" : "CS";
+
+  const allPosts = await getPublishedPosts(currentLang);
+  const articles = allPosts.slice(0, 3);
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#121214] text-zinc-100 font-sans leading-relaxed">
-      {/* HORNÍ LIŠTA */}
-      <header className="w-full border-b border-zinc-800/80 bg-[#121214]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+    <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
+      <div>
+        {/* Horní navigace - optimalizovaná pro mobil i desktop */}
+        <header className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-zinc-800/60 gap-2">
+          <Link href={isEn ? "/?lang=en" : "/"} className="flex items-center flex-shrink-0 group">
             <img
-              src={lang === "en" ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
+              src={isEn ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
               alt="ADHDen logo"
-              className="h-9 w-auto rounded-lg object-contain"
+              className="h-8 sm:h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
           </Link>
 
-          <div className="flex items-center gap-3 sm:gap-6">
-            {/* PŘEPÍNAČ JAZYKŮ */}
-            <div className="flex bg-zinc-900 border border-zinc-800 p-1 rounded-xl text-xs font-bold">
-              <button
-                onClick={() => setLang("cs")}
-                className={`px-2 py-1 rounded-lg transition ${lang === "cs" ? "bg-amber-400 text-zinc-950 shadow" : "text-zinc-400 hover:text-white"}`}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* PŘEPÍNAČ JAZYKŮ CZ | EN */}
+            <div className="flex bg-zinc-900 border border-zinc-800 p-0.5 rounded-xl text-xs font-bold flex-shrink-0">
+              <Link
+                href="/?lang=cs"
+                className={`px-2 py-1 rounded-lg transition ${
+                  !isEn
+                    ? "bg-amber-400 text-zinc-950 font-bold shadow"
+                    : "text-zinc-400 hover:text-zinc-200 font-medium"
+                }`}
               >
                 CZ
-              </button>
-              <button
-                onClick={() => setLang("en")}
-                className={`px-2 py-1 rounded-lg transition ${lang === "en" ? "bg-amber-400 text-zinc-950 shadow" : "text-zinc-400 hover:text-white"}`}
+              </Link>
+              <Link
+                href="/?lang=en"
+                className={`px-2 py-1 rounded-lg transition ${
+                  isEn
+                    ? "bg-amber-400 text-zinc-950 font-bold shadow"
+                    : "text-zinc-400 hover:text-zinc-200 font-medium"
+                }`}
               >
                 EN
-              </button>
+              </Link>
             </div>
 
-            <Link href="/blog" className="text-xs sm:text-sm text-zinc-300 hover:text-amber-300 font-semibold transition flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-amber-400" /> {lang === "cs" ? "Magazín" : "Magazine"}
+            <Link
+              href={isEn ? "/adhd-ledovec?lang=en" : "/adhd-ledovec"}
+              className="text-[11px] sm:text-xs text-zinc-400 hover:text-amber-300 transition flex items-center gap-1 sm:gap-1.5 flex-shrink-0"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>{isEn ? "ADHD Iceberg" : <><span className="hidden sm:inline">ADHD </span>Ledovec</>}</span>
             </Link>
 
             <Link
-              href="/app"
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition shadow-md active:scale-95 flex items-center gap-1.5"
+              href={isEn ? "/magazin?lang=en" : "/magazin"}
+              className="text-[11px] sm:text-xs text-zinc-400 hover:text-zinc-200 transition flex items-center gap-1 sm:gap-1.5 flex-shrink-0"
             >
-              {lang === "cs" ? "Spustit aplikaci" : "Launch App"} <ArrowRight className="w-4 h-4" />
+              <BookOpen className="w-3.5 h-3.5 text-amber-300/80" strokeWidth={1.5} />
+              <span>{isEn ? "Magazine" : "Magazín"}</span>
+            </Link>
+            
+            <Link
+              href={isEn ? "/app?lang=en" : "/app"}
+              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-medium px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-[11px] sm:text-xs flex items-center gap-1 sm:gap-1.5 transition flex-shrink-0"
+            >
+              <span>{isEn ? "Launch app" : "Spustit aplikaci"}</span>
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* HERO SEKCE */}
-      <section className="w-full max-w-6xl px-4 sm:px-6 pt-16 sm:pt-24 pb-16 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-amber-300 font-bold bg-amber-400/10 border border-amber-400/30 px-4 py-1.5 rounded-full mb-6">
-          <Heart className="w-3.5 h-3.5" /> {lang === "cs" ? "Laskavý systém pro neurodivergentní mozek" : "A gentle daily OS for the neurodivergent brain"}
-        </div>
-
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-[1.15] max-w-4xl mb-6">
-          {lang === "cs" ? (
-            <>
-              Zkrotit chaos, časovou slepotu a paralýzu <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">bez pocitu viny.</span>
-            </>
-          ) : (
-            <>
-              Tame chaos, time blindness, and paralysis <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">without the guilt.</span>
-            </>
-          )}
-        </h1>
-
-        <p className="text-base sm:text-xl text-zinc-400 max-w-2xl leading-relaxed mb-10 font-normal">
-          {lang === "cs"
-            ? "ADHDen spojuje vizuální ubývání času, zklidňující hnědý šum, AI rozpad paralyzujících úkolů a tichého parťáka pro dospělé i rodiny s dětmi."
-            : "ADHDen combines visual time tracking, calming brown noise, AI task micro-breakdowns, and quiet body doubling for adults and families with ADHD."}
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-          <Link
-            href="/app"
-            className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold px-8 py-4 rounded-2xl text-base transition shadow-xl shadow-amber-400/20 flex items-center justify-center gap-2 active:scale-95"
-          >
-            {lang === "cs" ? "Otevřít aplikaci v prohlížeči" : "Open Web App in Browser"} <ArrowRight className="w-5 h-5" />
-          </Link>
-          <Link
-            href="/blog"
-            className="w-full sm:w-auto bg-zinc-900/90 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-bold px-6 py-4 rounded-2xl text-base transition flex items-center justify-center active:scale-95"
-          >
-            {lang === "cs" ? "Číst magazín" : "Read Guides"}
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-6 text-xs text-zinc-400 mt-8">
-          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-teal-400" /> {lang === "cs" ? "Zdarma bez registrace" : "Free without sign-up"}</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-teal-400" /> {lang === "cs" ? "Žádné výčitky a tresty" : "No shame, no streaks"}</span>
-        </div>
-      </section>
-
-      {/* 4 PILÍŘE */}
-      <section className="w-full max-w-6xl px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="bg-zinc-900/70 border border-zinc-800 hover:border-amber-400/40 p-6 rounded-3xl transition space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-amber-300 mb-4">
-              <Timer className="w-6 h-6" />
+        {/* Hlavní obsah */}
+        <main className="max-w-4xl mx-auto px-6 pt-14 pb-16 space-y-16">
+          
+          {/* Hero sekce */}
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/50 border border-zinc-700/50 text-[11px] text-amber-300/90">
+              <span>{isEn ? "♡ A gentle daily OS for the neurodivergent brain" : "♡ Laskavý systém pro neurodivergentní mozek"}</span>
             </div>
-            <h3 className="text-base font-bold text-white mb-2">{lang === "cs" ? "Vizuální Time Timer" : "Visual Pie Timer"}</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              {lang === "cs"
-                ? "ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut."
-                : "The ADHD brain struggles with abstract digital numbers. Our disappearing color disc makes time physically visible."}
-            </p>
-          </div>
 
-          <div className="bg-zinc-900/70 border border-zinc-800 hover:border-teal-400/40 p-6 rounded-3xl transition space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-teal-400/15 border border-teal-400/30 flex items-center justify-center text-teal-300 mb-4">
-              <Volume2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">{lang === "cs" ? "Hnědý šum" : "Browser Brown Noise"}</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              {lang === "cs"
-                ? "Generovaný přímo v prohlížeči. Ztiší vnitřní dialog a vytvoří okamžitou sluchovou bariéru vůči distrakcím."
-                : "Zero data streaming required. Muffles internal mind chatter and creates an instant auditory bubble against distractions."}
-            </p>
-          </div>
+            <div className="h-10" />
 
-          <div className="bg-zinc-900/70 border border-zinc-800 hover:border-purple-400/40 p-6 rounded-3xl transition space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-purple-400/15 border border-purple-400/30 flex items-center justify-center text-purple-300 mb-4">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">{lang === "cs" ? "AI Kouskovač" : "AI Task Chunker"}</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              {lang === "cs"
-                ? "Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní fyzické kroky bez odporu."
-                : "Stuck in executive paralysis? Our low-friction AI breaks overwhelming tasks into 3 physical micro-steps."}
-            </p>
-          </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-zinc-100 max-w-2xl mx-auto leading-normal tracking-wide">
+              {isEn ? (
+                <>
+                  Tame chaos, time blindness, and paralysis{" "}
+                  <span className="text-amber-300 font-normal">without the guilt.</span>
+                </>
+              ) : (
+                <>
+                  Zkrotit chaos, časovou slepotu a paralýzu{" "}
+                  <span className="text-amber-300 font-normal">bez pocitu viny.</span>
+                </>
+              )}
+            </h1>
 
-          <div className="bg-zinc-900/70 border border-zinc-800 hover:border-teal-400/40 p-6 rounded-3xl transition space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-teal-400/15 border border-teal-400/30 flex items-center justify-center text-teal-300 mb-4">
-              <Users className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">{lang === "cs" ? "Tichý parťák" : "Quiet Body Doubling"}</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              {lang === "cs"
-                ? "Čištění zubů, reset stolu nebo úklid. Spusťte průvodce a dělejte monotónní činnost společně."
-                : "Brush teeth, reset your desk, or fold laundry together. A comforting virtual presence to overcome resistance."}
-            </p>
-          </div>
-        </div>
-      </section>
+            <div className="h-5" />
 
-      {/* PATIČKA S LÉKAŘSKÝM DISCLAIMEREM, INICIÁLAMI A COPYRIGHTEM */}
-      <footer className="w-full border-t border-zinc-800/80 bg-[#121214] py-12 px-4 sm:px-6 mt-12 text-zinc-400 text-xs">
-        <div className="max-w-4xl mx-auto space-y-6 text-center">
-          {/* Lékařský disclaimer */}
-          <div className="p-4 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl text-[11px] leading-relaxed text-zinc-400 max-w-3xl mx-auto">
-            <strong className="text-zinc-300 block mb-1">
-              {lang === "cs" ? "⚠️ Upozornění (Disclaimer):" : "⚠️ Medical Disclaimer:"}
-            </strong>
-            {lang === "cs"
-              ? "Obsah magazínu a nástroje v aplikaci ADHDen.cz slouží výhradně pro osobní organizaci, sebepoznání a podporu soustředění. Nepředstavují lékařskou, psychiatrickou ani psychologickou diagnostiku, péči či poradenství. V případě zdravotních či psychických obtíží vždy vyhledejte kvalifikovaného lékaře nebo terapeuta."
-              : "The content and tools on ADHDen are designed exclusively for personal focus support, self-understanding, and daily organization. They do not constitute medical, psychiatric, or psychological advice, diagnosis, or treatment. Always consult a qualified healthcare professional regarding any medical condition."}
-          </div>
-
-          {/* Iniciály autora, odkazy a copyright */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-zinc-900 gap-3 text-xs">
-            <div>
-              © {new Date().getFullYear()} <b>ADHDen</b> • {lang === "cs" ? "Vytvořila" : "Created by"}{" "}
-              <a
-                href="https://jitkap.cz/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-amber-300 hover:underline font-semibold"
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <Link
+                href={isEn ? "/app?lang=en" : "/app"}
+                className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-zinc-950 font-semibold px-6 py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition"
               >
-                Jitka Pekárková (JP)
-              </a>
+                <span>{isEn ? "Open Web App in browser" : "Otevřít aplikaci v prohlížeči"}</span>
+                <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
+              </Link>
+
+              <Link
+                href={isEn ? "/magazin?lang=en" : "/magazin"}
+                className="w-full sm:w-auto bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/60 px-6 py-3 rounded-xl text-xs font-medium transition text-center"
+              >
+                {isEn ? "Read magazine" : "Číst magazín"}
+              </Link>
             </div>
 
-            <div className="flex gap-4 text-zinc-400">
-              <Link href="/app" className="hover:text-zinc-200">{lang === "cs" ? "Aplikace" : "App"}</Link>
-              <Link href="/blog" className="hover:text-zinc-200">{lang === "cs" ? "Magazín" : "Magazine"}</Link>
+            {/* 2 body + Třetí řádek pod nimi */}
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-center gap-6 text-[11px] text-zinc-500">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" strokeWidth={1.5} /> {isEn ? "Free with zero sign-up" : "Zdarma bez registrace"}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" strokeWidth={1.5} /> {isEn ? "No shame, no streaks" : "Žádné výčitky a tresty"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-center text-[11px] text-amber-300/90 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" strokeWidth={1.5} /> {isEn ? "Optional PRO upgrade (7 days free trial)" : "Možnost rozšíření na PRO (vyzkoušení na 7 dní zdarma)"}
+                </span>
+              </div>
             </div>
+          </div>
+
+          <div className="h-5" />
+
+          {/* Sekce Nástrojů */}
+          <section className="space-y-6 text-left">
+            <div className="text-center space-y-1.5">
+              <h2 className="text-lg font-semibold text-zinc-200">
+                {isEn ? "Tools in ADHDen designed specifically for ADHD dynamics." : "Nástroje v aplikaci ADHden navržené přímo pro ADHD dynamiku."}
+              </h2>
+              <p className="text-xs text-zinc-400">
+                {isEn ? "Why generic to-do lists fail and how ADHDen helps you regain momentum." : "Proč běžné úkolovníky a minutky selhávají a jak vám pomůže ADHDen."}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              <Link
+                href={isEn ? "/app?tab=timer&lang=en" : "/app?tab=timer"}
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-amber-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
+                    <Timer className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition">
+                    {isEn ? "Visual Pie Timer" : "Vizuální Time Timer"}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    {isEn
+                      ? "The ADHD brain struggles with abstract numbers. The disappearing color disc makes time physically visible."
+                      : "ADHD mozek nevnímá čísla. Ubývající koláčový disk dává času jasný fyzický tvar bez nutnosti počítání minut."}
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-amber-300/80 group-hover:text-amber-300 flex items-center gap-1">
+                  {isEn ? "Launch timer" : "Spustit timer"} <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
+
+              <Link
+                href={isEn ? "/app?tab=klid&lang=en" : "/app?tab=klid"}
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+                    <Volume2 className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+                    {isEn ? "Sensory Brown Noise" : "Hnědý & Senzorický šum"}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    {isEn
+                      ? "Silences internal mind chatter, calms the nervous system, and builds an instant focus bubble."
+                      : "Ztiší vnitřní dialog, uklidní nervový systém a vytvoří zvukovou bariéru vůči rušivému okolí."}
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+                  {isEn ? "Instant calm" : "Okamžité zklidnění"} <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
+
+              <Link
+                href={isEn ? "/app?tab=kouskovac&lang=en" : "/app?tab=kouskovac"}
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-purple-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-300">
+                    <Sparkles className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-purple-300 transition">
+                    {isEn ? "AI Task Chunker" : "AI Kouskovač"}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    {isEn
+                      ? "Stuck in executive paralysis? Our AI breaks overwhelming tasks into 3 physical, low-friction micro-steps."
+                      : "Máte před sebou nepřekonatelný úkol? AI jej rozpadne na 3 primitivní kroky, u kterých mozek necítí odpor začít."}
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-purple-300/80 group-hover:text-purple-300 flex items-center gap-1">
+                  {isEn ? "Unfreeze paralysis" : "Konec paralýzy"} <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
+
+              <Link
+                href={isEn ? "/app?tab=bodydoubling&lang=en" : "/app?tab=bodydoubling"}
+                className="group p-5 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-teal-400/40 rounded-2xl transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+                    <Users className="w-4 h-4" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-teal-300 transition">
+                    {isEn ? "Quiet Body Doubling" : "Body Doubling"}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    {isEn
+                      ? "Brush teeth, clean off the desk, or fold laundry. Start a guide and do tedious tasks together with a partner."
+                      : "Čištění zubů, skládání prádla nebo úklid stolu. Spusťte průvodce a dělejte činnost společně s tichým parťákem."}
+                  </p>
+                </div>
+                <span className="text-[11px] font-medium text-teal-300/80 group-hover:text-teal-300 flex items-center gap-1">
+                  {isEn ? "Action partner" : "Parťák do akce"} <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                </span>
+              </Link>
+            </div>
+          </section>
+
+          <div className="h-5" />
+
+          {/* Upoutávka na průvodce */}
+          <section className="pt-2">
+            <Link
+              href={isEn ? "/adhd-ledovec?lang=en" : "/adhd-ledovec"}
+              className="group block p-6 sm:p-8 bg-zinc-800/30 hover:bg-zinc-800/50 border border-zinc-800 hover:border-amber-400/40 rounded-3xl transition-all"
+            >
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="space-y-2 text-center sm:text-left">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-[11px] font-medium border border-amber-400/20">
+                    <FileText className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    <span>{isEn ? "Free Neurodivergent Guide" : "Neurodivergentní průvodce zdarma"}</span>
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-zinc-100 group-hover:text-amber-300 transition">
+                    {isEn ? "ADHD ICEBERG" : "ADHD LEDOVEC"}
+                  </h3>
+                  <p className="text-xs text-zinc-400 max-w-lg leading-relaxed">
+                    {isEn
+                      ? "Comprehensive visual guide into the ADHD brain, dopamine regulation, and executive function. Download for free in PDF."
+                      : "Ucelený vizuální e-book o podstatě ADHD mozku, dopaminovém deficitu a exekutivní paralýze. Stáhněte si ho bezplatně v PDF."}
+                  </p>
+                </div>
+
+                <div className="flex-shrink-0 bg-amber-400 group-hover:bg-amber-300 text-zinc-950 font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 transition">
+                  <span>{isEn ? "View & Download" : "Prohlédnout & Stáhnout"}</span>
+                  <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
+                </div>
+              </div>
+            </Link>
+          </section>
+
+          <div className="h-5" />
+
+          {/* Sekce 3 nejnovějších článků z Notion s obrázky */}
+          <section className="space-y-6 pt-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-200">
+                  {isEn ? "Latest Articles & Guides" : "Poslední články & Tipy"}
+                </h2>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {isEn ? "Short guides and insights into the neurodivergent mind." : "Krátké návody a porozumění neurodivergentní mysli."}
+                </p>
+              </div>
+              
+              <Link
+                href={isEn ? "/magazin?lang=en" : "/magazin"}
+                className="text-xs text-amber-300 hover:underline flex items-center gap-1 font-medium"
+              >
+                <span>{isEn ? "All articles" : "Všechny články"}</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {articles.length === 0 ? (
+              <div className="p-6 bg-zinc-800/20 border border-zinc-800 rounded-2xl text-center text-xs text-zinc-400">
+                {isEn ? "No English articles published in Notion yet." : "Zatím nebyly načteny žádné články z Notionu."}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {articles.map((art: any) => (
+                  <Link
+                    key={art.id}
+                    href={`/magazin/${art.slug}`}
+                    className="group flex flex-col p-4 bg-zinc-800/30 hover:bg-zinc-800/60 border border-zinc-800 hover:border-zinc-700 rounded-2xl transition-all"
+                  >
+                    {art.coverImage && (
+                      <div className="w-full h-36 rounded-xl overflow-hidden mb-3.5 border border-zinc-800/60 bg-zinc-900">
+                        <img 
+                          src={art.coverImage} 
+                          alt={art.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                          <span className="text-amber-300/90 font-medium">
+                            {art.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition leading-snug">
+                          {art.title}
+                        </h3>
+
+                        {art.description && (
+                          <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
+                            {art.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="pt-2 mt-auto text-[11px] text-zinc-500 group-hover:text-zinc-300 flex items-center justify-between transition border-t border-zinc-800/40">
+                        <span>{art.date}</span>
+                        <span className="text-amber-300/80 group-hover:text-amber-300 flex items-center gap-0.5 font-medium">
+                          {isEn ? "Read" : "Číst"} <ChevronRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+
+        </main>
+      </div>
+
+      {/* PŮVODNÍ ZÁPATÍ S DOLOŽKOU, STRIPE A ODKAZY */}
+      <footer className="border-t border-zinc-800/80 bg-[#0e0e10] pt-10 pb-8 mt-12 text-xs text-zinc-400">
+        <div className="max-w-4xl mx-auto px-6 space-y-6 text-center sm:text-left">
+          
+          <div className="space-y-2 text-center max-w-2xl mx-auto">
+            <p className="font-semibold text-zinc-300">
+              © {new Date().getFullYear()} ADHden - {isEn ? "All rights reserved." : "Všechna práva vyhrazena."}
+            </p>
+            <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
+              {isEn
+                ? "Important Disclaimer: The content on this website and app is strictly for informational, educational, and self-growth purposes. The author is not a doctor, psychiatrist, or psychotherapist. All information and apps do not replace professional medical or psychological care. Use of these tools is at the user's own responsibility."
+                : "Důležité upozornění: Obsah tohoto webu a aplikace má pouze informativní, vzdělávací a seberozvojový charakter. Autorka není lékař, psychiatr ani psychoterapeut. Veškeré informace a aplikace nenahrazují odbornou lékařskou či psychologickou péči. Použití nástrojů je na vlastní zodpovědnost uživatele."}
+            </p>
+          </div>
+
+          <div className="border-t border-zinc-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <div className="space-y-0.5 text-center sm:text-left">
+              <p className="font-bold text-zinc-200">
+                {isEn ? "Operator: Jitka Pekárková" : "Provozovatel: Jitka Pekárková"}
+              </p>
+              <p className="text-[11px] text-zinc-500">
+                {isEn ? "Registered address: Primátorská 38, Prague 8, Czech Republic • ID (IČO): 87458021" : "Sídlo: Primátorská 38, Praha 8 • IČO: 87458021"}
+              </p>
+              <p className="text-[11px] text-zinc-500">
+                {isEn ? "Sole proprietor registered in the Trade Licensing Register." : "Fyzická osoba zapsaná v živnostenském rejstříku."}
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center sm:items-end gap-3">
+              <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 bg-zinc-800/40 px-3 py-1 rounded-lg border border-zinc-800">
+                <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+                <span>{isEn ? <>Secure payments powered by <b>Stripe</b></> : <>Bezpečné platby zajišťuje <b>Stripe</b></>}</span>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
+                <a
+                  href="https://jitkap.cz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-300 hover:underline"
+                >
+                  {isEn ? "About author" : "O autorce"}
+                </a>
+                <span className="text-zinc-700">•</span>
+                <a
+                  href="https://navigator40k.cz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-300 hover:underline"
+                >
+                  Navigátor 40k
+                </a>
+                <span className="text-zinc-700">•</span>
+                <Link href="/obchodni-podminky" className="text-zinc-300 hover:text-zinc-100">
+                  {isEn ? "Terms & Conditions" : "Obchodní podmínky"}
+                </Link>
+                <span className="text-zinc-700">•</span>
+                <Link href="/gdpr" className="text-zinc-300 hover:text-zinc-100">
+                  GDPR
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
