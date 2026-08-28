@@ -23,17 +23,21 @@ export default async function AdhdLedovecPage({
   const resolvedParams = await searchParams;
   const isEn = resolvedParams?.lang?.toLowerCase() === "en";
 
-  const pdfUrl =
-    "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20ledovec%20-%20No%C4%8Dn%C3%AD%20Knihovna.pdf";
-  const previewImgUrl =
-    "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20ledovec%20-%20No%C4%8Dn%C3%AD%20Knihovna%20-%20n%C3%A1hled.jpg";
+  // DYNAMICKÉ ODKAZY NA PDF A NÁHLEDOVÝ OBRÁZEK (CZ vs EN)
+  const pdfUrl = isEn
+    ? "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20iceberg%20-%20ADHday.pdf"
+    : "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20ledovec%20-%20No%C4%8Dn%C3%AD%20Knihovna.pdf";
+
+  const previewImgUrl = isEn
+    ? "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20iceberg%20-%20ADHday%20-%20free%20download.jpg"
+    : "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20ledovec%20-%20No%C4%8Dn%C3%AD%20Knihovna%20-%20n%C3%A1hled.jpg";
 
   return (
     <div className="min-h-screen bg-[#121214] text-zinc-300 font-sans leading-relaxed selection:bg-amber-400/20 selection:text-amber-300 flex flex-col justify-between">
       <div>
         {/* Záhlaví */}
         <header className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-zinc-800/60 gap-2">
-          {/* Logo v záhlaví (Podle jazyka + proklik na správný jazykový úvod) */}
+          {/* Logo v záhlaví (Podle jazyka + proklik na správný úvod) */}
           <Link href={isEn ? "/?lang=en" : "/"} className="flex items-center flex-shrink-0 group">
             <img
               src={isEn ? "/ADHday%20logo%20EN.jpg" : "/ADHden%20logo.jpg"}
@@ -149,7 +153,7 @@ export default async function AdhdLedovecPage({
               <div className="flex-shrink-0 max-w-xs sm:max-w-sm">
                 <img
                   src={previewImgUrl}
-                  alt="ADHD Ledovec náhled e-booku"
+                  alt={isEn ? "ADHD Iceberg e-book preview" : "ADHD Ledovec náhled e-booku"}
                   className="rounded-2xl border border-zinc-700/60 shadow-2xl hover:scale-102 transition duration-300"
                 />
               </div>
