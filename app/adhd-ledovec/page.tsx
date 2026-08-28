@@ -25,7 +25,7 @@ export default async function AdhdLedovecPage({
 
   // DYNAMICKÉ ODKAZY NA PDF A NÁHLEDOVÝ OBRÁZEK (CZ vs EN)
   const pdfUrl = isEn
-    ? "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20iceberg%20-%20ADHday.pdf"
+    ? "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20iceberg%20-%20ADHday%20-%20free%20download.pdf"
     : "https://8djza3oduj7elsmo.public.blob.vercel-storage.com/ADHD%20ledovec%20-%20No%C4%8Dn%C3%AD%20Knihovna.pdf";
 
   const previewImgUrl = isEn
