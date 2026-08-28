@@ -62,11 +62,18 @@ interface CustomAudio {
 }
 
 export default function ADHDApp() {
-  const stripeProUrl = "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t";
+  // 1. ODKAZY NA STRIPE PODLE JAZYKA
+  const stripeUrls = {
+    cs: "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t", // Váš český odkaz na 79 Kč
+    en: "https://buy.stripe.com/dRmfZh4mJ81m66BaDi9IQ0u", // Váš nový globální odkaz na $4.99
+  };
 
   const [activeTab, setActiveTab] = useState<Tab>("timer");
   const [isPro, setIsPro] = useState<boolean>(false);
   const [lang, setLang] = useState<"cs" | "en">("cs");
+
+  // Aktuální URL platební brány podle vybraného jazyka
+  const currentStripeUrl = stripeUrls[lang] || stripeUrls.cs;
 
   // =============================================================
   // 1. TIME TIMER
