@@ -620,7 +620,7 @@ export default function ADHDApp() {
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80 mb-6 flex-shrink-0">
           <Link href={lang === "en" ? "/?lang=en" : "/"} className="flex items-center group">
             <img
-              src={lang === "en" ? "/ADHden-logo-en.jpg" : "/ADHden%20logo.jpg"}
+              src={lang === "en" ? "/ADHday%20logo%20EN.jpg" : "/ADHden%20logo.jpg"}
               alt="ADHDen logo"
               className="h-9 w-auto rounded-lg object-contain group-hover:opacity-90 transition"
             />
