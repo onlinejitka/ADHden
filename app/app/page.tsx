@@ -65,7 +65,7 @@ export default function ADHDApp() {
   // 1. ODKAZY NA STRIPE PODLE JAZYKA
   const stripeUrls = {
     cs: "https://buy.stripe.com/28E8wPbPbchCcuZfXC9IQ0t", // Váš český odkaz na 79 Kč
-    en: "https://buy.stripe.com/dRmfZh4mJ81m66BaDi9IQ0u", // Váš nový globální odkaz na $4.99
+    en: "https://buy.stripe.com/dRmfZh4mJ81m66BaDi9IQ0u?locale=en", // Váš nový globální odkaz na $4.99
   };
 
   const [activeTab, setActiveTab] = useState<Tab>("timer");
