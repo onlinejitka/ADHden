@@ -76,7 +76,7 @@ export default function ADHDApp() {
   const currentStripeUrl = stripeUrls[lang] || stripeUrls.cs;
 
   // =============================================================
-  // 1. TIME TIMER
+  // 1. TIME TIMER & ROBUSTNÍ WAKE LOCK (Nezhasínání displeje)
   // =============================================================
   const [timerMinutes, setTimerMinutes] = useState<number>(15);
   const [secondsLeft, setSecondsLeft] = useState<number>(15 * 60);
@@ -85,6 +85,30 @@ export default function ADHDApp() {
   const [soundtrack, setSoundtrack] = useState<"brown" | "pink" | "rain" | "none">("brown");
   const [customTimeMinutes, setCustomTimeMinutes] = useState<string>("");
   const wakeLockRef = useRef<any>(null);
+
+  // Funkce pro zachování rozsvíceného displeje
+  const requestWakeLock = async () => {
+    if (typeof window !== "undefined" && "wakeLock" in navigator) {
+      try {
+        wakeLockRef.current = await (navigator as any).wakeLock.request("screen");
+        console.log("Displej uzamčen (nezhasne)");
+      } catch (err) {
+        console.error("Chyba WakeLock:", err);
+      }
+    }
+  };
+
+  const releaseWakeLock = async () => {
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+        console.log("Zámek displeje uvolněn");
+      } catch (err) {
+        console.error("Chyba uvolnění WakeLock:", err);
+      }
+    }
+  };
 
   // Bezpečné načtení a aktivace PRO + detekce jazyka z URL
   useEffect(() => {
@@ -137,20 +161,25 @@ export default function ADHDApp() {
     }
   }, []);
 
+  // Obnovení zámku displeje, pokud se uživatel vrátí do záložky aplikace
   useEffect(() => {
-    async function requestWakeLock() {
-      if (typeof window !== "undefined" && "wakeLock" in navigator && isTimerRunning) {
-        try {
-          wakeLockRef.current = await (navigator as any).wakeLock.request("screen");
-        } catch (err) {}
-      } else if (wakeLockRef.current && !isTimerRunning) {
-        try {
-          wakeLockRef.current.release();
-        } catch {}
-        wakeLockRef.current = null;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && isTimerRunning) {
+        requestWakeLock();
       }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [isTimerRunning]);
+
+  // Vypínání a zapínání zámku displeje podle stavu časovače
+  useEffect(() => {
+    if (isTimerRunning) {
+      requestWakeLock();
+    } else {
+      releaseWakeLock();
     }
-    requestWakeLock();
+    return () => { releaseWakeLock(); };
   }, [isTimerRunning]);
 
   useEffect(() => {
@@ -171,6 +200,22 @@ export default function ADHDApp() {
     }
     return () => clearInterval(interval);
   }, [isTimerRunning, secondsLeft]);
+
+  // =============================================================
+  // HELPER: MEDIA SESSION API (Zvuk na zhasnutém displeji)
+  // =============================================================
+  const updateMediaSession = (title: string, artist: string) => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: artist,
+        album: "ADHDen",
+        artwork: [
+          { src: "/ADHden%20favikon.png", sizes: "512x512", type: "image/png" }
+        ]
+      });
+    }
+  };
 
   const toggleTimer = () => {
     if (!isTimerRunning) {
@@ -457,7 +502,7 @@ export default function ADHDApp() {
     setCustomAudios(customAudios.filter((a) => a.id !== id));
   };
 
-  const playAudioTrack = (id: string, type: string, url?: string) => {
+  const playAudioTrack = (id: string, type: string, url?: string, trackName?: string) => {
     soundEngine?.stopNoise();
     if (audioPlayerRef.current) audioPlayerRef.current.pause();
 
@@ -474,6 +519,9 @@ export default function ADHDApp() {
       soundEngine?.playRainNoise(0.5);
       setActiveAudioId(id);
     } else if (url && audioPlayerRef.current) {
+      // Registrace do Media Session (aby to jelo na pozadí a šlo ovládat)
+      updateMediaSession(trackName || "Zklidňující zvuk", "ADHDen Klidová zóna");
+      
       audioPlayerRef.current.src = url;
       audioPlayerRef.current.loop = true;
       audioPlayerRef.current.play().catch((err) => {});
@@ -559,6 +607,7 @@ export default function ADHDApp() {
     setIsSessionAudioMuted(false);
 
     if (session.mediaUrl && session.type === "audio") {
+      updateMediaSession(session.title, "ADHDen Tichý parťák");
       setTimeout(() => {
         if (bodyDoublingAudioRef.current) {
           bodyDoublingAudioRef.current.src = session.mediaUrl!;
@@ -620,8 +669,9 @@ export default function ADHDApp() {
   return (
     <div className="w-full min-h-screen bg-[#121214] text-zinc-200 flex justify-center font-sans tracking-wide leading-relaxed">
       <div className="w-full max-w-md min-h-screen flex flex-col bg-[#18181b] border-x border-zinc-800/80 shadow-2xl relative px-5 pt-4 pb-32">
-        <audio ref={audioPlayerRef} className="hidden" />
-        <audio ref={bodyDoublingAudioRef} className="hidden" />
+        {/* PŘIDÁNO: playsInline a preload="auto" pomáhá přehrávání na pozadí mobilů */}
+        <audio ref={audioPlayerRef} className="hidden" playsInline preload="auto" />
+        <audio ref={bodyDoublingAudioRef} className="hidden" playsInline preload="auto" />
 
         {/* HLAVIČKA APLIKACE S PŘEPÍNAČEM JAZYKŮ A LOGEM */}
         <header className="flex items-center justify-between pb-4 border-b border-zinc-800/80 mb-6 flex-shrink-0">
@@ -1072,7 +1122,7 @@ export default function ADHDApp() {
                         <div className="text-[11px] text-teal-400/80 mt-0.5">{audio.desc}</div>
                       </div>
                       <button
-                        onClick={() => playAudioTrack(audio.id, audio.type, (audio as any).url)}
+                        onClick={() => playAudioTrack(audio.id, audio.type, (audio as any).url, audio.name)}
                         className={`px-4 py-2 font-semibold rounded-xl text-xs flex items-center gap-1.5 transition ${
                           isPlaying ? "bg-teal-400 text-zinc-950 font-bold" : "bg-zinc-700 hover:bg-zinc-600 text-zinc-200"
                         }`}
@@ -1118,6 +1168,87 @@ export default function ADHDApp() {
                   <span className="text-xs text-zinc-400 block text-center py-1">
                     🔒 {lang === "en" ? "Sleep timer is in PRO" : "Automatické vypnutí zvuku je součástí PRO"}
                   </span>
+                )}
+
+                {isPro && klidSecsLeft !== null && (
+                  <button
+                    onClick={cancelKlidTimer}
+                    className="w-full py-1.5 text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center justify-center gap-1 transition mt-2"
+                  >
+                    <RotateCcw className="w-3 h-3" /> {lang === "en" ? "Cancel timer" : "Zrušit časovač"}
+                  </button>
+                )}
+              </div>
+
+              {/* Vlastní audia */}
+              <div className="bg-zinc-800/30 border border-zinc-800 rounded-2xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                      <Music className="w-4 h-4 text-teal-400" /> {lang === "en" ? "My MP3 Audios" : "Moje MP3 audia"}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 block mt-0.5">
+                      {isPro ? (lang === "en" ? `${customAudios.length}/3 tracks uploaded` : `Nahráno ${customAudios.length}/3 skladeb`) : "🔒 " + (lang === "en" ? "PRO Only" : "Pouze v PRO")}
+                    </span>
+                  </div>
+
+                  {isPro && (
+                    <label
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+                        customAudios.length >= 3
+                          ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+                          : "cursor-pointer bg-zinc-700 hover:bg-zinc-600 text-zinc-200"
+                      }`}
+                    >
+                      <Upload className="w-3.5 h-3.5" /> {lang === "en" ? "Upload" : "Nahrát"}
+                      {customAudios.length < 3 && (
+                        <input
+                          type="file"
+                          accept="audio/*"
+                          onChange={handleAudioUpload}
+                          className="hidden"
+                        />
+                      )}
+                    </label>
+                  )}
+                </div>
+
+                {customAudios.length === 0 ? (
+                  <p className="text-xs text-zinc-500 text-center py-2">
+                    {lang === "en" ? "No custom MP3 audios saved yet." : "Zatím nemáte uložena žádná vlastní MP3 audia."}
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {customAudios.map((track) => {
+                      const isPlaying = activeAudioId === track.id;
+                      return (
+                        <div
+                          key={track.id}
+                          className="p-2.5 bg-[#121214] border border-zinc-800 rounded-lg flex items-center justify-between"
+                        >
+                          <span className="text-xs text-zinc-300 truncate max-w-[160px]">
+                            🎵 {track.name}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => playAudioTrack(track.id, "custom", track.url, track.name)}
+                              className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 ${
+                                isPlaying ? "bg-teal-400 text-zinc-950" : "bg-zinc-800 text-zinc-300"
+                              }`}
+                            >
+                              {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                            </button>
+                            <button
+                              onClick={() => deleteCustomAudio(track.id)}
+                              className="p-1 text-zinc-500 hover:text-rose-400 transition"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
 
